@@ -1,0 +1,100 @@
+/* UserManagement.css */
+
+
+.data-grid-container {
+    height: 500px;
+    width: 100%;
+    padding-top: 70px;
+    padding-left: 250px;
+    padding-right: 100px;
+    margin-top: auto;
+    margin-bottom: 100px;
+    text-align : center;
+  }
+  .button-pill {
+    background-color: #4CAF50; /* Green background color */
+    border: none; /* Remove border */
+    color: white; /* Text color */
+    padding: 5px 10px; /* Padding for pill shape */
+    border-radius: 5px; /* Make it pill-shaped */
+    cursor: pointer;
+    transition: background-color 0.3s; /* Add a smooth transition effect */
+  }
+  
+  .button-pill:hover {
+    background-color: #1c120c; /* Darker green on hover */
+  }
+  
+  /* Circular button with red background */
+.circular-button {
+    background-color: #170404; /* Red background color */
+    border: none; /* Remove border */
+    border-radius: 50%; /* Make it circular */
+    width: 30px; /* Set the width and height to create a circle */
+    height: 30px;
+    color: white; /* Text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Add a smooth transition effect */
+  }
+  
+  .circular-button:hover {
+    background-color: black; /* Darker red on hover */
+  }
+  /* In your CSS file, e.g., UserManagement.css */
+
+.custom-button-inactive {
+  background-color: #e49438c8; /* Change this to your desired background color */
+  border: none;
+  color: white; /* Change this to your desired text color */
+  padding: 3px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.custom-button-active {
+  background-color: rgb(180, 180, 244); /* Change this to your desired background color */
+  border: none;
+  color: white; /* Change this to your desired text color */
+  padding: 3px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.custom-button:hover {
+  background-color: #0056
+}
+/* In your CSS file, e.g., UserManagement.css */
+
+.pill {
+  /* display: inline-block; */
+  padding: 1px 3px;
+  border-radius: 25px;
+  color: white;
+  /* font-weight: bold; 
+   text-align: center;  */
+} 
+
+.inactive {
+  background-color: #ff1201c8;
+}
+
+.active {
+  background-color: rgb(18, 255, 77);
+  color: black;
+}
+  
+  @media screen and (max-width: 768px) {
+    .data-grid-container {
+        height: 526px;
+        padding-left: 220px;
+        padding-right: 60px;
+    }
+  }  @media screen and (max-width: 1000px) {
+    .data-grid-container {
+      padding-left: 50px;
+      padding-right: 50px;
+    }
+  }

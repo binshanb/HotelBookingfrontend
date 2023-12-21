@@ -1,0 +1,126 @@
+/* AdminSidebar.css */
+
+.admin-sidebar {
+  background-color: #ffffff;
+  color: #000000;
+  width: 250px;
+  height: 100vh; /* Set the height to 100% of the viewport height */
+  position: fixed;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  top: 100px;
+  left: 0;
+  transition: transform 0.3s ease;
+}
+
+.toggle-button {
+  cursor: pointer;
+  color: #0eefff;
+  font-size: 20px;
+  align-self: flex-end;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.admin-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-sidebar li {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 2px solid transparent;
+  border-radius: 12px; /* Rounded border */
+  transition: border-color 0.3s ease;
+}
+
+.admin-sidebar li.logout-button {
+  margin-top: auto; /* Push the logout button to the bottom */
+  color: red;
+}
+
+.admin-sidebar li.logout-button:hover {
+  border-color: #dc3545; 
+}
+
+.admin-sidebar li:hover {
+  border-color: #007bff;
+}
+
+
+.sidebar-icon {
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.menu-text {
+  display: block;
+}
+
+.menu-text.hidden {
+  display: none;
+}
+
+.icons-only {
+  transform: translateX(-200px);
+}
+
+.icons-only .sidebar-icon.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 50px;
+  }
+
+  .admin-sidebar ul li {
+    text-align: center;
+  }
+
+  .admin-sidebar ul li .sidebar-icon {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-sidebar {
+    width: 50px;
+  }
+
+  .admin-sidebar .menu-text {
+    display: none;
+  }
+
+  .admin-sidebar.icons-only {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar.icons-only .sidebar-icon.hidden {
+    display: flex;
+  }
+
+  .toggle-button {
+    margin-right: 5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .admin-sidebar li {
+    padding: 10px;
+  }
+
+  .admin-sidebar .toggle-button {
+    margin-right: 0;
+  }
+
+  .admin-sidebar.icons-only .sidebar-icon.hidden {
+    display: flex;
+  }
+}
