@@ -13,6 +13,7 @@ export default function AddCategoryModal({
 }) {
   const [formError, setFormError] = useState({});
   const [categoryName, setCategoryName] = useState([]);
+  console.log(categoryName,"Category");
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleAddCategory = async (e) => {

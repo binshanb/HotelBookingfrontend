@@ -53,6 +53,7 @@ const showToast = (message, type = "error") => {
 
 const RoomCategory = () => {
   const [categories, setCategories] = useState([]);
+  console.log(categories,"categories");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
