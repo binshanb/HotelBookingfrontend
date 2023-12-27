@@ -9,6 +9,7 @@ function Register() {
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    first_name:'',
     email: '',
     mobileNumber: '',
     password: '',
@@ -165,7 +166,7 @@ function Register() {
     try {
       // Make a POST request to your backend registration endpoint using the Axios instance
       const response = await axios.post('/api/user/register/', {
-        
+        first_name:formData.first_name,
         email: formData.email,
         phone_number: formData.mobileNumber,
         password: formData.password,
@@ -199,7 +200,10 @@ function Register() {
         <div className='form_container p-5 rounded bg-white'>
           <form onSubmit={handleSubmit}>
             <h3 className='text-center'>Sign Up</h3>
-    
+            <div className='mb-3'>
+              <input type="text" name="first_name" placeholder='Enter Name' className='form-control' onChange={handleInputChange} />
+              
+            </div>
             <div className='mb-3'>
               <input type="email" name="email" placeholder='Enter Email' className='form-control' onChange={handleInputChange} />
               {validationErrors.email && <p className="error-message">{validationErrors.email}</p>}
