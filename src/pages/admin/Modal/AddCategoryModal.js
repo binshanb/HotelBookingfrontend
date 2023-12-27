@@ -5,6 +5,7 @@ import { FcAddImage } from "react-icons/fc";
 import "./AddCategory.css";
 import { toast } from 'react-toastify';
 
+Modal.setAppElement("#root");
 
 export default function AddCategoryModal({
   isOpen,
@@ -12,8 +13,7 @@ export default function AddCategoryModal({
   onAddCategory,
 }) {
   const [formError, setFormError] = useState({});
-  const [categoryName, setCategoryName] = useState([]);
-  console.log(categoryName,"Category");
+  const [categoryName, setCategoryName] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleAddCategory = async (e) => {
@@ -24,7 +24,7 @@ export default function AddCategoryModal({
     if (Object.keys(errors).length === 0) {
       try {
         const categoryData = new FormData();
-        categoryData.append('category_name', categoryName);
+        categoryData.append('categoryName', categoryName);
         categoryData.append('image', selectedImage);
 
         const response = await onAddCategory(categoryData, {

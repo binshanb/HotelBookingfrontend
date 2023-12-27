@@ -5,11 +5,12 @@ import { BiSolidEdit } from "react-icons/bi";
 import { FaBan, FaCheck } from "react-icons/fa";
 import {GoCheckCircleFill} from "react-icons/go";
 import {HiExclamationCircle} from "react-icons/hi"
-import { adminInstance } from "../../../utils/Axios";
-import "../../admin/UserManagement.css"
+import { adminInstance } from "../../../utils/Axios"
+import "../UserManagement.css"
 import AddCategoryModal from "../Modal/AddCategoryModal"
 import EditCategoryModal from "../Modal/EditCategoryModal"; // Import the new modal
 import { toast } from "react-toastify";
+import { baseUrl } from "../../../utils/constants";
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
@@ -53,14 +54,13 @@ const showToast = (message, type = "error") => {
 
 const RoomCategory = () => {
   const [categories, setCategories] = useState([]);
-  console.log(categories,"categories");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const fetchCategories = async () => {
     try {
-      const response = await adminInstance.get("booking/admin/room-category/");
+      const response = await adminInstance.get(`${baseUrl}/api/booking/admin/room-category/`);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories", error);
@@ -73,7 +73,7 @@ const RoomCategory = () => {
 
   const handleAddCategory = async (categoryData) => {
     try {
-      await adminInstance.post("booking/admin/add-category/", categoryData);
+      await adminInstance.post(`${baseUrl}/api/booking/admin/add-category/`, categoryData);
       fetchCategories();
       showToast("Category added", "success");
       setIsAddModalOpen(false);
@@ -92,7 +92,7 @@ const RoomCategory = () => {
   const handleUpdateCategory = async (updatedCategoryData, categoryId) => {
     try {
       console.log(updatedCategoryData,'pppppppppppppppppppppppp');
-      await adminInstance.put(`booking/admin/edit-category/${categoryId}/`, updatedCategoryData);
+      await adminInstance.put(`${baseUrl}/api/booking/admin/room-category/${categoryId}/`, updatedCategoryData);
       fetchCategories();
       showToast("Category updated", "success");
       setIsEditModalOpen(false);
@@ -104,7 +104,7 @@ const RoomCategory = () => {
 
   const handleBlockUnblockCategory = async (categoryId, isBlocked) => {
     try {
-      await adminInstance.patch(`booking/admin/room-category/block-unblock/${categoryId}/`, {
+      await adminInstance.patch(`${baseUrl}/api/booking/admin/room-category/block-unblock/${categoryId}/`, {
         is_active: !isBlocked,
       });
       fetchCategories();
@@ -197,6 +197,9 @@ const RoomCategory = () => {
 };
 
 export default RoomCategory;
+
+
+
 
 
 
