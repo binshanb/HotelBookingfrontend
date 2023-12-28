@@ -60,7 +60,7 @@ const RoomCategory = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await adminInstance.get(`${baseUrl}/api/booking/admin/room-category/`);
+      const response = await adminInstance.get(`booking/admin/room-category/`);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories", error);
@@ -73,7 +73,7 @@ const RoomCategory = () => {
 
   const handleAddCategory = async (categoryData) => {
     try {
-      await adminInstance.post(`${baseUrl}/api/booking/admin/add-category/`, categoryData);
+      await adminInstance.post(`booking/admin/add-category/`, categoryData);
       fetchCategories();
       showToast("Category added", "success");
       setIsAddModalOpen(false);
@@ -92,7 +92,7 @@ const RoomCategory = () => {
   const handleUpdateCategory = async (updatedCategoryData, categoryId) => {
     try {
       console.log(updatedCategoryData,'pppppppppppppppppppppppp');
-      await adminInstance.put(`${baseUrl}/api/booking/admin/room-category/${categoryId}/`, updatedCategoryData);
+      await adminInstance.put(`booking/admin/room-category/${categoryId}/`, updatedCategoryData);
       fetchCategories();
       showToast("Category updated", "success");
       setIsEditModalOpen(false);
