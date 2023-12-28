@@ -1,7 +1,7 @@
 import React,{useEffect,useState}  from 'react';
 import { Container, Grid, Paper, Typography } from '@mui/material';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import  adminInstance  from '../../utils/Axios';
+import { adminInstance } from '../../utils/Axios';
 
 const AdminDashboard = () => {
 
