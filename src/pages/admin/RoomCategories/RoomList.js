@@ -1,15 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { AiOutlineAppstoreAdd,AiOutlineCheckCircle } from "react-icons/ai";
-import { BiSolidEdit } from "react-icons/bi";
-import { FaBan, FaCheck } from "react-icons/fa";
+import { adminInstance } from "../../../utils/Axios";
+import EditRoomModal from  "../Modal/EditRoomModal"
+import AddRoomModal from "../Modal/AddRoomModal";
+import { toast } from "react-toastify";
 import {GoCheckCircleFill} from "react-icons/go";
 import {HiExclamationCircle} from "react-icons/hi"
-import { adminInstance } from "../../../utils/Axios";
-import '../UserManagement.css';
-import AddRoomModal from "../Modal/AddRoomModal";
-import EditRoomModal from "../Modal/EditRoomModal"; // Import the new modal
-import { toast } from "react-toastify";
+import { AiOutlineAppstoreAdd,AiOutlineCheckCircle } from "react-icons/ai";
+import { FaBan, FaCheck } from "react-icons/fa";
+import { BiSolidEdit } from "react-icons/bi";
+
+const columns = [
+  { field: "id", headerName: "ID", width: 70 },
+  { field: "category_name", headerName: "Category_name", width: 130 },
+  {
+    field: "image",
+    headerName: "Image",
+    width: 200,
+    renderCell: (params) => (
+      <img
+        src={`${params.value}`}
+        alt="Category"
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+    ),
+  },
+  {
+    field: "is_active",
+    headerName: "Active",
+    width: 100,
+    renderCell: (params) => (
+      params.value ? (
+        <GoCheckCircleFill color="green" style={{fontSize: "24px"}} />
+      ) : (
+        <HiExclamationCircle color="red" style={{fontSize: "24px"}}/>
+      )
+    ),
+  },];
 
 const showToast = (message, type = "error") => {
   toast[type](message, {
@@ -28,123 +55,24 @@ const RoomList = () => {
   const [rooms, setRooms] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedRooms, setSelectedRooms] = useState(null);
-  const [description,setDescription] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
-  const [features, setFeatures] = useState([]);
+const fetchRooms = async () => {
+  try {
+    const response = await adminInstance.get('booking/admin/room-list/');
+    setRooms(response.data);
+  } catch (error) {
+    console.error("Error fetching rooms", error);
+  }
+};
 
+useEffect(() => {
+  fetchRooms();
+}, []);
 
-  const getCategoryName = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.category_name : "";
-  };
-  
-  const getFeaturesList = (featureIds) => {
-    return featureIds.map((featureId) => {
-      const feature = features.find((feat) => feat.id === featureId);
-      return feature ? feature.name : "";
-    });
-  };
-  const columns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "title", headerName: "Room Name", width: 150 },
-    { field: "category", headerName: "Category", width: 130, valueGetter: (params) => params.row.category.category_name || "", },
-    { field: "price_per_night", headerName: "Price Per Night", width: 150 },
-    { field: "room_slug", headerName: "Room Slug", width: 130 },
-  
-    { field: "capacity", headerName: "Capacity", width: 120 },
-    { field: "room_size", headerName: "Room Size", width: 120 },
-    { field: "description", headerName: "Description", width: 120 },
-    {
-      field: "cover_image",
-      headerName: "Cover Image",
-      width: 200,
-      renderCell: (params) => (
-        <img
-          src={params.value}
-          alt="Room"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      ),
-    },
-    {
-      field: "features",
-      headerName: "Features",
-      width: 200,
-      renderCell: (params) => (
-        <ul>
-          {params.row.features && Array.isArray(params.row.features) ? (
-            params.row.features.map((feature) => {
-              
-              // const foundFeature = features.find((feature) => feature.id === featureId);
-              return (
-                <li key={feature.id}>
-                  {feature ? feature.name : "Unknown Feature"}
-                </li>
-              );
-            })
-          ) : (
-            <li>No features</li>
-          )}
-        </ul>
-      ),
-    },
-    
-    {
-      field: "is_active",
-      headerName: "Active",
-      width: 100,
-      renderCell: (params) => (
-        params.value ? (
-          <GoCheckCircleFill color="green" style={{fontSize: "24px"}} />
-        ) : (
-          <HiExclamationCircle color="red" style={{fontSize: "24px"}}/>
-        )
-      ),
-    },
-    ];
-  const fetchRooms = async () => {
-    try {
-      const response = await adminInstance.get("booking/admin/room-list/");
-      console.log(response.data,"jkkjjjkk")
-      setRooms(response.data);
-    } catch (error) {
-      console.error("Error fetching categories", error);
-    }
-  };
-  
-  useEffect(() => {
-    fetchRooms();
-    fetchCategories();
-    fetchFeatures();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await adminInstance.get("booking/admin/room-category/");
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Error fetching categories", error);
-    }
-  };
-
-  const fetchFeatures = async () => {
-    try {
-      const response = await adminInstance.get("booking/admin/room-feature/");
-      setFeatures(response.data);
-    } catch (error) {
-      console.error("Error fetching features", error);
-    }
-  };
-
-
-  // const handleRoomSelect = (room) => {
-  //   setSelectedRooms(room);
-  // };
   const handleAddRoom = async (roomData) => {
     try {
-      await adminInstance.post("booking/admin/add-room/", roomData);
+      await adminInstance.post('booking/admin/add-room/', roomData);
       fetchRooms();
       showToast("Room added", "success");
       setIsAddModalOpen(false);
@@ -155,15 +83,15 @@ const RoomList = () => {
   };
 
   const handleEditRoom = (room) => {
-    console.log('edit')
-    setSelectedRooms(room);
+    setSelectedRoom(room);
     setIsEditModalOpen(true);
-    console.log('value',isEditModalOpen)
   };
+ 
 
   const handleUpdateRoom = async (updatedRoomData, roomId) => {
     try {
-      await adminInstance.put(`booking/admin/edit-room/${roomId}/`, updatedRoomData);
+      console.log(updatedRoomData,'pppppppppppppppppppppppp');
+      await adminInstance.put(`booking/admin/room-list/${roomId}/`, updatedRoomData);
       fetchRooms();
       showToast("Room updated", "success");
       setIsEditModalOpen(false);
@@ -173,7 +101,7 @@ const RoomList = () => {
     }
   };
 
-  const handleBlockUnblockRoom = async (roomId, isBlocked) => {
+  const handleBlockUnblockCategory = async (roomId, isBlocked) => {
     try {
       await adminInstance.patch(`booking/admin/room-list/block-unblock/${roomId}/`, {
         is_active: !isBlocked,
@@ -195,7 +123,7 @@ const RoomList = () => {
       renderCell: (params) => (
         <div>
           <button
-            onClick={() => handleBlockUnblockRoom(params.row.id, params.row.is_active)}
+            onClick={() => handleBlockUnblockCategory(params.row.id, params.row.is_active)}
             style={{ border: "none", background: "none", cursor: "pointer" }}
           >
         {params.row.is_active ? <FaBan color="red" style={{ fontSize: "24px"}}/> : <AiOutlineCheckCircle color="green" style={{ fontSize: "24px"}} />}
@@ -210,72 +138,366 @@ const RoomList = () => {
       renderCell: (params) => (
         <div>
           <button
-            onClick={() => {
-              console.log("Edit button clicked"); 
-              handleEditRoom(params.row)}}
+            onClick={() => handleEditRoom(params.row)}
             style={{ border: "none", background: "none", cursor: "pointer" }}
           >
             <BiSolidEdit style={{ fontSize: "24px", color: "blue" }} />
-          </button>
+          </button>{" "}
         </div>
       ),
     },
   ];
 
-  return (
-    <div style={{ backgroundColor: "white", height: "100vh" }}>
-      <div className="data-grid-container">
-        <div className="header d-flex justify-content-between align-items-center mb-4">
-          <div style={{ fontWeight: "bold", fontSize: 32 }}>Room List</div>
-          <div
-            className="d-flex align-items-center"
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            <AiOutlineAppstoreAdd style={{ fontSize: "30px" }} /> Add
-          </div>
-        </div>
-        <div className="h-500 w-full overflow-hidden border border-gray-300">
-          <DataGrid
-            rows={rooms}
-            columns={columnsWithActions}
-            pageSize={5}
-            checkboxSelection
-            sx={{ backgroundColor: "white" }}
-            isCellEditable={(params) => params.field !== "id"}
-            onCellEditCommit={(params) => {
-              const updatedData = [...rooms];
-              updatedData[params.id - 1][params.field] = params.props.value;
-              handleUpdateRoom(updatedData[params.id - 1]);
-            }}
-          />
-        </div>
-        
-        <AddRoomModal
-          isOpen={isAddModalOpen}
-          onRequestClose={() => setIsAddModalOpen(false)}
-          onAddRoom={handleAddRoom}
-          roomData={selectedRooms}
-          categories={categories} 
-          features={features}
-        />
-       
-  {selectedRooms && (
-   <EditRoomModal
-   isOpen={isEditModalOpen}
-   onRequestClose={() => setIsEditModalOpen(false)}
-   onEditRoom={handleUpdateRoom}
-   roomData={selectedRooms}
-   features={features}
-   categories={categories}
 
- />
-        )}
+  return (
+    <div style={{ backgroundColor: "cyan", height: "100vh" }}>
+    <div className="data-grid-container">
+      <div className="header d-flex justify-content-between align-items-center mb-4">
+        <div style={{ fontWeight: "bold" }}>Room Management</div>
+        <div
+          className="d-flex align-items-center"
+          onClick={() => setIsAddModalOpen(true)}
+        >
+          <AiOutlineAppstoreAdd style={{ fontSize: "30px" }} /> Add
+        </div>
       </div>
+      <div className="h-500 w-full overflow-hidden border border-gray-300">
+        <DataGrid
+          rows={rooms}
+          columns={columnsWithActions}
+          pageSize={5}
+          checkboxSelection
+          sx={{ backgroundColor: "white" }}
+          isCellEditable={(params) => params.field !== "id"}
+          onCellEditCommit={(params) => {
+            const updatedData = [...rooms];
+            updatedData[params.id - 1][params.field] = params.props.value;
+            handleUpdateRoom(updatedData[params.id - 1]);
+          }}
+        />
+      </div>
+
+      <AddRoomModal
+        isOpen={isAddModalOpen}
+        onRequestClose={() => setIsAddModalOpen(false)}
+        onAddRoom={handleAddRoom}
+      />
+
+      <EditRoomModal
+        isOpen={isEditModalOpen}
+        onRequestClose={() => setIsEditModalOpen(false)}
+        onUpdateRoom={(updatedData) =>
+          handleUpdateRoom(updatedData, selectedRoom.id)
+        }
+        roomData={selectedRoom}
+      />
     </div>
-  );
+  </div>
+);
 };
 
 export default RoomList;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from "react";
+// import { DataGrid } from "@mui/x-data-grid";
+// import { AiOutlineAppstoreAdd,AiOutlineCheckCircle } from "react-icons/ai";
+// import { BiSolidEdit } from "react-icons/bi";
+// import { FaBan, FaCheck } from "react-icons/fa";
+// import {GoCheckCircleFill} from "react-icons/go";
+// import {HiExclamationCircle} from "react-icons/hi"
+// import { adminInstance } from "../../../utils/Axios";
+// import '../UserManagement.css';
+// import AddRoomModal from "../Modal/AddRoomModal";
+// import EditRoomModal from "../Modal/EditRoomModal"; // Import the new modal
+// import { toast } from "react-toastify";
+
+// const showToast = (message, type = "error") => {
+//   toast[type](message, {
+//     position: toast.POSITION.TOP_RIGHT,
+//     autoClose: 3000,
+//     hideProgressBar: false,
+//     closeOnClick: true,
+//     pauseOnHover: true,
+//     draggable: true,
+//     progress: undefined,
+//   });
+// };
+
+
+// const RoomList = () => {
+//   const [rooms, setRooms] = useState([]);
+//   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+//   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+//   const [selectedRooms, setSelectedRooms] = useState(null);
+//   const [description,setDescription] = useState("");
+//   const [categories, setCategories] = useState([]);
+
+//   const [features, setFeatures] = useState([]);
+
+
+//   const getCategoryName = (categoryId) => {
+//     const category = categories.find((cat) => cat.id === categoryId);
+//     return category ? category.category_name : "";
+//   };
+  
+//   const getFeaturesList = (featureIds) => {
+//     return featureIds.map((featureId) => {
+//       const feature = features.find((feat) => feat.id === featureId);
+//       return feature ? feature.name : "";
+//     });
+//   };
+//   const columns = [
+//     { field: "id", headerName: "ID", width: 70 },
+//     { field: "title", headerName: "Room Name", width: 150 },
+//     { field: "category", headerName: "Category", width: 130, valueGetter: (params) => params.row.category.category_name || "", },
+//     { field: "price_per_night", headerName: "Price Per Night", width: 150 },
+//     { field: "room_slug", headerName: "Room Slug", width: 130 },
+  
+//     { field: "capacity", headerName: "Capacity", width: 120 },
+//     { field: "room_size", headerName: "Room Size", width: 120 },
+//     { field: "description", headerName: "Description", width: 120 },
+//     {
+//       field: "cover_image",
+//       headerName: "Cover Image",
+//       width: 200,
+//       renderCell: (params) => (
+//         <img
+//           src={params.value}
+//           alt="Room"
+//           style={{ width: "100%", height: "100%", objectFit: "cover" }}
+//         />
+//       ),
+//     },
+//     {
+//       field: "features",
+//       headerName: "Features",
+//       width: 200,
+//       renderCell: (params) => (
+//         <ul>
+//           {params.row.features && Array.isArray(params.row.features) ? (
+//             params.row.features.map((feature) => {
+              
+//               // const foundFeature = features.find((feature) => feature.id === featureId);
+//               return (
+//                 <li key={feature.id}>
+//                   {feature ? feature.name : "Unknown Feature"}
+//                 </li>
+//               );
+//             })
+//           ) : (
+//             <li>No features</li>
+//           )}
+//         </ul>
+//       ),
+//     },
+    
+//     {
+//       field: "is_active",
+//       headerName: "Active",
+//       width: 100,
+//       renderCell: (params) => (
+//         params.value ? (
+//           <GoCheckCircleFill color="green" style={{fontSize: "24px"}} />
+//         ) : (
+//           <HiExclamationCircle color="red" style={{fontSize: "24px"}}/>
+//         )
+//       ),
+//     },
+//     ];
+//   const fetchRooms = async () => {
+//     try {
+//       const response = await adminInstance.get("booking/admin/room-list/");
+//       console.log(response.data,"jkkjjjkk")
+//       setRooms(response.data);
+//     } catch (error) {
+//       console.error("Error fetching categories", error);
+//     }
+//   };
+  
+//   useEffect(() => {
+//     fetchRooms();
+//     fetchCategories();
+//     fetchFeatures();
+//   }, []);
+
+//   const fetchCategories = async () => {
+//     try {
+//       const response = await adminInstance.get("booking/admin/room-category/");
+//       setCategories(response.data);
+//     } catch (error) {
+//       console.error("Error fetching categories", error);
+//     }
+//   };
+
+//   const fetchFeatures = async () => {
+//     try {
+//       const response = await adminInstance.get("booking/admin/room-feature/");
+//       setFeatures(response.data);
+//     } catch (error) {
+//       console.error("Error fetching features", error);
+//     }
+//   };
+
+
+//   // const handleRoomSelect = (room) => {
+//   //   setSelectedRooms(room);
+//   // };
+//   const handleAddRoom = async (roomData) => {
+//     try {
+//       await adminInstance.post("booking/admin/add-room/", roomData);
+//       fetchRooms();
+//       showToast("Room added", "success");
+//       setIsAddModalOpen(false);
+//     } catch (error) {
+//       showToast("Error adding room", "error");
+//       console.error("Error adding room", error);
+//     }
+//   };
+
+//   const handleEditRoom = (room) => {
+//     console.log('edit')
+//     setSelectedRooms(room);
+//     setIsEditModalOpen(true);
+//     console.log('value',isEditModalOpen)
+//   };
+
+//   const handleUpdateRoom = async (updatedRoomData, roomId) => {
+//     try {
+//       await adminInstance.put(`booking/admin/edit-room/${roomId}/`, updatedRoomData);
+//       fetchRooms();
+//       showToast("Room updated", "success");
+//       setIsEditModalOpen(false);
+//     } catch (error) {
+//       showToast("Error updating room", "error");
+//       console.error("Error updating room", error);
+//     }
+//   };
+
+//   const handleBlockUnblockRoom = async (roomId, isBlocked) => {
+//     try {
+//       await adminInstance.patch(`booking/admin/room-list/block-unblock/${roomId}/`, {
+//         is_active: !isBlocked,
+//       });
+//       fetchRooms();
+//       showToast(`Room ${isBlocked ? 'Unblocked' : 'Blocked'}`, "success");
+//     } catch (error) {
+//       showToast("Error updating room", "error");
+//       console.error("Error updating room", error);
+//     }
+//   };
+
+//   const columnsWithActions = [
+//     ...columns,
+//     {
+//       field: "blockUnblock",
+//       headerName: "Block/Unblock",
+//       width: 150,
+//       renderCell: (params) => (
+//         <div>
+//           <button
+//             onClick={() => handleBlockUnblockRoom(params.row.id, params.row.is_active)}
+//             style={{ border: "none", background: "none", cursor: "pointer" }}
+//           >
+//         {params.row.is_active ? <FaBan color="red" style={{ fontSize: "24px"}}/> : <AiOutlineCheckCircle color="green" style={{ fontSize: "24px"}} />}
+//           </button>{" "}
+//         </div>
+//       ),
+//     },
+//     {
+//       field: "edit",
+//       headerName: "Edit",
+//       width: 130,
+//       renderCell: (params) => (
+//         <div>
+//           <button
+//             onClick={() => {
+//               console.log("Edit button clicked"); 
+//               handleEditRoom(params.row)}}
+//             style={{ border: "none", background: "none", cursor: "pointer" }}
+//           >
+//             <BiSolidEdit style={{ fontSize: "24px", color: "blue" }} />
+//           </button>
+//         </div>
+//       ),
+//     },
+//   ];
+
+//   return (
+//     <div style={{ backgroundColor: "white", height: "100vh" }}>
+//       <div className="data-grid-container">
+//         <div className="header d-flex justify-content-between align-items-center mb-4">
+//           <div style={{ fontWeight: "bold", fontSize: 32 }}>Room List</div>
+//           <div
+//             className="d-flex align-items-center"
+//             onClick={() => setIsAddModalOpen(true)}
+//           >
+//             <AiOutlineAppstoreAdd style={{ fontSize: "30px" }} /> Add
+//           </div>
+//         </div>
+//         <div className="h-500 w-full overflow-hidden border border-gray-300">
+//           <DataGrid
+//             rows={rooms}
+//             columns={columnsWithActions}
+//             pageSize={5}
+//             checkboxSelection
+//             sx={{ backgroundColor: "white" }}
+//             isCellEditable={(params) => params.field !== "id"}
+//             onCellEditCommit={(params) => {
+//               const updatedData = [...rooms];
+//               updatedData[params.id - 1][params.field] = params.props.value;
+//               handleUpdateRoom(updatedData[params.id - 1]);
+//             }}
+//           />
+//         </div>
+        
+//         <AddRoomModal
+//           isOpen={isAddModalOpen}
+//           onRequestClose={() => setIsAddModalOpen(false)}
+//           onAddRoom={handleAddRoom}
+//           roomData={selectedRooms}
+//           categories={categories} 
+//           features={features}
+//         />
+       
+//   {selectedRooms && (
+//    <EditRoomModal
+//    isOpen={isEditModalOpen}
+//    onRequestClose={() => setIsEditModalOpen(false)}
+//    onEditRoom={handleUpdateRoom}
+//    roomData={selectedRooms}
+//    features={features}
+//    categories={categories}
+
+//  />
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default RoomList;
 
 
 
