@@ -104,7 +104,7 @@ const RoomCategory = () => {
 
   const handleBlockUnblockCategory = async (categoryId, isBlocked) => {
     try {
-      await adminInstance.patch(`${baseUrl}/api/booking/admin/room-category/block-unblock/${categoryId}/`, {
+      await adminInstance.patch(`booking/admin/room-category/block-unblock/${categoryId}/`, {
         is_active: !isBlocked,
       });
       fetchCategories();
@@ -150,7 +150,7 @@ const RoomCategory = () => {
   ];
 
   return (
-    <div style={{ backgroundColor: "pink", height: "100vh" }}>
+    <div style={{ backgroundColor: "cyan", height: "100vh" }}>
       <div className="data-grid-container">
         <div className="header d-flex justify-content-between align-items-center mb-4">
           <div style={{ fontWeight: "bold" }}>Category Management</div>
