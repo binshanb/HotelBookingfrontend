@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice";
 const USERS_URL ='/api'
-const baseURL = "https://extremehotelbooking.online";
+const baseURL = "https://backend.extremehotelbooking.online";
 export const userApiSlice =apiSlice.injectEndpoints({
   endpoints:(builder)  =>({
     login:builder.mutation({
