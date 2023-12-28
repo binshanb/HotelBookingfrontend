@@ -12,7 +12,7 @@ const [isDashboardData,isSetDashboardData]=useState(false)
   useEffect(()=>{
     const fetchDataForDashBoard=async()=>{
      try{
-   const res=await adminInstance.get('booking/admin/dashboard-data')
+   const res=await adminInstance.get('booking/admin/dashboard-data/')
    console.log(res.data.responseData,'res.data.responseData')
    console.log(res.data,'res.data')
    setDashboardData(res.data)
