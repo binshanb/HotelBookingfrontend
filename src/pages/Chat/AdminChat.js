@@ -132,7 +132,7 @@ function AdminChat() {
       {chats.map((msg, index) => (
         <ListItem
           key={index}
-          className={msg.user === userId ? 'text-left' : 'text-right'}
+          className={msg.user === adminId ? 'text-left' : 'text-right'}
         >
           <ListItemText
             primary={msg.user === userId ? 'You' : 'User'}
