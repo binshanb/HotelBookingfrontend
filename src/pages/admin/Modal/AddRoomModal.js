@@ -15,14 +15,17 @@ export default function AddRoomModal({
 }) {
   const [formError, setFormError] = useState({});
   const [title, setTitle] = useState("");
-  const [pricePerNight, setPricePerNight] = useState("");
-  const [roomSlug, setRoomSlug] = useState("");
-  const [capacity, setCapacity] = useState("");
-  const [roomSize, setRoomSize] = useState("");
+  const [pricePerNight, setPricePerNight] = useState(0);
+  const [roomSlug, setRoomSlug] = useState(0);
+  const [capacity, setCapacity] = useState(0);
+  const [roomSize, setRoomSize] = useState(0);
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
   const [features, setFeatures] = useState([]);
-  const [categoryId, setCategoryId] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   
 
@@ -51,14 +54,16 @@ export default function AddRoomModal({
       roomData.append('room_size', roomSize);
       roomData.append('description', description);
       roomData.append('cover_image', selectedImage);
-      roomData.append('category_id', categoryId);
+      
 
 
+      if (selectedCategory) {
+        roomData.append('category', selectedCategory);
+      }
 
-      features.forEach((featureId) => {
-        roomData.append('features[]', featureId); // Append each feature ID
-
-      })
+      selectedFeatures.forEach((features) => {
+        roomData.append('features[]', selectedFeatures);
+      });
       
 
         const response = await onAddRoom(roomData, {
@@ -69,39 +74,52 @@ export default function AddRoomModal({
 
         if (response === null) {
           setTitle("");
-          setPricePerNight(""); 
-          setRoomSlug("");
-          setCapacity("");
-          setRoomSize("");
+          setPricePerNight(0); 
+          setRoomSlug(0);
+          setCapacity(0);
+          setRoomSize(0);
           setDescription("");
 
           setFormError({});
           setSelectedImage(null);
           onRequestClose();
-          showToast('Room added successfully!', 'success');
-        }
+          // showToast('Room added successfully!', 'success');
+        }else{
+        const {addedRoom} = response.data;
+        if (addedRoom){
+          setSelectedCategory(addedRoom.selectedCategory);
+          setSelectedFeatures(addedRoom.selectedFeatures);
+        }}
     } catch (error) {
-        console.error('Error adding room:', error.response.data);
-        showToast('Error adding room', 'error');
+        console.error('Error adding room:', error.response?.data);
+        // showToast('Error adding room', 'error');
       }
     }
   };
   const fetchCategories = async () => {
     try {
-      const categoryData = await instance.get('/api/booking/category-list/'); // Fetch categories from the backend
+      const response = await instance.get('/api/booking/category-list/');
+      const categoryData = response.data.results;
+  
+      console.log('Fetched Categories:', categoryData); // Check the structure of categoryData
+  
       setCategories(categoryData);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
   };
-    const fetchFeatures = async () => {
-      try {
-        const featureData = await instance.get('/api/booking/admin/room-feature/'); // Fetch features from the backend
-        setFeatures(featureData);
-      } catch (error) {
-        console.error('Error fetching features:', error);
-      }
-    };
+  
+  const fetchFeatures = async () => {
+    try {
+      const response = await instance.get('/api/booking/admin/room-feature/');
+      const featureData = response.data;
+      console.log(featureData,"featuressssss");
+      setFeatures(featureData); // Assuming the array of features is directly in response.data
+    } catch (error) {
+      console.error('Error fetching features:', error);
+    }
+  };
+  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);
@@ -141,8 +159,15 @@ export default function AddRoomModal({
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       contentLabel="Add Room Modal"
-      className="custom-modal"
+      className="custom-modal w-50 h-50 overflow"
       overlayClassName="custom-overlay"
+      style={{
+        content: {
+          width: '70%',
+          height: '70%',
+          overflow: 'auto', // or 'scroll' depending on your preference
+        },
+      }}
     >
       <div className="modal-content p-4">
         <div className="header">
@@ -162,20 +187,25 @@ export default function AddRoomModal({
           {formError?.title ? formError.title : ""}
         </span>
         <select
-        value={categoryId}
-        onChange={(e) => setCategoryId(e.target.value)}
-        className="w-full border rounded p-2 mt-2"
-      >
-        <option value="">Select Category</option>
-        {categories.map((category) => (
-          <option key={category.id} value={category.id}>
-            {category.name}
-          </option>
-        ))}
-      </select>
+  value={selectedCategory}
+  onChange={(e) => {
+    setSelectedCategory(e.target.value);
+    setSelectedCategoryId(e.target.value); // Set selectedCategoryId here
+  }}
+  className="w-full border rounded p-2 mt-2"
+>
+  <option value="">Select Category</option>
+  {categories && categories.map((category) => (
+    <option key={category.id} value={category.id}>
+      {category.category_name}
+    </option>
+  ))}
+</select>
+
+
         <input
           type="text"
-          placeholder="Room Name"
+          placeholder="Enter Price"
           value={pricePerNight}
           onChange={(e) => setPricePerNight(e.target.value)}
           className="w-full border rounded p-2 mt-2"
@@ -186,7 +216,7 @@ export default function AddRoomModal({
 
         <input
           type="text"
-          placeholder="Room Name"
+          placeholder="Room Slug"
           value={roomSlug}
           onChange={(e) => setRoomSlug(e.target.value)}
           className="w-full border rounded p-2 mt-2"
@@ -196,7 +226,7 @@ export default function AddRoomModal({
         </span>
         <input
           type="text"
-          placeholder="Room Name"
+          placeholder="Enter Capacity"
           value={capacity}
           onChange={(e) => setCapacity(e.target.value)}
           className="w-full border rounded p-2 mt-2"
@@ -206,7 +236,7 @@ export default function AddRoomModal({
         </span>
         <input
           type="text"
-          placeholder="Room Name"
+          placeholder="Enter Room Size"
           value={roomSize}
           onChange={(e) => setRoomSize(e.target.value)}
           className="w-full border rounded p-2 mt-2"
@@ -216,7 +246,7 @@ export default function AddRoomModal({
         </span>
         <input
           type="text"
-          placeholder="Room Name"
+          placeholder="Add Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full border rounded p-2 mt-2"
@@ -224,18 +254,20 @@ export default function AddRoomModal({
         <span className="text-red-500">
           {formError?.title ? formError.title : ""}
         </span>
+
         <select
-        multiple
-        value={selectedFeatures}
-        onChange={(e) => setSelectedFeatures(Array.from(e.target.selectedOptions, (option) => option.value))}
-        className="w-full border rounded p-2 mt-2"
-      >
-        {features.map((feature) => (
-          <option key={feature.id} value={feature.id}>
-            {feature.name}
-          </option>
-        ))}
-      </select>
+  multiple
+  value={selectedFeatures}
+  onChange={(e) => setSelectedFeatures(Array.from(e.target.selectedOptions, (option) => option.value))}
+  className="w-full border rounded p-2 mt-2"
+>
+  <option value="">Select Features</option>
+  {features.map((feature) => (
+    <option key={feature.id} value={feature.id}>
+      {feature.name}
+    </option>
+  ))}
+</select>
 
     
         <div className="image-input mt-4">

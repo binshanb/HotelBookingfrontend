@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import instance from '../../../utils/Axios'; // Assuming Axios is configured for API requests
-import { baseUrl } from '../../../utils/constants';
+
 import { useNavigate } from 'react-router-dom'; 
 
 const OTPLogin = () => {
@@ -17,12 +17,13 @@ const OTPLogin = () => {
 
   const handleSendOTP = async () => {
     try {
-      const response = await instance.post(`${baseUrl}/api/otp-sent/`, {phone_number:phone});
+      const response = await instance.post('/api/send-otp/',{phone_number:phone});
 
       
       if (response.status === 200) {
         setMessage('OTP sent successfully.');
-        navigate('/otp-verify'); // Use navigate function for navigation
+
+        navigate(`/otp-verify/${phone}`); // Use navigate function for navigation
       }
     } catch (error) {
       setMessage('Error sending OTP. Please try again.');

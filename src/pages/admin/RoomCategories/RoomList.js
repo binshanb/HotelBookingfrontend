@@ -12,19 +12,44 @@ import { BiSolidEdit } from "react-icons/bi";
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
-  { field: "category_name", headerName: "Category_name", width: 130 },
-  {
-    field: "image",
-    headerName: "Image",
-    width: 200,
-    renderCell: (params) => (
-      <img
-        src={`${params.value}`}
-        alt="Category"
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-      />
-    ),
-  },
+  { field: "title", headerName: "Room Name", width: 130 },
+  { field: "category", headerName: "Category", width: 130, valueGetter: (params) => params.row.category.category_name || "", },
+    { field: "price_per_night", headerName: "Price Per Night", width: 150 },
+    { field: "room_slug", headerName: "Room Slug", width: 130 },
+  
+    { field: "capacity", headerName: "Capacity", width: 120 },
+    { field: "room_size", headerName: "Room Size", width: 120 },
+    { field: "description", headerName: "Description", width: 120 },
+    {
+      field: "cover_image",
+      headerName: "Cover Image",
+      width: 200,
+      renderCell: (params) => (
+        <img
+          src={params.value}
+          alt="Room"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      ),
+    },
+    {
+      field: "features",
+      headerName: "Features",
+      width: 200,
+      renderCell: (params) => (
+        <ul>
+          {Array.isArray(params.row.features) && params.row.features.length > 0 ? (
+            params.row.features.map((feature, index) => (
+              <li key={index}>{feature.name}</li>
+            ))
+          ) : (
+            <li>No features</li>
+          )}
+        </ul>
+      ),
+    },
+
+ 
   {
     field: "is_active",
     headerName: "Active",
@@ -60,7 +85,9 @@ const RoomList = () => {
 const fetchRooms = async () => {
   try {
     const response = await adminInstance.get('booking/admin/room-list/');
+    console.log(response.data,"dtaaaaaaaaaa");
     setRooms(response.data);
+
   } catch (error) {
     console.error("Error fetching rooms", error);
   }
@@ -72,7 +99,7 @@ useEffect(() => {
 
   const handleAddRoom = async (roomData) => {
     try {
-      await adminInstance.post('booking/admin/add-room/', roomData);
+      await adminInstance.post(`booking/admin/add-room/`,roomData);
       fetchRooms();
       showToast("Room added", "success");
       setIsAddModalOpen(false);
@@ -91,7 +118,7 @@ useEffect(() => {
   const handleUpdateRoom = async (updatedRoomData, roomId) => {
     try {
       console.log(updatedRoomData,'pppppppppppppppppppppppp');
-      await adminInstance.put(`booking/admin/room-list/${roomId}/`, updatedRoomData);
+      await adminInstance.put(`booking/admin/edit-room/${roomId}/`,updatedRoomData);
       fetchRooms();
       showToast("Room updated", "success");
       setIsEditModalOpen(false);
@@ -101,7 +128,7 @@ useEffect(() => {
     }
   };
 
-  const handleBlockUnblockCategory = async (roomId, isBlocked) => {
+  const handleBlockUnblockRoom = async (roomId, isBlocked) => {
     try {
       await adminInstance.patch(`booking/admin/room-list/block-unblock/${roomId}/`, {
         is_active: !isBlocked,
@@ -123,7 +150,7 @@ useEffect(() => {
       renderCell: (params) => (
         <div>
           <button
-            onClick={() => handleBlockUnblockCategory(params.row.id, params.row.is_active)}
+            onClick={() => handleBlockUnblockRoom(params.row.id, params.row.is_active)}
             style={{ border: "none", background: "none", cursor: "pointer" }}
           >
         {params.row.is_active ? <FaBan color="red" style={{ fontSize: "24px"}}/> : <AiOutlineCheckCircle color="green" style={{ fontSize: "24px"}} />}
@@ -150,7 +177,7 @@ useEffect(() => {
 
 
   return (
-    <div style={{ backgroundColor: "cyan", height: "100vh" }}>
+    <div style={{ backgroundColor: "secondary", height: "100vh" }}>
     <div className="data-grid-container">
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <div style={{ fontWeight: "bold" }}>Room Management</div>

@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import instance from '../../../utils/Axios'; // Assuming Axios is configured for API requests
-import { baseUrl } from '../../../utils/constants';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const OTPVerify = () => {
   const [otp, setOtp] = useState('');
   console.log(otp,"otp");
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const { phone } = useParams();
+  
+
 
   const handleOTPChange = (event) => {
     setOtp(event.target.value);
@@ -15,7 +18,10 @@ const OTPVerify = () => {
 
   const handleVerifyOTP = async () => {
     try {
-      const response = await instance.post(`${baseUrl}/api/otp-verify/`,{otp});
+      const response = await instance.post(`/api/verify-otp/${phone}`,{otp: otp});
+      console.log(response.data,"responseeeeeeeee");
+      
+      
       if (response.status === 200) {
         setMessage('OTP verified successfully.');
        navigate('/')

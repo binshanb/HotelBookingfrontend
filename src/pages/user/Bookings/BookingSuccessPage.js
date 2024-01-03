@@ -1,4 +1,7 @@
 import React from 'react';
+import { useState,useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import instance from '../../../utils/Axios';
 
 import {
   Box,
@@ -11,14 +14,25 @@ import {
 import { Link } from 'react-router-dom'; 
 import { useSelector } from 'react-redux';
 const BookingSuccessPage = () => {
-  // Use the location hook to get data passed from the previous page (if needed)
 
+  const {bookingId} = useParams();
+  const [bookingData, setBookingData] = useState(null);
 
-  const bookingInfos = useSelector((state) => state.booking.bookingInfo);
-  console.log(bookingInfos,"infossssssssss"); // Access the booking info from Redux store
-  const bookingId = bookingInfos ? bookingInfos.id : null; // Check if bookingInfos is defined
+  useEffect(() => {
+    const fetchBookingData = async () => {
+      try {
+        const response = await instance.get(`/api/booking/booking-success/${bookingId}/`);
+        console.log(response.data,"dataresponsee");
+        
+        setBookingData(response.data);
 
-  console.log(bookingId,"infossssssssss");
+      } catch (error) {
+        console.error('Error fetching booking data:', error);
+      }
+    };
+  
+    fetchBookingData();
+  }, [bookingId]);
 
 
   return (

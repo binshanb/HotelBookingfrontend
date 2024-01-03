@@ -14,7 +14,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import LockIcon from "@mui/icons-material/Lock";
-import img from "../../assets/logo7.png";
+import img from "../../assets/booking1-logo.png";
 import "./Navbar.css";
 
 

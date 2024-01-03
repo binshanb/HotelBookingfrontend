@@ -4,7 +4,6 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import instance from '../../../utils/Axios';
 import { toast } from 'react-toastify';
-import { baseUrl } from '../../../utils/constants';
 import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -36,7 +35,7 @@ function AddProfile() {
 
   const handleSubmit = async () => {
     try {
-      await instance.post(`${baseUrl}/api/user/add-profile/`, formData);
+      await instance.post('/api/user/add-profile/', formData);
       showToast('Profile details added', 'success');
     } catch (error) {
       showToast('Error adding user details', 'error');

@@ -9,7 +9,8 @@ import {
   FormControl,
   Grid,
   GridItem,
-  Paper,
+  Paper, 
+
 } from '@mui/material';
 import { baseUrl } from '../../../utils/constants';
 import instance from '../../../utils/Axios';
@@ -19,10 +20,14 @@ import jwtDecode from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { activateBookingInfo } from '../../../redux/slices/bookingslices/bookingslice';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 
 function BookingPage  ({ razorpayKey}) {
   const dispatch = useDispatch();
+  const {bookingId} = useParams();
+
+  console.log(bookingId,"idbookinggggg");
 
   const navigate = useNavigate();
 
@@ -30,12 +35,20 @@ function BookingPage  ({ razorpayKey}) {
   console.log(price,"price:");
   // const location = useLocation();
   // const queryParams = new URLSearchParams(location.search);
-  const [bookingDetails, setBookingDetails] = useState(null);
+  const [bookingData, setBookingData] = useState(null);
+  console.log(bookingData,"bookingggggggggg");
 
   const userInfos = useSelector((state) => state.auth.userInfo);
-  const [decodedUserInfo, setDecodedUserInfo] = useState({});
-  const roomData = useSelector((state)=>state.room.roomInfo)
-  const bookingData = useSelector((state)=>state.booking.bookingInfo);
+ 
+  const [decodedUserInfo,setDecodedUserInfo] = useState({});
+  
+
+ 
+  
+  const roomData = useSelector((state)=>state.room.roomInfo);
+  console.log(roomData,"roomdataaaa");
+
+  // const bookingData = useSelector((state)=>state.booking.bookingInfo);
   
   // const bookingRoomData = { id: bookingData.id };
  
@@ -48,6 +61,23 @@ function BookingPage  ({ razorpayKey}) {
       console.log(decodedInfo);
       setDecodedUserInfo(decodedInfo);
 }},[userInfos]);
+
+useEffect(() => {
+  const fetchBookingData = async () => {
+    try {
+      const response = await instance.get(`/api/booking/roombooking-page/${bookingId}/`);
+      
+      setBookingData(response.data);
+    } catch (error) {
+      console.error('Error fetching booking data:', error);
+      // Handle errors...
+    }
+  };
+
+  fetchBookingData();
+}, [bookingId]);
+
+
 
   // useEffect(()=>{
   //   if (bookingId){
@@ -84,6 +114,7 @@ function BookingPage  ({ razorpayKey}) {
       const pricePerNight = roomData.price_per_night; // Replace with actual price per night
 
       const calculatedPrice = diffDays * pricePerNight * numberOfGuests;
+      console.log(calculatedPrice,"calculateeeeeeeeeee");
       
 
       setPrice(calculatedPrice)
@@ -92,7 +123,7 @@ function BookingPage  ({ razorpayKey}) {
     }
   }, [bookingData,roomData]);
   // Retrieve other form data fields similarly
-  const bookingId = bookingData.id
+  const bookingIds = bookingData ? bookingData.id : null;
   console.log(bookingId,"ideeee");
   console.log(price,"amount");
   console.log(roomData,"room");
@@ -107,7 +138,7 @@ function BookingPage  ({ razorpayKey}) {
       await loadRazorpayScript();
   
       // Create a Razorpay order
-      const order = await createRazorpayOrder(bookingId, price);
+      const order = await createRazorpayOrder(bookingIds, price);
 
       console.log(bookingId,price,"boook amt");
 
@@ -118,13 +149,13 @@ function BookingPage  ({ razorpayKey}) {
         amount: order.amount,
         currency: order.currency,
         name: 'Hotel Booking',
-        description: `Payment for Room ${bookingId}`,
+        description: `Payment for Room ${bookingIds}`,
         order_id: order.id,
         handler: function (response) { 
           // Handle successful payment response
           console.log('Payment successful:', response);
           // const bookingId = bookingData.id;
-         navigate('/booking-success',{bookingId})
+         navigate(`/booking-success/${bookingId}`)
           // Proceed to book the room after successful payment
           // bookRoom(roomData, bookingData);
         },
@@ -195,9 +226,13 @@ function BookingPage  ({ razorpayKey}) {
           <Typography variant="body1">
             Room Name: {roomData ? roomData.title : ''}
           </Typography>
+          {roomData && roomData.category && roomData.category ? (
           <Typography variant="body1">
-            Category: {roomData && roomData.category ? roomData.category.category_name : ''}
+             Category: {roomData.category}
           </Typography>
+          ) : (
+            <Typography variant="body1">Category: N/A</Typography>
+          )}
           {/* Add more room details */}
         </Paper>
       </Paper>
@@ -211,22 +246,29 @@ function BookingPage  ({ razorpayKey}) {
         </Typography>
         {/* Display price details */}
         <Typography variant="body1">
-          Price Per Night: {roomData ? roomData.price_per_night : ''}
+          Price Per Night: ₹{roomData ? roomData.price_per_night : ''}
         </Typography>
+        {bookingData && (
         <Typography variant="body1">
           Check In Date : {bookingData.check_in}
         </Typography>
+           )}
+        {bookingData && (
         <Typography variant="body1">
           Check Out Date : { bookingData.check_out}
         </Typography>
+         )}
+         {bookingData && (
         <Typography variant="body1">
           Number Of Guests : {bookingData.number_of_guests}
         </Typography>
+       
+         )}
         <Divider />
-        <Typography variant="body1">Total Price: ${price}</Typography>
-
+        <Typography variant="body1">Total Price: ₹{price}</Typography>
+     
         {/* Payment method using Razorpay */}
-        <Button variant="contained" color="primary" onClick={() => handleHotelBookingPayment(bookingId, price,roomData)} sx={{ mt: 2 }}>
+        <Button variant="contained" color="primary" onClick={() => handleHotelBookingPayment(bookingIds, price,roomData)} sx={{ mt: 2 }}>
           Pay Now with Razorpay
         </Button>
       </Paper>

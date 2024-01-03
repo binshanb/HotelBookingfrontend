@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import instance from '../../../utils/Axios';
 import { Typography, TextField, Button, Grid } from '@mui/material';
-import {baseUrl} from "../../../utils/constants";
+
 
 import { Link } from "react-router-dom";
-
+import { useNavigate } from 'react-router-dom';
 import changePasswordApi from "../../../api/changePasswordApi"
 import { ToastContainer, toast } from "react-toastify";
 
@@ -14,6 +14,7 @@ const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -65,6 +66,7 @@ const ChangePassword = () => {
       setOldPassword("");
       setPassword("");
       setConfirmPassword("");
+      navigate('/login')
     } catch (error) {
       console.error(error);
 
@@ -117,14 +119,14 @@ const ChangePassword = () => {
       <div className="pt-10 pb-16">
 
         
-      <div className="mt-10 divide-y divide-gray-200">
+      <div className="mt-10 divide-y divide-gray-500">
                   <div className="space-y-1">
                     <h3 className="text-lg leading-6 font-medium text-[#4b2848]">
                       Change Password
                     </h3>
-                    <p className="max-w-2xl text-sm text-gray-500">
+                    {/* <p className="max-w-2xl text-sm text-gray-500">
                       Change your password.
-                    </p>
+                    </p> */}
                   </div>
                   <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form className="space-y-6 public" onSubmit={onSubmit}>

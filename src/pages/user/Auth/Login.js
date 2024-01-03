@@ -117,7 +117,7 @@ function UserLogin() {
       <Box className="links-container text-end mt-2">
         <Typography>
 
-        <RouterLink to="/otp-sent"> OTP Login </RouterLink> 
+        <RouterLink to="/otp-sent"> OTP Login |</RouterLink> 
            
            
           <RouterLink to="/forgot-password/"> Forgot Password ? </RouterLink> 

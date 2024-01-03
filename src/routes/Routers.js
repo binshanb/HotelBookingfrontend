@@ -29,7 +29,7 @@ import BookingSuccessPage from '../pages/user/Bookings/BookingSuccessPage'
 import MyBookings from '../pages/user/Profile/MyBookings'
 import CancelMyBooking from '../pages/user/Profile/CancelMyBooking'
 import AvailableRoomsPage from '../pages/user/Bookings/AvailableRoomsPage'
-import Reviews from '../pages/user/Review/Reviews'
+import ReviewForm from '../pages/user/Review/ReviewForm'
 import ReviewList from '../pages/user/Review/ReviewList'
 import ResetPasswordWrapper from '../pages/user/Auth/ResetPassword'
 import ForgotPassword from '../pages/user/Auth/ForgotPassword'
@@ -66,7 +66,7 @@ const Routers = () => {
       <Route path='/forgot-password' element={<ForgotPassword/>} />
       <Route path='/change-password' element={<ChangePassword />} />
       <Route path="/otp-sent" element={<OtpLogin/>}/>
-      <Route path="/otp-verify" element={<OtpVerify/>}/>
+      <Route path="/otp-verify/:phone" element={<OtpVerify/>}/>
       <Route path="/" element={<HomePage/>}/>
       <Route path='' element={<RouteUser/>} >
         
@@ -106,12 +106,12 @@ const Routers = () => {
 
         <Route path='/get-available-rooms' element={<AvailableRoomsPage/>} />
         <Route path='/add-roombooking' element={<BookingForm/>} />
-        <Route path='/roombooking-page' element={<BookingPage/>} />
-        <Route path='/booking-success' element={<BookingSuccessPage/>} />
+        <Route path='/roombooking-page/:bookingId' element={<BookingPage/>} />
+        <Route path='/booking-success/:bookingId' element={<BookingSuccessPage/>} />
         <Route path='/my-bookings/:user_id' element={<MyBookings/>} />
         <Route path='/booking-report' element={<BookingReport/>} />
 
-        <Route path='/add-review/:roomId' element={<Reviews/>} />
+        <Route path='/add-review/:roomId' element={<ReviewForm/>} />
         <Route path='/reviews' element={<ReviewList/>} />
         <Route path='/wallet/:userId' element={<WalletDetails/>} />
 

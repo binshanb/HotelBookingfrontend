@@ -10,11 +10,11 @@ import "../UserManagement.css"
 import AddCategoryModal from "../Modal/AddCategoryModal"
 import EditCategoryModal from "../Modal/EditCategoryModal"; // Import the new modal
 import { toast } from "react-toastify";
-import { baseUrl } from "../../../utils/constants";
+
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
-  { field: "category_name", headerName: "Category_name", width: 130 },
+  { field: "category_name", headerName: "Category Name", width: 130 },
   {
     field: "image",
     headerName: "Image",
@@ -57,6 +57,7 @@ const RoomCategory = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  console.log(selectedCategory,"selected...");
 
   const fetchCategories = async () => {
     try {

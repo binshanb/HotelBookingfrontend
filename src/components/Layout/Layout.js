@@ -24,7 +24,20 @@ function Layout() {
 
       <Routers />
 
-      <Footer/>
+      {
+        adminHeader ? (
+          " "
+        ) : (
+          <Footer />
+          
+        ) // Its mainly used for checking its navbar user or admin
+      }
+
+     
+
+
+
+    
 
 
     </>

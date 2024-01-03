@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import {activateRoomInfo} from '../../../redux/slices/roomslices/roomSlice'
 import { makeStyles } from '@material-ui/core/styles';
 import ReviewList from '../Review/ReviewList';
+import CustomButton from '../../../components/TextInput/Button';
 import {
   Card,
   CardContent,
@@ -164,19 +165,19 @@ function RoomDetail({rooms}) {
 
 
 
-<button onClick={handleReview} variant="contained" color="primary" size ="large">
-  Add a Review
-</button>
-<Box mt={4} display="flex" justifyContent="center">
-        <Button onClick={handleBooking} variant="contained" color="primary" size="large">
-           Book Now
-        </Button>
-        <Button onClick={handleRooms} variant="outlined" color="primary" size="large">
+      <CustomButton onClick={handleReview} variant="contained" color="primary" size="medium">
+        Add a Review
+      </CustomButton>
+      <Box mt={4} display="flex" justifyContent="center">
+        <CustomButton onClick={handleBooking} variant="contained" color="primary" size="medium">
+          Book Now
+        </CustomButton>
+        <CustomButton onClick={handleRooms} variant="outlined" color="primary" size="medium">
           Back to Room List
-         </Button>
-
+        </CustomButton>
+        </Box>
          <ReviewList/>
-      </Box>
+    
       </CardContent>
       </Box>
     )}

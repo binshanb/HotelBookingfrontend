@@ -1,262 +1,132 @@
-import React, { useState, useEffect } from 'react';
-import instance from '../../../utils/Axios';
+// ReviewForm.js
+
+import React, { useState,useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import { baseUrl } from '../../../utils/constants';
-import {activateRoomInfo} from '../../../redux/slices/roomslices/roomSlice'
-import { useSelector,useDispatch } from 'react-redux';
+import instance from '../../../utils/Axios';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Grid,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  List, ListItem, ListItemText, Divider
+    Button,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    TextField,
+    Typography,
+    Grid
 } from '@material-ui/core';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useSelector,useDispatch } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(2),
-  },
-  formControl: {
-    minWidth: 120,
-    marginBottom: theme.spacing(2),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-  },
+    formContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: theme.spacing(2),
+        border: `1px solid ${theme.palette.primary.main}`,
+        borderRadius: theme.spacing(1),
+        boxShadow: `0 4px 8px ${theme.palette.primary.light}`,
+        backgroundColor: theme.palette.background.paper,
+        '& > *': {
+            margin: theme.spacing(1),
+            width: '100%',
+            maxWidth: '400px',
+        },
+    },
+    button: {
+        width: '50%',
+        alignSelf: 'center',
+    },
 }));
-const Reviews = () => {
 
-  const classes = useStyles();
-  const dispatch = useDispatch();
-  const [reviews, setReviews] = useState([]);
-  console.log(reviews,"reviewssssssssssssss");
-  const user=useSelector((state) => state.auth.userInfo);
-  const [decodeInfo,setDecodeInfo]=useState({});
-  const rooms = useSelector((state)=> state.room.roomInfo);
-  const roomId = rooms.id 
-  console.log(rooms,"roomssssssssssss");
-  const [selectedRoomId, setSelectedRoomId] = useState(null);
-  const [formData, setFormData] = useState({
-    rating: '',
-    comment: '',
-  });
 
-useEffect(() => {
-  if (user) {
-    // Decode the token and set the user info state
-    const decodedInfo = jwtDecode(user.access); // Assuming 'access' contains user details
-    console.log(decodedInfo);
-    setDecodeInfo(decodedInfo);
-  }
-  if (rooms){
-  // Fetch room info and user info when component mounts
-  dispatch(activateRoomInfo(rooms));
-  // dispatch(userInfos());
-}}, [dispatch,roomId,]);
-  useEffect(() => {
-    // Fetch existing reviews from the backend
-    instance.get(`${baseUrl}/api/booking/reviews/${roomId}`) // Replace with your backend endpoint
-      .then(response => {
-        setReviews(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching reviews:', error);
-      });
-  }, []);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-  const handleRoomSelect = (roomId) => {
-    setSelectedRoomId(roomId);
-    try {
-      // Fetch reviews for the selected room
-      instance.get(`${baseUrl}/api/booking/reviews/${roomId}/`) // Adjust the endpoint to fetch reviews based on room ID
-        .then((response) => {
-          setReviews(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching room reviews:', error);
-        });
-    } catch (error) {
-      // Handle any synchronous errors here
-      console.error('Synchronous error:', error);
-    }
-  };
+const ReviewForm = () => {
+    const classes = useStyles();
+    const dispatch = useDispatch();
+    const [roomIds, setRoomId] = useState('');
+    const [userIds, setUserId] = useState('');
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+
+    const rooms = useSelector((state) => state.room.roomInfo);
+
+    const userInfos = useSelector((state) => state.auth.userInfo);
+    const [decodedUserInfo, setDecodedUserInfo] = useState({});
+    console.log(decodedUserInfo,"userInfo");
+
+    const roomId = rooms.id
+    const userId =  decodedUserInfo.user_id
+
+    useEffect(() => {
+        if (userInfos) {
+          // Decode the token and set the user info state
+          const decodedInfo = jwtDecode(userInfos.access); // Assuming 'access' contains user details
+          setDecodedUserInfo(decodedInfo);
+        }},[userInfos]);
   
+        const handleAddReview = async () => {
+          try {
+        
     
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const postData = {
-      customer: decodeInfo.user_id,
-      room: roomId, // Ensure roomId is defined or passed correctly to this function
-      rating: formData.rating,
-      comment: formData.comment
-    };
-  
-    console.log(postData, "posttttttttttttttttt");
-  
-    try {
-      instance.post(`${baseUrl}/api/booking/add-review/${roomId}/`, postData)
-        .then(response => {
-          console.log('Review added:', response.data);
-          alert("Review added successfully");
-  
-          // Update reviews state to include the newly added review
-          setReviews([...reviews, response.data]);
-  
-          // Reset form data after successful submission
-          setFormData({
-            rating: '',
-            comment: '',
-          });
-        })
-        .catch(error => {
-          if (error.response) {
-            // Handle error response from the server
-            console.error('Error response from server:', error.response.data);
-            console.error('Status code:', error.response.status);
-            console.error('Headers:', error.response.headers);
-            // Handle the error (show an error message, etc.)
-          } else if (error.request) {
-            // Handle request made but no response received
-            console.error('Request made but no response received:', error.request);
-            // Handle the error (show an error message, etc.)
-          } else {
-            // Handle other errors
-            console.error('Error setting up the request:', error.message);
-            // Handle the error (show an error message, etc.)
+              const requestData = {
+                  room: roomId,
+                  user: userId,
+                  rating: rating,
+                  comment: comment
+              };
+      
+              console.log('Request data:', requestData);
+      
+              const response = await instance.post(`/api/booking/add-review/${roomId}/${userId}/`, requestData);
+              console.log('Response data:', response.data); // Log the response
+              toast.success('Review added successfully!');
+              setRoomId('');
+              setUserId('');
+              setRating('');
+              setComment('');
+           
+          } catch (error) {
+              console.error('Error adding review:', error);
+              toast.error('Failed to add review.');
           }
-        });
-    } catch (error) {
-      // Handle any synchronous errors here
-      console.error('Synchronous error:', error);
-      // Handle the error (show an error message, etc.)
-    }
-  };
-  
+      };
 
-  return (
-    <div className={classes.root}>
-    <Grid container spacing={2}>
-      <Grid item xs={12} sm={6}>
-      <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="room-select">Select Room:</InputLabel>
-            <Select
-              value={selectedRoomId || ''}
-              onChange={(e) => handleRoomSelect(e.target.value)}
-              inputProps={{
-                name: 'room-select',
-                id: 'room-select',
-              }}
-            >
-              {/* Map through available rooms */}
-              {reviews.map((review) => (
-                <MenuItem key={review.id} value={review.roomId}>
-                  {review.title}
-                  {/* {room.client} - {room.uuid} */}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        <Paper className={classes.paper}>
-          <Typography variant="h6">Review Form</Typography>
-          <form onSubmit={handleSubmit}>
-            <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="rating">Rating:</InputLabel>
-              <Select
-                value={formData.rating}
-                onChange={handleChange}
-                inputProps={{
-                  name: 'rating',
-                  id: 'rating',
-                }}
-              >
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <TextField
-              id="comment"
-              name="comment"
-              label="Comment"
-              multiline
-              rows={4}
-              value={formData.comment}
-              onChange={handleChange}
-              fullWidth
-            />
-
-            <Button type="submit" variant="contained" color="primary">
-              Submit Review
-            </Button>
-          </form>
-        </Paper>
-      </Grid>
-
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <Paper className={classes.paper}>
-          {selectedRoomId && (
-              <React.Fragment>
-            <Typography variant="h6">Existing Reviews</Typography>
-            <List>
-              {reviews.map((review) => (
-                   <React.Fragment key={review.id}>
-                   <ListItem alignItems="flex-start">
-                     <ListItemText
-                       secondary={
-                         <React.Fragment>
-                            {/* Display user email */}
-                            <Typography variant="body2" color="textSecondary">
-                                User Email: {review.user_email}
-                           <Typography component="span" variant="body2" color="textPrimary">
-                             Rating: {review.rating}
-                           </Typography>
-                           <Typography variant="body2" color="textSecondary">
-                             {review.comment}
-                           </Typography>
-                           
-                              </Typography>
-                         </React.Fragment>
-                       }
-                     />
-                   </ListItem>
-                   <Divider variant="inset" component="li" />
-                 </React.Fragment>
-               ))}
-             </List>
-           </React.Fragment>
-         )}
-         {!selectedRoomId && (
-           <Typography variant="body2">Select a room to view reviews.</Typography>
-         )}
-                      </Paper>
-                    </Grid>
-                    </Grid>
-    </Grid>
-  </div>
-);
+    return (
+      <Grid container justifyContent="center">
+            <Grid item xs={12} sm={6}>
+                <form className={classes.formContainer}>
+                    <Typography variant="h6">Add Review</Typography>
+                    <TextField
+                        type="number"
+                        label="Rating"
+                        value={rating}
+                        onChange={(e) => setRating(e.target.value)}
+                    />
+                 <TextField
+                    label="Comment"
+                    multiline
+                     minRows={4} // Replace 'rows' with 'minRows'
+                    variant="outlined"
+                    value={comment}
+                   onChange={(e) => setComment(e.target.value)}
+                  />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAddReview}
+                        className={classes.button}
+                    >
+                        Add Review
+                    </Button>
+                </form>
+            </Grid>
+        </Grid>
+    );
 };
 
-export default Reviews;
-
+export default ReviewForm;
 
 
 

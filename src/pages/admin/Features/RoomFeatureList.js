@@ -79,23 +79,37 @@ const RoomFeatureList = () => {
  
 
   const handleUpdateFeature = async (updatedFeatureData, featureId) => {
-    console.log(updatedFeatureData,'updated dataaaaaaaaaaaaaaaaaaaa',featureId,'iddddddddd')
     try {
-      console.log(updatedFeatureData,'pppppppppppppppppppppppp');
-      await adminInstance.put(`booking/admin/room-feature/${featureId}/`, updatedFeatureData);
+      // Perform the update
+      await adminInstance.put(`booking/admin/edit-feature/${featureId}/`, updatedFeatureData);
+      
+      // Refresh the features list after successful update
       fetchFeatures();
+      
+      // Show success message and close the modal
       showToast("Feature updated", "success");
       setIsEditModalOpen(false);
     } catch (error) {
-      showToast("Error updating feature", "error");
+      // Specific error handling based on error types
+      if (error.response) {
+        // Server responded with an error status code (e.g., 4xx, 5xx)
+        showToast(`Error: ${error.response.data}`, "error");
+      } else if (error.request) {
+        // The request was made but no response was received
+        showToast("No response received from server", "error");
+      } else {
+        // Something happened in setting up the request
+        showToast("Error updating feature", "error");
+      }
       console.error("Error updating feature", error);
     }
   };
+  
 
   const handleBlockUnblockFeature = async (featureId, isBlocked) => {
     try {
       await adminInstance.patch(`booking/admin/room-feature/block-unblock/${featureId}/`, {
-        is_active: !isBlocked,
+        is_blocked: !isBlocked,
       });
       fetchFeatures();
       showToast(`Feature ${isBlocked ? 'Unblocked' : 'Blocked'}`, "success");

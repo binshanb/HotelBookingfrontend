@@ -2,20 +2,22 @@ import React, { useState,useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
 import instance from '../../utils/Axios';
 import { useNavigate } from 'react-router-dom';
-import { baseUrl } from '../../utils/constants';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import  {userInfo} from "../../redux/slices/userslices/authSlice"
 import { activateRoomInfo } from '../../redux/slices/roomslices/roomSlice';
 
-import { activateBookingInfo } from '../../redux/slices/bookingslices/bookingslice';
-import TextInput from '@mui/material/TextField';
+
+
 import Button from '@mui/material/Button';
 import { DatePicker } from "@mui/x-date-pickers";
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format } from 'date-fns';
+
 
 // import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns// Adapter for date functions
 import Grid from '@mui/material/Grid';
@@ -79,17 +81,41 @@ const BookingForm = ({roomId}) => {
   };
   
   const handleCheckInDateChange = (date) => {
-    setFormData({
-      ...formData,
-      check_in: date,
-    });
+    if (date > new Date()) {
+      setFormData({
+        ...formData,
+        check_in: date,
+      });
+    } else {
+      toast.error('Please select a future date for Check-in', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   const handleCheckOutDateChange = (date) => {
-    setFormData({
-      ...formData,
-      check_out: date,
-    });
+    if (date > new Date()) {
+      setFormData({
+        ...formData,
+        check_out: date,
+      });
+    } else {
+      toast.error('Please select a future date for Check-out', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
   function validateDate(date) {
     const currentDate = new Date();
@@ -155,7 +181,7 @@ const BookingForm = ({roomId}) => {
     //       console.log(formattedData, "This is formatted data");
  
     try {
-      const response = await instance.post(`${baseUrl}/api/booking/check-overlapping-bookings/`, {
+      const response = await instance.post('/api/booking/check-overlapping-bookings/', {
         check_in: updatedFormData.check_in,
         check_out: updatedFormData.check_out,
         number_of_guests:updatedFormData.number_of_guests,
@@ -163,10 +189,11 @@ const BookingForm = ({roomId}) => {
         room: updatedFormData.room.id,
         
       });
-
+      console.log(response.data,"dataaaaaaaaaaa");
       // Perform API call to create a booking
       if (response.data && response.data.message !== 'Overlapping booking exists') {
-          await instance.post(`${baseUrl}/api/booking/add-roombooking/`, updatedFormData);
+        const response = await instance.post('/api/booking/add-roombooking/', updatedFormData);
+        console.log(response.data.data,"ressssssss");
     
       // Check if the booking creation was successful
       // if (response && response.data) {
@@ -181,12 +208,18 @@ const BookingForm = ({roomId}) => {
           draggable: true,
           progress: undefined,
         });
-        navigate('/roombooking-page');
+        console.log(response.data.data.id,"updateidddddddd");
+        if (response.data.data && response.data.data.id) {
+          // Extract the booking ID from the response
+          const bookingId = response.data.data.id;
+    
+          // Navigate to the RoomBookingPage with the extracted booking ID
+          navigate(`/roombooking-page/${bookingId}`);
       }
       else {
         // If an overlapping booking exists, display an error message
         toast.error('Overlapping booking exists. Please choose different dates or room.');
-      }
+      }}
     } catch (error) {
       // Handle API errors or other exceptions
       console.error('Error creating booking:', error);
@@ -237,28 +270,40 @@ return (
             />
           </Grid>
           <Grid item xs={12}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <MuiPickersUtilsProvider utils={AdapterDateFns}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <DatePicker
-              label="Check-in Date"
-              value={formData.check_in}
-              onChange={handleCheckInDateChange}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-              minDate={new Date()} // Disable past dates
-            />
-            <DatePicker
-              label="Check-Out Date"
-              value={formData.check_out}
-              onChange={handleCheckOutDateChange}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-              minDate={new Date()} // Disable past dates
-            />
-          </Grid>
-        </Grid>
-      </MuiPickersUtilsProvider>
-    </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <MuiPickersUtilsProvider utils={AdapterDateFns}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <DatePicker
+                      label="Check-in Date"
+                      value={formData.check_in}
+                      onChange={handleCheckInDateChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          value={formData.check_in ? format(new Date(formData.check_in), 'dd MMMM yyyy hh:mm a') : ''}
+                        />
+                      )}
+                      minDate={new Date()} // Disable past dates
+                    />
+                    <DatePicker
+                      label="Check-Out Date"
+                      value={formData.check_out}
+                      onChange={handleCheckOutDateChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          value={formData.check_out ? format(new Date(formData.check_out), 'dd MMMM yyyy hh:mm a') : ''}
+                        />
+                      )}
+                      minDate={new Date()} // Disable past dates
+                    />
+                  </Grid>
+                </Grid>
+              </MuiPickersUtilsProvider>
+            </LocalizationProvider>
           </Grid>
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary" size="large">

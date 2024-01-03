@@ -77,7 +77,7 @@ function AdminLogin() {
           <p style={{color:'red'}}>{formErrors.email}</p>
         </div>
         <div className='mb-3'>
-          <input type="password" placeholder='Enter password'  onChange={(e) => {
+          <input type="password" placeholder='Enter password' onChange={(e) => {
                 setPassword(e.target.value);
               }} className='form-control' />
           <p style={{color:'red'}}>{formErrors.password}</p>
