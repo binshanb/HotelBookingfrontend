@@ -97,7 +97,7 @@ function AdminSidebar() {
             <span className={`menu-text ${isIconsOnly ? 'hidden' : ''}`}>Booking Report</span>
           </li>
           </NavLink>
-          <NavLink to='/adminchat-messages' className="active-link" style={{ textDecoration: 'none', color: 'black' }}>
+          <NavLink to='/chat-messages/' className="active-link" style={{ textDecoration: 'none', color: 'black' }}>
           <li>
               <FaEnvelope className={`sidebar-icon ${isIconsOnly ? "" : ""}`} />
               <span className={`menu-text ${isIconsOnly ? "hidden" : ""}`}>

@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar';
 
 
 
-function ChatPage() {
+function AdminChat() {
     const [chats, setChats] = useState([]);
     console.log(chats,"chat");
     const [messageInput, setMessageInput] = useState('');
@@ -88,7 +88,7 @@ function ChatPage() {
       };
 
     const fetchChats = () => {
-        instance.get(`${baseUrl}/api/chat/chat-messages/`) 
+        instance.get('/api/chat/chat-messages/') 
             .then(response => {
                 setChats(response.data);
             })
@@ -134,7 +134,7 @@ function ChatPage() {
     return (
         <div className="flex flex-col h-screen">
             <div className="flex-none bg-gray-200 p-4">
-                <h1 className="text-2xl font-semibold">Chat Component</h1>
+                <h1 className="text-2xl font-semibold">Admin Chat</h1>
             </div>
             <div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
             {chats.map((msg, index) => (
@@ -168,4 +168,4 @@ function ChatPage() {
     );
 }
 
-export default ChatPage;
+export default AdminChat;
