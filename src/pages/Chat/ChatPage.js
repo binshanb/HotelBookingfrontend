@@ -50,8 +50,8 @@ function ChatPage() {
 
     const setupWebSocket = () => {
 
-    
-        const newSocket = new w3cwebsocket('ws://127.0.0.1:8003/ws/chat/chat-messages/'); // Replace with your WebSocket URL
+      // const newSocket = new w3cwebsocket('ws://backend.extremehotelbooking.online/ws/chat/chat-messages/');
+      const newSocket = new w3cwebsocket('ws://127.0.0.1:8003/ws/chat/chat-messages/'); 
     
         newSocket.onopen = function(event) {
           console.log('WebSocket connection established.');

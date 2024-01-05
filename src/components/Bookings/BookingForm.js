@@ -59,7 +59,22 @@ const BookingForm = ({roomId}) => {
     check_in: '',
     check_out: '',
     number_of_guests: '',
+    diffDays :''
   });
+  useEffect(() => {
+    const fetchData = async () => {
+      const oneDay = 24 * 60 * 60 * 1000;
+      const difference = Math.round(Math.abs((formData.check_out - formData.check_in) / oneDay));
+      setFormData({
+        ...formData,
+        diffDays: difference,
+      });
+    };
+
+    fetchData();
+  }, [formData.check_out, formData.check_in]);
+
+
   useEffect(() => {
     if (userInfos) {
       // Decode the token and set the user info state
@@ -152,42 +167,16 @@ const BookingForm = ({roomId}) => {
 
 
 
-    // try {
-    //   // Validate formData and retrieve needed information
-    //   // ... (assuming formData, decodedUserInfo, and roomInfo are defined)
-  
-    //   if (formData.check_in && formData.check_out) {
-    //     // Construct Date objects from formData
-    //     const checkInDate = new Date(formData.check_in);
-    //     const checkOutDate = new Date(formData.check_out);
-  
-    //     // Check if the dates are valid
-    //     if (!isNaN(checkInDate) && !isNaN(checkOutDate)) {
-    //       // Convert dates to IST (India Standard Time)
-    //       const istTimezone = 'Asia/Kolkata';
-  
-    //       // const checkInIST = new Date(checkInDate.toLocaleString('en-US', { timeZone: istTimezone }));
-    //       // const checkOutIST = new Date(checkOutDate.toLocaleString('en-US', { timeZone: istTimezone }));
-    //       const currentDate = AdapterDateFns.utcToday();
-    //       // Format dates as ISO strings
-    //       const formattedData = {
-    //         ...formData,
-    //         user: decodedUserInfo.user_id,
-    //         room: roomInfo.id,
-    //         // check_in: checkInIST.toISOString(),
-    //         // check_out: checkOutIST.toISOString(),
-    //       };
-  
-    //       console.log(formattedData, "This is formatted data");
- 
     try {
+      
+      console.log(formData.diffDays,"dddd");
       const response = await instance.post('/api/booking/check-overlapping-bookings/', {
         check_in: updatedFormData.check_in,
         check_out: updatedFormData.check_out,
         number_of_guests:updatedFormData.number_of_guests,
         user: updatedFormData.user.user_id,
         room: updatedFormData.room.id,
-        
+        diffDays: updatedFormData.diffDays
       });
       console.log(response.data,"dataaaaaaaaaaa");
       // Perform API call to create a booking

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 function CategoryList() {
   const [categoryList, setCategoryList] = useState([]);
+  console.log(categoryList,"categoryyyyyyyyy");
   const navigate = useNavigate();
 
   useEffect(() => {

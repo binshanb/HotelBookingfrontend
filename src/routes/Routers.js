@@ -137,7 +137,7 @@ const Routers = () => {
       <Route path="" element={<RouteAdmin />} >
       <Route path="/admin/ad-logout" element={<AdminLogout />} /> 
       
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard-data" element={<AdminDashboard />} />
         <Route path='/admin/usermanagement' element={<UserManagement />} />
         <Route path='/admin/room-category' element={<RoomCategory/>} />
         <Route path='/admin/room-list' element={<RoomList/>} />
@@ -145,7 +145,7 @@ const Routers = () => {
         <Route path='/admin/booking-list' element= {<BookingList/>} />
         
         <Route path='/admin/booking-report' element= {<BookingReport/>} />
-        <Route path='/adminchat-messages' element={<AdminChat/>} />
+        <Route path='/admin/chat-messages' element={<AdminChat/>} />
 
 
       

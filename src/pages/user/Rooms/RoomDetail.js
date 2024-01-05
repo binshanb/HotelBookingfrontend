@@ -42,6 +42,7 @@ function RoomDetail({rooms}) {
 
   const classes = useStyles();
   const [roomData, setRoomData] = useState([]);
+  console.log(roomData,"roomdataaaaaaaaaaaa");
   const[isRoomData, setIsRoomData] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -137,7 +138,7 @@ function RoomDetail({rooms}) {
             {roomData.title}
           </Typography>
           <Typography variant="body1" color="textSecondary" gutterBottom>
-            Category: {roomData.category ? roomData.category.category_name : 'Not available'}
+            Category: {roomData ? roomData.category.category_name : 'Not available'}
           </Typography>
           <Typography variant="subtitle1" color="textPrimary" gutterBottom>
             Price Per Day: ₹{roomData.price_per_night}
@@ -169,10 +170,10 @@ function RoomDetail({rooms}) {
         Add a Review
       </CustomButton>
       <Box mt={4} display="flex" justifyContent="center">
-        <CustomButton onClick={handleBooking} variant="contained" color="primary" size="medium">
+        <CustomButton onClick={handleBooking} variant="contained" color="primary" size="medium" style={{ padding: '6px 16px', minHeight: '20px', fontSize: '0.875rem' }}>
           Book Now
         </CustomButton>
-        <CustomButton onClick={handleRooms} variant="outlined" color="primary" size="medium">
+        <CustomButton onClick={handleRooms} variant="outlined" color="primary" size="medium" style={{ padding: '6px 16px', minHeight: '20px', fontSize: '0.875rem' }}>
           Back to Room List
         </CustomButton>
         </Box>

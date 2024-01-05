@@ -6,11 +6,13 @@ import MenuItem from '@mui/material/MenuItem';
 import { adminInstance } from '../../../utils/Axios';
 import { baseUrl } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
+import { log } from 'util';
 // import RoomFilter from './RoomFilter';
 
 function RoomListUser() {
   const [roomList, setRoomList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all'); // State for category selection
+  console.log(selectedCategory,"selected");
   const [priceRange, setPriceRange] = useState([0, 10000]); // State for price range selection
   const {id} = useParams()
   
@@ -18,11 +20,14 @@ function RoomListUser() {
   useEffect(() => {
     // Fetch the list of rooms and update state
     adminInstance.get(`${baseUrl}/api/booking/roomlistuser/`)
+       
       .then((response) => response.data)
+    
       .then((data) => setRoomList(data))
+  
       .catch((error) => console.error('Error fetching rooms:', error));
   }, []);
-
+  
   const categories = [...new Set(roomList.map(room => room.category.category_name))];
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value); // Update selected category

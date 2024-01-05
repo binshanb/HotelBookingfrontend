@@ -21,8 +21,9 @@ export default function AddRoomModal({
   const [roomSize, setRoomSize] = useState(0);
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
+  console.log(categories,"catttttttttt");
   const [features, setFeatures] = useState([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  // const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
 
@@ -79,6 +80,7 @@ export default function AddRoomModal({
           setCapacity(0);
           setRoomSize(0);
           setDescription("");
+          
 
           setFormError({});
           setSelectedImage(null);
@@ -99,7 +101,9 @@ export default function AddRoomModal({
   const fetchCategories = async () => {
     try {
       const response = await instance.get('/api/booking/category-list/');
+      console.log(response.data,"resdatttttttttttttt");
       const categoryData = response.data.results;
+
   
       console.log('Fetched Categories:', categoryData); // Check the structure of categoryData
   
@@ -159,7 +163,7 @@ export default function AddRoomModal({
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       contentLabel="Add Room Modal"
-      className="custom-modal w-50 h-50 overflow"
+      className="custom-modal w-70 h-70 overflow"
       overlayClassName="custom-overlay"
       style={{
         content: {
@@ -190,7 +194,7 @@ export default function AddRoomModal({
   value={selectedCategory}
   onChange={(e) => {
     setSelectedCategory(e.target.value);
-    setSelectedCategoryId(e.target.value); // Set selectedCategoryId here
+    // setSelectedCategoryId(e.target.value); // Set selectedCategoryId here
   }}
   className="w-full border rounded p-2 mt-2"
 >
@@ -201,6 +205,7 @@ export default function AddRoomModal({
     </option>
   ))}
 </select>
+
 
 
         <input

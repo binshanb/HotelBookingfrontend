@@ -1,12 +1,15 @@
 // import * as React from 'react';
 import React,{useEffect, useState} from 'react';
-
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format } from 'date-fns';
 
 
 import { useNavigate } from 'react-router-dom';
 import Hotel1 from '../../../assets/hotel51.jpg' 
 import Hotel2 from '../../../assets/hotel2.png' 
-import DateSelectionForm from '../Bookings/AvailableRoomsPage';
+import { DatePicker } from "@mui/x-date-pickers";
 import Hotel3 from '../../../assets/hotel16.jpg' 
 import { Carousel } from 'react-responsive-carousel';
 import instance from '../../../utils/Axios';
@@ -39,7 +42,9 @@ import { Box, Container, Flex, Text, SimpleGrid, Button,Grid,Link,Card } from '@
 import { TextField,List, ListItem, ListItemText  } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { baseUrl } from '../../../utils/constants';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { date } from 'yup';
 
 
 const useStyles = makeStyles({
@@ -48,12 +53,19 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     justifyContent: 'space-between',
     height: '100%', // Maintain full height of the card
+    
   },
   cardMedia: {
     paddingTop: '56.25%', // 16:9 aspect ratio for the images
   },
   cardContent: {
     flexGrow: 1,
+    mainContainer: {
+      backgroundImage: `url("../../../assets/hotel2.png")`, // Replace with the path to your image
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+    },
   },
 });
 
@@ -120,10 +132,56 @@ function HomePage() {
   const classes = useStyles();
 
 
+
+   
+  const [formData, setFormData] = useState({
+    check_in: '',
+    check_out: '',
+  
+  
+  });
+  const handleCheckInDateChange = (date) => {
+    if (date > new Date()) {
+      setFormData({
+        ...formData,
+        check_in: date,
+      });
+    } else {
+      toast.error('Please select a future date for Check-in', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
+  const handleCheckOutDateChange = (date) => {
+    if (date > new Date()) {
+      setFormData({
+        ...formData,
+        check_out: date,
+      });
+    } else {
+      toast.error('Please select a future date for Check-out', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
   const handleCheckAvailability = async () => {
     try {
-      const response = await instance.get(`${baseUrl}/api/booking/roomlistuser/?check_in=${checkInDate}&check_out=${checkOutDate}`);
-      console.log(response.data, "Response Data"); // Assuming the response data has 'is_active' property
+      const response = await instance.get(`/api/booking/roomlistuser/?check_in=${formData.check_in}&check_out=${formData.check_out}`);
+      console.log(response.data, "Response Data");
       if (Array.isArray(response.data)) {
         const availableRooms = response.data.filter(room => room.is_active === true);
         setAvailableRooms(availableRooms);
@@ -166,7 +224,8 @@ return (
       border="1px solid #ccc"
       borderRadius="5px"
     > */}
-     <Box padding={5} margin={17} border="1px solid #ccc" borderRadius="5px">
+<Box padding={5} margin={17} border="1px solid #ccc" borderRadius="5px" bgcolor="#FFC0CB">
+
       <Container maxWidth="xl">
         <Grid container direction="column" alignItems="center">
           <Typography variant="h4" fontWeight="bold" mb={4}>
@@ -180,36 +239,54 @@ return (
           <Box bgcolor="white" padding={6} borderRadius="lg" boxShadow={3} mb={8}>
   <div className={classes.container}>
     <Typography variant="h4">Check Room Availability</Typography>
+    <br/><br/>
     <div className={classes.inputContainer}>
-      <TextField
-        label="Check-in Date"
-        type="date"
-        onChange={(e) => setCheckInDate(e.target.value)}
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-    </div>
-    <br/>
-    <div className={classes.inputContainer}>
-      <TextField
-        label="Check-out Date"
-        type="date"
-        onChange={(e) => setCheckOutDate(e.target.value)}
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-    </div>
+    <Grid item xs={12}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <MuiPickersUtilsProvider utils={AdapterDateFns}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <DatePicker
+                      label="Check-in Date"
+                      value={formData.check_in}
+                      onChange={handleCheckInDateChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          value={formData.check_in ? format(new Date(formData.check_in), 'dd MMMM yyyy hh:mm a') : ''}
+                        />
+                      )}
+                      minDate={new Date()} // Disable past dates
+                    />
+                    <br/><br/>
+                    <DatePicker
+                      label="Check-Out Date"
+                      value={formData.check_out}
+                      onChange={handleCheckOutDateChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          value={formData.check_out ? format(new Date(formData.check_out), 'dd MMMM yyyy hh:mm a') : ''}
+                        />
+                      )}
+                      minDate={new Date()} // Disable past dates
+                    />
+                  </Grid>
+                </Grid>
+              </MuiPickersUtilsProvider>
+            </LocalizationProvider>
+          </Grid>
+          </div>
     <br/>
     <Button
-      variant="contained"
-      color="primary"
-      onClick={handleCheckAvailability}
-      className={classes.button}
-    >
-      Check Availability
-    </Button>
+        variant="contained"
+        color="primary"
+        onClick={handleCheckAvailability}
+      >
+        Check Availability
+      </Button>
   </div>
 </Box>
 
@@ -229,7 +306,15 @@ return (
                   <Typography variant="body1" mb={2}>
                     Discover the comforts of our in-room amenities
                   </Typography>
-                  <Link to="/categorylist">Explore More</Link>
+                  <Button
+    variant="contained"
+    color="primary"
+    component={RouterLink}
+    to="/categorylist"
+    mt={2}
+  >
+    View Here
+  </Button>
                 </Box>
               </Card>
             </Grid>
@@ -245,9 +330,17 @@ return (
                     Feel Good Experience
                   </Typography>
                   <Typography variant="body1" mb={2}>
-                    Stay longer and save on your accommodation
+                    Stay longer and save on your accommodation on very safe
                   </Typography>
-                  <Link to="/categorylist">Discover More</Link>
+                  <Button
+    variant="contained"
+    color="primary"
+    component={RouterLink}
+    to="/categorylist"
+    mt={2}
+  >
+    View Here
+  </Button>
                 </Box>
               </Card>
             </Grid>
@@ -260,12 +353,20 @@ return (
                 </Link>
                 <Box p={4}>
                   <Typography variant="h6" fontWeight="bold" mb={2}>
-                    Exclusive Offers
+                    Exclusive Offers For you
                   </Typography>
                   <Typography variant="body1" mb={2}>
                     Avail exclusive discounts on your next booking
                   </Typography>
-                  <Link to="/categorylist">Book Now</Link>
+                  <Button
+    variant="contained"
+    color="primary"
+    component={RouterLink}
+    to="/categorylist"
+    mt={2}
+  >
+    View Here
+  </Button>
                 </Box>
               </Card>
             </Grid>
@@ -278,14 +379,14 @@ return (
     {/* <Container sx={{ py: 8 }} maxWidth="md">
   <h2 className="text-4xl font-bold text-gray-800 underline">Features</h2> */}
 
-<Container py={8} maxWidth="lg">
-      <Typography variant="h2" component="h2" fontWeight="bold" color="textPrimary" textDecoration="underline" mb={4}>
+<Container py={8} maxWidth="md">
+      <Typography variant="h2" component="h2" fontWeight="italic" color="textPrimary" textDecoration="underline" mb={4}>
         Features
       </Typography>
 
       <Grid container spacing={6}>
         {cards.map((card, index) => (
-          <Grid item key={index} xs={12} md={4}>
+          <Grid item key={index} xs={12} md={6}>
             <Card elevation={3}>
               <CardMedia
                 component="img"

@@ -53,7 +53,7 @@ function AdminSidebar() {
           {isIconsOnly ? '☰' : '✖'}
         </div>
         <ul>
-          <NavLink to='/admin/dashboard' className="active-link" style={{ textDecoration: 'none', color: 'black' }}>
+          <NavLink to='/admin/dashboard-data' className="active-link" style={{ textDecoration: 'none', color: 'black' }}>
             <li>
               <FaHome className="sidebar-icon" />
               <span className={`menu-text ${isIconsOnly ? 'hidden' : ''}`}>Dashboard</span>

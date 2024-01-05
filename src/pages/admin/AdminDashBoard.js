@@ -1,73 +1,93 @@
-import React,{useEffect,useState}  from 'react';
-import { Container, Grid, Paper, Typography } from '@mui/material';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Assuming axios is used for HTTP requests
+import {
+  Container,
+  Grid,
+  Paper,
+  Typography,
+} from '@mui/material';
+import {
+  PieChart,
+  Pie,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  Cell,
+} from 'recharts';
 import { adminInstance } from '../../utils/Axios';
 
-const AdminDashboard = () => {
-  const [dashboardData, setDashboardData] = useState(null);
-  const [isDashboardData, setIsDashboardData] = useState(false);
-  const colors = ['#0088FE', '#00C49F', '#FFBB28'];
-
-
-
+const Dashboard = () => {
+  const [dashboardData, setDashboardData] = useState({
+    pieChart: [],
+    barGraph: [],
+    statistics: {},
+  });
 
   useEffect(() => {
-    const fetchDataForDashboard = async () => {
+    const fetchData = async () => {
       try {
-        const res = await adminInstance.get('booking/admin/dashboard-data/');
-        setDashboardData(res.data);
+        const response = await adminInstance.get('booking/admin/dashboard-data/');
+        setDashboardData(response.data);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       }
     };
-    fetchDataForDashboard();
+    fetchData();
   }, []);
-
-  useEffect(() => {
-    setIsDashboardData(true);
-  }, [dashboardData]);
-
-  // ... (other chart data)
 
   return (
     <Container>
-      <div className=' pl-24'>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Dashboard
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Paper>
-              <Typography variant="h6" component="h2" gutterBottom>
-                Pie Chart
-              </Typography>
-              <PieChart width={400} height={400}>
-                {isDashboardData && dashboardData?.data?.pieChart ? (
-                  <Pie
-                    data={dashboardData.data.pieChart}
-                    dataKey="count"
-                    nameKey="_id"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                  >
-                    {dashboardData.data.pieChart.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                    ))}
-                  </Pie>
-                ) : (
-                  // Render a fallback if the data is not available yet
-                  <p>Loading...</p>
-                )}
-              </PieChart>
-            </Paper>
-          </Grid>
-          {/* ... Other Grid items */}
+      <Typography variant="h4" gutterBottom>
+        Admin Dashboard
+      </Typography>
+      <Grid container spacing={3}>
+      <Grid item xs={12} md={6}>
+        <Paper>
+          <Typography variant="h6">Pie Chart</Typography>
+          <PieChart width={400} height={300}>
+            <Pie data={dashboardData.pieChart} dataKey="count">
+              {dashboardData.pieChart.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={`#${Math.floor(Math.random() * 16777215).toString(16)}`} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </Paper>
+      </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Paper>
+            <Typography variant="h6">Bar Graph</Typography>
+            <BarChart width={400} height={300} data={dashboardData.barGraph}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="_id" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="totalBookings" fill="#8884d8" />
+            </BarChart>
+          </Paper>
         </Grid>
-      </div>
+        <Grid item xs={12}>
+          <Paper>
+            <Typography variant="h6">Statistics</Typography>
+            <ul>
+              {Object.entries(dashboardData.statistics).map(([key, value]) => (
+                <li key={key}>
+                  {key}: {value}
+                </li>
+              ))}
+            </ul>
+          </Paper>
+        </Grid>
+      </Grid>
     </Container>
   );
 };
 
-export default AdminDashboard;
+export default Dashboard;
+

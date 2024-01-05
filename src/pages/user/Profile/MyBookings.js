@@ -18,6 +18,10 @@
     },
   }));
 
+    
+
+    
+    
   const MyBookings = () => {
     const classes = useStyles();
     const [roomBookings,setRoomBookings] = useState([])
@@ -27,10 +31,35 @@
     const [decodedUserInfo, setDecodedUserInfo] = useState({});
     console.log(decodedUserInfo,"klllllllllllllllllllllll");
     const [selectedBookingId, setSelectedBookingId] = useState(null);
+    
     console.log(selectedBookingId,"kllllllllllll");
     const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+    const [cancellationReason, setCancellationReason] = useState('');
 
-
+    const handleDialogClose = () => {
+      setOpenConfirmationDialog(false);
+    };
+    const handleCancel = async () => {
+      try {
+        const response = await instance.post(`/api/booking/cancel-booking/${selectedBookingId}/`, {
+          cancellation_reason: cancellationReason,
+          user : decodedUserInfo.user_id
+        });
+        console.log(response.data);
+        // Call the function to update frontend logic after cancellation
+        // ... (update the booking status or other UI changes)
+        setRoomBookings(prevBookings =>
+          prevBookings.map(booking =>
+            booking.id === selectedBookingId ? { ...booking, booking_status: 'cancelled' } : booking
+          )
+        );
+      } catch (error) {
+        console.error('Error cancelling booking:', error);
+        // Handle error or display an error message
+      } finally {
+        handleDialogClose(); // Close the dialog after cancellation
+      }
+    };
     useEffect(() => {
       if (userInfo) {
         // Decode the token and set the user info state
@@ -43,7 +72,7 @@
       if (decodedUserInfo && decodedUserInfo.user_id) {
         const fetchBookings = async () => {
           try {
-            const response = await instance.get(`${baseUrl}/api/booking/my-bookings/${decodedUserInfo.user_id}/`);
+            const response = await instance.get(`/api/booking/my-bookings/${decodedUserInfo.user_id}/`);
             setRoomBookings(response.data);
           } catch (error) {
             console.error('Error fetching bookings:', error);
@@ -60,31 +89,11 @@
       setOpenConfirmationDialog(true);
     };
   
-    
-    const confirmCancelBooking = async (bookingId) => {
-      try {
-        await instance.patch(`${baseUrl}/api/booking/cancel-booking/${selectedBookingId}/`, { booking_status: 'pending' });
   
-        // Update logic after cancellation...
-        const updatedBookings = roomBookings
-        .map((booking) => (booking.id === bookingId ? { ...booking, booking_status: 'cancelled' } : booking))
-        .filter((booking) => booking.booking_status !== 'completed');
-        
-      setRoomBookings(updatedBookings);
-        // Close dialog and refetch room bookings after cancellation
-        setOpenConfirmationDialog(false);
-
-        alert('Your booking is cancelled,Your Money will be refunded within 24 hours');
-        // Fetch room bookings again to reflect the updated data
-        // fetchRoomBookings();
-      } catch (error) {
-        console.error('Error cancelling booking:', error);
-      }
-    };
-  const handleCloseDialog = () => {
-      setOpenConfirmationDialog(false);
-    };
-  
+  // const handleCloseDialog = () => {
+  //     setOpenConfirmationDialog(false);
+  //   };
+  // }
     return (
       <div className={classes.root}>
         <Typography variant="h4" gutterBottom>
@@ -98,7 +107,7 @@
                 <TableCell>Room Title</TableCell>
                 <TableCell align="centre">Check-in</TableCell>
                 <TableCell align="centre">Check-out</TableCell>
-                <TableCell align="right">Amount Per Day</TableCell>
+                <TableCell align="right">Total Amount</TableCell>
 
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
@@ -112,7 +121,7 @@
                   </TableCell>
                   <TableCell align="centre">{booking.check_in}</TableCell>
                   <TableCell align="centre">{booking.check_out}</TableCell>
-                  <TableCell align="right">{booking?.price ||'null'}</TableCell>
+                  <TableCell align="right">{booking?.total_amount ||'null'}</TableCell>
 
                   <TableCell align="right">
                     {booking.booking_status !== 'cancelled' && (
@@ -131,20 +140,26 @@
           </Table>
         </TableContainer>
         
-      <Dialog open={openConfirmationDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Confirm Cancellation</DialogTitle>
-        <DialogContent>
-          Are you sure you want to cancel this booking?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            No
-          </Button>
-          <Button onClick={confirmCancelBooking} color="secondary">
-            Yes, Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog open={openConfirmationDialog} onClose={handleDialogClose}>
+      <DialogTitle>Confirm Cancellation</DialogTitle>
+      <DialogContent>
+        <p>Are you sure you want to cancel this booking?</p>
+        <input
+          type="text"
+          value={cancellationReason}
+          onChange={(e) => setCancellationReason(e.target.value)}
+          placeholder="Enter reason for cancellation"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDialogClose} color="primary">
+          No
+        </Button>
+        <Button onClick={handleCancel} color="secondary">
+          Yes, Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
       </div>
     );
   };

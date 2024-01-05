@@ -31,8 +31,8 @@ function BookingPage  ({ razorpayKey}) {
 
   const navigate = useNavigate();
 
-  const [price,setPrice] = useState(0);
-  console.log(price,"price:");
+  // const [price,setPrice] = useState(0);
+  // console.log(price,"price:");
   // const location = useLocation();
   // const queryParams = new URLSearchParams(location.search);
   const [bookingData, setBookingData] = useState(null);
@@ -66,7 +66,7 @@ useEffect(() => {
   const fetchBookingData = async () => {
     try {
       const response = await instance.get(`/api/booking/roombooking-page/${bookingId}/`);
-      
+      console.log(response.data,"booking room datas")
       setBookingData(response.data);
     } catch (error) {
       console.error('Error fetching booking data:', error);
@@ -79,68 +79,28 @@ useEffect(() => {
 
 
 
-  // useEffect(()=>{
-  //   if (bookingId){
-  //     dispatch(setBookingInfo(bookingId));
-  //   }
-  // },[dispatch,bookingId]);
-
-  // useEffect(() => {
-  //   instance.get(`/api/booking/roombooking-page/${bookingData.id}/`)
-  //     .then((response) => response.data)
-  //       .then((data) => {
-  //         console.log('Booking data:',data[0]);
-  //       setBookingDetails(data[0]);
-  //       dispatch(activateBookingInfo(data[0]))
-  //     })
-  //     .catch(error => {
-  //       console.error('Error fetching booking details:', error);
-  //     });
-  // }, [bookingData.id]);
-  
 
   // Calculate price based on booking details
-  useEffect(() => {
-    if (bookingData) {
-      const checkInDate = new Date(bookingData.check_in);
-
-      const checkOutDate = new Date(bookingData.check_out);
-      const numberOfGuests = parseInt(bookingData.number_of_guests);
   
-      const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
-      const diffDays = Math.round(Math.abs((checkOutDate - checkInDate) / oneDay));
-    
-
-      const pricePerNight = roomData.price_per_night; // Replace with actual price per night
-
-      const calculatedPrice = diffDays * pricePerNight * numberOfGuests;
-      console.log(calculatedPrice,"calculateeeeeeeeeee");
-      
-
-      setPrice(calculatedPrice)
-  
-
-    }
-  }, [bookingData,roomData]);
   // Retrieve other form data fields similarly
   const bookingIds = bookingData ? bookingData.id : null;
   console.log(bookingId,"ideeee");
-  console.log(price,"amount");
+
   console.log(roomData,"room");
 
 
-  const handleHotelBookingPayment = async (bookingId, price, roomData) => {
+  const handleHotelBookingPayment = async (bookingId,booking_amount, roomData) => {
 
-    console.log(bookingId,price,"joooo");
+    console.log(bookingId,booking_amount,"joooo");
   
     try {
       // Load the Razorpay script
       await loadRazorpayScript();
   
       // Create a Razorpay order
-      const order = await createRazorpayOrder(bookingIds, price);
+      const order = await createRazorpayOrder(bookingIds, booking_amount);
 
-      console.log(bookingId,price,"boook amt");
+      
 
     
       // Open the Razorpay payment UI
@@ -173,27 +133,7 @@ useEffect(() => {
   };
 
 
-  // const bookRoom = async (roomId, bookingData) => {
-  //   try {
-  //     // Implement the logic to book the room with the provided roomId and bookingDetails
-  //     // Make an API call or perform necessary actions to confirm the booking
-  
-  //     // Example API call to book the room
-  //     const response = await instance.post('/api/hotel/booking', {
-  //       room_id: roomId,
-        
-  //       email: decodedUserInfo.email,
-  //       phone: decodedUserInfo.phone,
-  //       // Add other relevant booking details
-  //     });
-  
-      // if (response.status === 201) {
-      //   console.log('Room booked successfully:', response.data);
-      //   navigate('/booking-success');
-      // } else {
-      //   console.error('Failed to book the room:', response.data);
-      // }
-    
+
   
 
 
@@ -228,7 +168,7 @@ useEffect(() => {
           </Typography>
           {roomData && roomData.category && roomData.category ? (
           <Typography variant="body1">
-             Category: {roomData.category}
+             Category: {roomData.category.category_name}
           </Typography>
           ) : (
             <Typography variant="body1">Category: N/A</Typography>
@@ -265,10 +205,10 @@ useEffect(() => {
        
          )}
         <Divider />
-        <Typography variant="body1">Total Price: ₹{price}</Typography>
+        <Typography variant="body1">Total Price: { bookingData ? bookingData.total_amount :""}</Typography>
      
         {/* Payment method using Razorpay */}
-        <Button variant="contained" color="primary" onClick={() => handleHotelBookingPayment(bookingIds, price,roomData)} sx={{ mt: 2 }}>
+        <Button variant="contained" color="primary" onClick={() => handleHotelBookingPayment(bookingIds,  bookingData?.total_amount,roomData)} sx={{ mt: 2 }}>
           Pay Now with Razorpay
         </Button>
       </Paper>

@@ -1,19 +1,19 @@
 import React from "react";
 import Title from "./Title";
 import ServiceCard from "./ServiceCard";
-import { FaCocktail, FaBeer, FaShuttleVan, FaHiking } from "react-icons/fa";
-import Image1 from '../../../assets/service1.jpg'
+import { FaGamepad, FaBeer, FaUtensils, FaWifi } from "react-icons/fa";
+import Image1 from '../../../assets/hotel14.jpg'
 import Image2 from '../../../assets/service2.jpg'
-import Image3 from '../../../assets/service3.jpg'
-import Image4 from '../../../assets/service4.jpg'
+import Image3 from '../../../assets/hotel13.jpg'
+import Image4 from '../../../assets/hotel10.jpg'
 
 
 export default function Services() {
   const serviceList = [
     {
       image: Image1,
-      serviceName: <FaCocktail />,
-      title: "Free Cocktail",
+      serviceName: <FaGamepad />,
+      title: "Entertainments",
       details:
       "Some quick example text to build on the card title and make up the bulk of the card's content.Some quick example text to build on the card title and make up",
     
@@ -21,21 +21,21 @@ export default function Services() {
     {
       image: Image2,
       serviceName: <FaBeer />,
-      title: "Free Beer",
+      title: "Beverages",
       details:
         "Some quick example text to build on the card title and make up the bulk of the card's content.Some quick example text to build on the card title and make up",
     },
     {
       image: Image3,
-      serviceName: <FaShuttleVan />,
-      title: "Free Shuttle Van",
+      serviceName: <FaUtensils />,
+      title: "Room Service 24 X 7 ",
       details:
         "Some quick example text to build on the card title and make up the bulk of the card's content.Some quick example text to build on the card title and make up",
     },
     {
       image: Image4,
-      serviceName: <FaHiking />,
-      title: "Free Hiking",
+      serviceName: <FaWifi />,
+      title: "Free Wifi",
       details:
         "Some quick example text to build on the card title and make up the bulk of the card's content.Some quick example text to build on the card title and make up",
     },
