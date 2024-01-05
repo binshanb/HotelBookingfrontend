@@ -1,16 +1,18 @@
-// AdminChat.js
 import React, { useState, useEffect, useRef } from 'react';
 import instance from '../../utils/Axios';
 import { useSelector } from 'react-redux';
 import jwtDecode from 'jwt-decode';
-
-
+import { baseUrl } from '../../utils/constants';
 import { w3cwebsocket } from 'websocket';
-import { List } from '@mui/material';
-import { ListItem, ListItemText } from '@material-ui/core';
+import Avatar from '@mui/material/Avatar';
 
-function AdminChat() {
+
+
+
+
+function ChatPage() {
     const [chats, setChats] = useState([]);
+    console.log(chats,"chat");
     const [messageInput, setMessageInput] = useState('');
     console.log(messageInput,"message");
     const chatContainerRef = useRef(null);
@@ -27,16 +29,17 @@ function AdminChat() {
           // Decode the token and set the user info state
           const decodedInfo = jwtDecode(userInfos.access); // Assuming 'access' contains user details
           setDecodedUserInfo(decodedInfo);
-        }},[]);
+        }},[userInfos]);
     useEffect(() => {
         if (adminInfos) {
             // Decode the token and set the user info state
             const decodedInfoAdmin = jwtDecode(adminInfos.access); // Assuming 'access' contains user details
             setDecodedAdminInfo(decodedInfoAdmin);
-        }},[]);
+        }},[adminInfos]);
 
     useEffect(() => {
         fetchChats();
+        setupWebSocket();
     }, []);
 
     useEffect(() => {
@@ -45,8 +48,10 @@ function AdminChat() {
         }
     }, [chats]);
 
-    useEffect(() => {
-        const newSocket = new w3cwebsocket('ws://127.0.0.1:8003/ws/chat/chat-messages/'); // Replace with your WebSocket URL
+    const setupWebSocket = () => {
+
+      const newSocket = new w3cwebsocket('ws://backend.extremehotelbooking.online/ws/chat/chat-messages/');
+      // const newSocket = new w3cwebsocket('ws://127.0.0.1:8003/ws/chat/chat-messages/'); 
     
         newSocket.onopen = function(event) {
           console.log('WebSocket connection established.');
@@ -59,7 +64,7 @@ function AdminChat() {
     
           // Handle the received message data in your React component
           // For example, update messages state
-          setChats(prevMessages => [...prevMessages, data]);
+          setChats(prevChats => [...prevChats, data]);
         };
     
         newSocket.onclose = function(event) {
@@ -80,10 +85,10 @@ function AdminChat() {
             newSocket.close();
           }
         };
-      }, []);
+      };
 
     const fetchChats = () => {
-        instance.get('/api/chat/chat-messages/') // Replace with your Django backend endpoint
+        instance.get(`${baseUrl}/api/chat/chat-messages/`) 
             .then(response => {
                 setChats(response.data);
             })
@@ -92,68 +97,60 @@ function AdminChat() {
             });
     };
 
-    const sendMessageToUser = () => {
+    const sendMessage = () => {
         if (messageInput.trim() !== '') {
             const senderId = decodedAdminInfo.user_id; // Assuming user_id is part of decodedUserInfo
             const receiverId = decodedUserInfo.user_id; // Assuming admin_id is part of decodedAdminInfo
+            
+            const messageData = {
+                sender_id: senderId,
+                receiver_id: receiverId,
+                message: messageInput
+            };
+        
     
-            // Log the message data before sending the request
-            instance.post('/api/chat/chat-messages/', {
-              sender_id: senderId,
-              receiver_id: receiverId,
-              message: messageInput
-            })
-            .then(response => {
+            instance.post(`${baseUrl}/api/chat/chat-messages/`,messageData) 
+              .then(response => {
                 // After successfully sending the message, fetch updated chats
-                fetchChats();
-                setMessageInput(''); // Clear the message input field
-            })
-            .catch(error => {
+                  setChats(prevChats => [...prevChats, messageData]);
+                  setMessageInput(''); // Clear the message input field
+              })
+              .catch(error => {
                 console.error('Error sending message:', error);
-            });
+              });
         }
     };
-    const adminId = decodedAdminInfo.user_id; 
-    const userId = decodedUserInfo.user_id ; 
+    
 
-    // const isAdminMessage = (msg) => {
-    //     const adminId = decodedAdminInfo.user_id; 
-    //     const userId = decodedUserInfo.user_id ; 
-        
-    //     // Check if the sender_id matches the user ID or the admin ID
-    //     return msg.sender_id === adminId || msg.sender_id === userId;
-    //   };
+    const isAdminMessage = (msg) => {
+        const userId = decodedUserInfo.user_id;
+        const adminId = decodedAdminInfo.user_id;
+    
+        // Check if the sender_id matches the current user ID or the admin ID
+        return msg.sender_id === userId || msg.sender_id === adminId;
+    };
+    
+
     return (
         <div className="flex flex-col h-screen">
             <div className="flex-none bg-gray-200 p-4">
                 <h1 className="text-2xl font-semibold">Chat Component</h1>
             </div>
-            <List className="max-h-400px overflow-y-scroll bg-blue-200" ref={chatContainerRef}>
-      {chats.map((msg, index) => (
-        <ListItem
-          key={index}
-          className={msg.user === adminId ? 'text-left' : 'text-right'}
-        >
-          <ListItemText
-            primary={msg.user === userId ? 'You' : 'User'}
-            secondary={msg.message}
-          />
-          {/* Additional content for each message */}
-          {/* <p>{msg.sender === user ? 'Admin' : decodedUserInfo.email}</p>
-          <p>{new Date(msg.timestamp).toLocaleString()}</p> */}
-        </ListItem>
-      ))}
-    </List>      
-          {/* // <div key={index} className={msg.sender === userId? 'flex justify-end' : 'flex justify-start'}>
-          // <div className={`p-2 max-w-xs rounded-lg ${isAdminMessage(msg) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
-          //   <p className="m-0">{msg.message}</p> */}
-          
+            <div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
+            {chats.map((msg, index) => (
             
-          {/* //  </div>
-          //  </div> */}
-           {/* </div> */}
-      
-    
+            <div key={index} className={msg.sender === 8 ?  'flex justify-start':'flex justify-end'}>
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          </Avatar>
+            <div className={`p-2 max-w-xs rounded-lg ${isAdminMessage(msg) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+            <p className="m-0">{msg.message}</p>
+            <p>{msg.sender != 8 ?  decodedUserInfo.email : 'Admin' }</p>
+            <p>{new Date(msg.timestamp).toLocaleString()}</p>
+      </div>
+    </div>
+  ))}
+</div>
+
             <div className="flex-none bg-gray-200 p-4">
                 <div className="flex items-center">
                   <input
@@ -164,11 +161,11 @@ function AdminChat() {
                        placeholder="Type your message..."
                        />
 
-                    <button onClick={sendMessageToUser} className="px-4 py-2 bg-blue-500 text-white rounded-lg">Send</button>
+                    <button onClick={sendMessage} className="px-4 py-2 bg-blue-500 text-white rounded-lg">Send</button>
                 </div>
             </div>
         </div>
     );
 }
 
-export default AdminChat;
+export default ChatPage;

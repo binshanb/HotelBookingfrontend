@@ -50,8 +50,8 @@ function ChatPage() {
 
     const setupWebSocket = () => {
 
-      // const newSocket = new w3cwebsocket('ws://backend.extremehotelbooking.online/ws/chat/chat-messages/');
-      const newSocket = new w3cwebsocket('ws://127.0.0.1:8003/ws/chat/chat-messages/'); 
+      const newSocket = new w3cwebsocket('ws://backend.extremehotelbooking.online/ws/chat/chat-messages/');
+      // const newSocket = new w3cwebsocket('ws://127.0.0.1:8003/ws/chat/chat-messages/'); 
     
         newSocket.onopen = function(event) {
           console.log('WebSocket connection established.');
@@ -139,7 +139,7 @@ function ChatPage() {
             <div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
             {chats.map((msg, index) => (
             
-            <div key={index} className={msg.sender > 8 ?  'flex justify-start':'flex justify-end'}>
+            <div key={index} className={msg.sender === 9 ?  'flex justify-start':'flex justify-end'}>
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           </Avatar>
             <div className={`p-2 max-w-xs rounded-lg ${isUserMessage(msg) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
