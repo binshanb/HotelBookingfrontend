@@ -139,12 +139,12 @@ function ChatPage() {
             <div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
             {chats.map((msg, index) => (
             
-            <div key={index} className={msg.sender === 9 ?  'flex justify-start':'flex justify-end'}>
+            <div key={index} className={msg.sender <1 ?  'flex justify-start':'flex justify-end'}>
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           </Avatar>
             <div className={`p-2 max-w-xs rounded-lg ${isUserMessage(msg) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
             <p className="m-0">{msg.message}</p>
-            <p>{msg.sender < 8 ?  decodedUserInfo.email : 'Admin' }</p>
+            <p>{msg.sender >1 ?  decodedUserInfo.email : 'Admin' }</p>
             <p>{new Date(msg.timestamp).toLocaleString()}</p>
       </div>
     </div>
