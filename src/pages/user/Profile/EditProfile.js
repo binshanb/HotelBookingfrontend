@@ -1,42 +1,110 @@
-import React, { useState, useEffect } from "react";
-import "../Profile/Style.css";
-import instance from "../../../utils/Axios";
-import { toast } from "react-toastify";
-import { baseUrl } from "../../../utils/constants";
+import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import jwtDecode from 'jwt-decode';
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
+import instance from '../../../utils/Axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
-function EditProfile() {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
+  formContainer: {
+    padding: theme.spacing(2),
+  },
+  textField: {
+    marginBottom: theme.spacing(3),
+  },
+  button: {
+    marginTop: theme.spacing(2),
+  },
+}));
+
+const EditProfile = () => {
+
+  const classes = useStyles();
+  const navigate = useNavigate();
 
   const userInfos = useSelector((state) => state.auth.userInfo);
-  
   const [decodedUserInfo, setDecodedUserInfo] = useState({});
+
   const [formData, setFormData] = useState({
-    first_name: "",
-    address: "",
-    city:"",
-    state: "",
-    country:""
+    user: decodedUserInfo.user_id,
+    name: '',
+    address: '',
+    city: '',
+    state: '',
+    country: '',
   });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+     const response = await instance.put(`/api/user/edit-profile/${decodedUserInfo.user_id}/`, formData);
+     console.log(response,"responseeeeeeeeeeeee");
+      
+      showToast('Profile details updated', 'success');
+      navigate('/user-profile')
+    } catch (error) {
+      showToast('Error updating user details', 'error');
+      console.error('Error updating profile details', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log('decodedUserInfo:', decodedUserInfo); // Log decodedUserInfo
+    if (decodedUserInfo && decodedUserInfo.user_id) {
+      // Fetch user profile details and set form data
+      // You may need to make an API call to get the existing profile details
+      // setFormData with the retrieved data
+    }
+  }, [decodedUserInfo]);
 
   useEffect(() => {
     if (userInfos) {
       // Decode the token and set the user info state
       const decodedInfo = jwtDecode(userInfos.access); // Assuming 'access' contains user details
       setDecodedUserInfo(decodedInfo);
-    }},[]);
 
-    const userIds = decodedUserInfo.user_id;
-  
-  // Fetch the token from localStorage
-  const userId = localStorage.getItem("userInfo")
-    ? JSON.parse(localStorage.getItem("userInfo")).user_id
-    : null;
-  const token = localStorage.getItem("userInfo")
-    ? JSON.parse(localStorage.getItem("userInfo")).access
-    : null;
-console.log(userId,'idddddddddd')
-  const showToast = (message, type = "error") => {
+
+  const fetchUserProfile = async () => {
+
+    try {
+      const response = await instance.get(`/api/user/detail-view/${decodedInfo.user_id}/`);
+      console.log(response.data,"response");
+      const userProfileData = response.data[0]; // User profile data from the API
+
+      // Set the retrieved user profile data into the form fields
+      setFormData({
+        ...formData,
+        name: userProfileData.name,
+        address: userProfileData.address,
+        city: userProfileData.city,
+        state: userProfileData.state,
+        country: userProfileData.country,
+      });
+    } catch (error) {
+      console.error('Error fetching user profile data', error);
+      // Handle error scenarios or display an error message to the user
+    }
+  };
+
+  fetchUserProfile(); // Call the function to fetch user profile data
+}
+}, [userInfos]);
+
+  const showToast = (message, type = 'error') => {
     toast[type](message, {
       position: toast.POSITION.TOP_RIGHT,
       autoClose: 3000,
@@ -48,143 +116,276 @@ console.log(userId,'idddddddddd')
     });
   };
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [id]: value }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await instance.put(`${baseUrl}/api/user/update-profile/`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      showToast("Profile details updated", "success");
-    } catch (error) {
-      showToast("Error updating user details", "error");
-      console.error("Error updating profile details", error);
-    }
-  };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Fetch user data
-        const response = await instance.get(`/api/user/user-profile/${userIds}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const userData = response.data;
-        setFormData(userData);
-
-     
-      } catch (error) {
-        console.error("Error fetching user data", error);
-      }
-    };
-
-    fetchUserData();
-  }, [userId, token]);
-
   return (
-    <>
-      <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
-        <div className="card h-100">
-          <div className="card-body">
-            <div className="row gutters">
-              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <h6 className="mb-3 text-primary">Personal Details</h6>
-              </div>
-              <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div className="form-group">
-                  <label htmlFor="first_name">Full Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="first_name"
-                    placeholder="Enter full name"
-                    value={formData.first_name}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div className="form-group">
-                  <label htmlFor="eMail">Address</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address"
-                    placeholder="Enter Address"
-                    value={formData.address}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div className="form-group">
-                  <label htmlFor="eMail">City</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="city"
-                    placeholder="Enter city"
-                    value={formData.city}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div className="form-group">
-                  <label htmlFor="State">State</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="state"
-                    placeholder="Enter State"
-                    value={formData.state}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div className="form-group">
-                  <label htmlFor="country">Country</label>
-                  <input
-                    type="url"
-                    className="form-control"
-                    id="country"
-                    placeholder="enter country"
-                    value={formData.country}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </div>
- 
-            <div className="row gutters">
-              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <div className="text-right d-flex justify-content-center">
-                  <button
-                    type="button"
-                    id="submit"
-                    name="submit"
-                    className="btn btn-primary mt-3"
-                    onClick={handleSubmit}
-                  >
-                    Update
-                  </button>
-                </div>
-              </div>
-            </div>
+    <div className={classes.root}>
+      <Grid container justifyContent="center">
+        <Grid item xs={12} sm={8} md={6}>
+          <div className={classes.formContainer}>
+            <Typography variant="h5" gutterBottom>
+              Edit Profile Information
+            </Typography>
+            <form onSubmit={handleSubmit}>
+          
+              <TextField
+                id="name"
+                label="Full Name"
+                variant="outlined"
+                fullWidth
+                value={formData.name}
+                onChange={handleChange}
+                margin="normal"
+                className={classes.textField}
+              />
+                  <TextField
+                id="address"
+                label="Address"
+                variant="outlined"
+                fullWidth
+                value={formData.address}
+                onChange={handleChange}
+                margin="normal"
+                className={classes.textField}
+              />
+                  <TextField
+                id="city"
+                label="City"
+                variant="outlined"
+                fullWidth
+                value={formData.city}
+                onChange={handleChange}
+                margin="normal"
+                className={classes.textField}
+              />
+                  <TextField
+                id="state"
+                label="State"
+                variant="outlined"
+                fullWidth
+                value={formData.state}
+                onChange={handleChange}
+                margin="normal"
+                className={classes.textField}
+              />
+                  <TextField
+                id="country"
+                label="Country"
+                variant="outlined"
+                fullWidth
+                value={formData.country}
+                onChange={handleChange}
+                margin="normal"
+                className={classes.textField}
+              />
+              
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                className={classes.button}
+              >
+                Save Changes
+              </Button>
+            </form>
           </div>
-        </div>
-      </div>
-    </>
+        </Grid>
+      </Grid>
+    </div>
   );
-}
+};
 
 export default EditProfile;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState } from 'react';
+// import {
+//   Button,
+//   Grid,
+//   TextField,
+//   Typography,
+//   Paper,
+//   Avatar,
+// } from '@mui/material';
+// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+// import { makeStyles } from '@mui/styles';
+
+
+// const useStyles = makeStyles((theme) => ({
+//   root: {
+//     flexGrow: 1,
+//     padding: theme.spacing(3),
+//     display: 'flex',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   formContainer: {
+//     display: 'flex',
+//     flexDirection: 'column',
+//     gap: theme.spacing(2),
+//     padding: theme.spacing(3),
+//     borderRadius: '8px',
+//     boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+//     backgroundColor: '#fff',
+//     maxWidth: '400px', // Limiting the width for better readability
+//   },
+//   avatarContainer: {
+//     display: 'flex',
+//     flexDirection: 'column',
+//     alignItems: 'center',
+//     marginBottom: theme.spacing(2),
+//   },
+//   avatar: {
+//     backgroundColor: theme.palette.primary.main,
+//     width: theme.spacing(10),
+//     height: theme.spacing(10),
+//   },
+//   form: {
+//     width: '100%',
+//   },
+//   textField: {
+//     marginBottom: theme.spacing(2),
+//   },
+//   button: {
+//     marginBottom: theme.spacing(2),
+//     backgroundColor: theme.palette.primary.main,
+//     color: '#fff',
+//     '&:hover': {
+//       backgroundColor: theme.palette.primary.dark,
+//     },
+//   },
+//   textField: {
+//     marginBottom: theme.spacing(2), // Add bottom margin to create space between text fields
+//   },
+// }));
+// const EditProfile = () => {
+//   const classes = useStyles();
+//   const [formData, setFormData] = useState({
+//     first_name: '',
+//     address: '',
+//     city: '',
+//     state: '',
+//     country: '',
+//   });
+
+//   const handleChange = (e) => {
+//     setFormData({
+//       ...formData,
+//       [e.target.id]: e.target.value,
+//     });
+//   };
+
+//   const handleSubmit = () => {
+//     // Implement submission logic here
+//     console.log(formData);
+//   };
+
+//   return (
+//     <div className={classes.root}>
+//       <Grid container spacing={3} justifyContent="center">
+//         <Grid item xs={12} md={4}>
+//           <Paper className={classes.formContainer}>
+//             <div className={classes.avatarContainer}>
+//               <Avatar className={classes.avatar}>
+//                 <LockOutlinedIcon />
+//               </Avatar>
+//               <Typography variant="h6">User's Full Name</Typography>
+//               <Typography variant="body2" color="textSecondary">
+//                 user@email.com
+//               </Typography>
+              
+//             </div>
+//             <form className={classes.form}>
+//               <TextField
+//                 id="first_name"
+//                 label="Full Name"
+//                 variant="outlined"
+//                 fullWidth
+//                 value={formData.first_name}
+//                 onChange={handleChange}
+//                 className={classes.textField}
+//               />
+//               <TextField
+//                 id="address"
+//                 label="Address"
+//                 variant="outlined"
+//                 fullWidth
+//                 value={formData.address}
+//                 onChange={handleChange}
+//                 className={classes.textField}
+//               />
+//               <TextField
+//                 id="city"
+//                 label="City"
+//                 variant="outlined"
+//                 fullWidth
+//                 value={formData.city}
+//                 onChange={handleChange}
+//                 className={classes.textField}
+//               />
+//               <TextField
+//                 id="state"
+//                 label="State"
+//                 variant="outlined"
+//                 fullWidth
+//                 value={formData.state}
+//                 onChange={handleChange}
+//                 className={classes.textField}
+//               />
+//               <TextField
+//                 id="country"
+//                 label="Country"
+//                 variant="outlined"
+//                 fullWidth
+//                 value={formData.country}
+//                 onChange={handleChange}
+//                 className={classes.textField}
+//               />
+//               <Button
+//                 variant="contained"
+//                 color="primary"
+//                 className={classes.button}
+//                 onClick={handleSubmit}
+//               >
+//                 Save Changes
+//               </Button>
+//             </form>
+//           </Paper>
+//         </Grid>
+//       </Grid>
+//     </div>
+//   );
+// };
+
+// export default EditProfile;
+

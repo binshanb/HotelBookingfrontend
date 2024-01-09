@@ -78,6 +78,8 @@ const handleCheckout = async () => {
 
 
   return (
+    <>
+      <Box style={{ backgroundColor: "#f0f0f0", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
     <Box p={4}>
     <Typography variant="h4" mb={4}>
       Booking List
@@ -95,7 +97,7 @@ const handleCheckout = async () => {
             <TableCell>Current Status</TableCell>
             {/* <TableCell>Room Name</TableCell>
             <TableCell>User Email</TableCell> */}
-            {/* <TableCell>Action</TableCell> */}
+            <TableCell>Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -116,21 +118,23 @@ const handleCheckout = async () => {
       <TableCell>{booking.booking_status}</TableCell>
               {/* <TableCell>{booking.room.title}</TableCell>
               <TableCell>{booking.user.email}</TableCell> */}
-              <TableCell>
-              {booking.booking_status === 'completed' ? (
-                  'Checked Out'
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleCheckout(booking.id)}
-                    disabled={booking.booking_status === 'completed'} // Disable button if already completed
-                  >
-                    Checkout
-                  </Button>
-                )}
-           
-                </TableCell>
+ <TableCell>
+  {booking.booking_status === 'completed' ? (
+    'Checked Out'
+  ) : booking.booking_status === 'cancelled' ? (
+    'Booking Cancelled'
+  ) : (
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={() => handleCheckout(booking.id)}
+      disabled={booking.booking_status === 'completed' || booking.booking_status === 'cancelled'}
+    >
+      Checkout
+    </Button>
+  )}
+</TableCell>
+
               {/* <TableCell>
                 <IconButton
                   color="secondary"
@@ -145,7 +149,11 @@ const handleCheckout = async () => {
         </TableBody>
       </Table>
     </TableContainer>
-  </Box>
+    </Box>
+
+    </Box>
+    </>
+ 
   );
 };
 

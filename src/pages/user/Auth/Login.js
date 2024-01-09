@@ -7,6 +7,9 @@ import { setCredentials } from "../../../redux/slices/userslices/authSlice";
 import { ToastContainer,toast  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Box, Button, FormControl, FormHelperText, Input, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+
 
 
 function UserLogin() {
@@ -52,6 +55,7 @@ function UserLogin() {
       navigate("/");
     } catch (err) {
       toast.error(err?.data || err?.error);
+      showToast("Login Failed","error");
     }
   };
 
@@ -75,8 +79,18 @@ function UserLogin() {
     return errors;
   };
   return (
-    <Box className="login template d-flex justify-content-center align-items-center vh-100 bg-blue-200" p={4}>
+    <Box className="login template d-flex justify-content-center align-items-center vh-100 bg-gray-200" p={4}>
     <Box className="form_container p-5 rounded bg-white">
+    <Avatar sx={{
+      display: 'flex',
+      flexDirection: 'row-reverse',
+      bgcolor: 'primary.main',
+      padding: '10px',
+      mx:'105px',
+    
+    }}>
+            <LockOutlinedIcon />
+          </Avatar>
       <form onSubmit={submitHandler}>
         <Typography variant="h5" align="center" gutterBottom>
           Sign In

@@ -118,12 +118,12 @@ const ForgotPassword = () => {
                     Verify OTP
                 </Button>
             </Grid>
-       
-         
+      
         </Grid>
         </Box>
         </Box>
         </Container>
+        <br/><br/>
         <ToastContainer 
           position="bottom-right"
           autoClose={6000}

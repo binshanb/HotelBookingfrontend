@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from '../../../utils/Axios'; // Adjust the path accordingly
+import instance from '../../../utils/Axios'; // Adjust the path accordingly
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Register.css';
+import Avatar from '@mui/material/Avatar';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+
+
+
+
+
+
 
 function Register() {
 
+
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
   const [formData, setFormData] = useState({
     first_name:'',
     email: '',
@@ -15,16 +25,19 @@ function Register() {
     password: '',
     confirmPassword: '',
   });
-
+  
   const [validationErrors, setValidationErrors] = useState({});
-
-
+ 
+  const validateFirstName = (firstName) => {
+    const nameRegex = /^[a-zA-Z -]+$/;
+    return nameRegex.test(firstName);
+  };
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
   const validateMobileNumber = (mobileNumber) => {
-    const mobileRegex = /^\d{10}$/; // Regular expression for 10-digit mobile number
+    const mobileRegex = /^\d{10}$/; 
     return mobileRegex.test(mobileNumber);
   };
   
@@ -73,6 +86,15 @@ function Register() {
     }));
 
     switch (name) {
+      case 'firstName':
+        if (!validateFirstName(value)) {
+          setValidationErrors((prevErrors) => ({
+            ...prevErrors,
+            name: 'Invalid name format',
+          }));
+         
+        }
+        break;
       case 'email':
         if (!validateEmail(value)) {
           setValidationErrors((prevErrors) => ({
@@ -127,12 +149,17 @@ function Register() {
         break;
     }
   };
-
+  
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate form fields
     const newErrors = {};
+
+    if (!validateFirstName(formData.firstName)) {
+      newErrors.firstName = 'Invalid name format';
+    }
 
     if (!validateEmail(formData.email)) {
       newErrors.email = 'Invalid email format';
@@ -144,17 +171,17 @@ function Register() {
 
     const passwordValidation = validatePassword(formData.password);
     if (!passwordValidation.isLowerCaseValid) {
-      newErrors.password = 'Password must contain at least one lowercase letter';
+      validationErrors.password = 'Password must contain at least one lowercase letter';
     } else if (!passwordValidation.isUpperCaseValid) {
-      newErrors.password = 'Password must contain at least one uppercase letter';
+      validationErrors.password = 'Password must contain at least one uppercase letter';
     } else if (!passwordValidation.isNumberValid) {
-      newErrors.password = 'Password must contain at least one number';
+      validationErrors.password = 'Password must contain at least one number';
     } else if (!passwordValidation.isLengthValid) {
-      newErrors.password = 'Password must be at least 6 characters long';
+      validationErrors = 'Password must be at least 6 characters long';
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      validationErrors.confirmPassword = 'Passwords do not match';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -165,8 +192,8 @@ function Register() {
 
     try {
       // Make a POST request to your backend registration endpoint using the Axios instance
-      const response = await axios.post('/api/user/register/', {
-        first_name:formData.first_name,
+      const response = await instance.post('/api/user/register/', {
+        first_name:formData.firstName,
         email: formData.email,
         phone_number: formData.mobileNumber,
         password: formData.password,
@@ -178,32 +205,59 @@ function Register() {
 
       // Handle the registration response
       if (response.status === 201) {
-        // Registration successful
-        navigate('/login');
-        console.log('Registration successful:', data);
-        showToast('Registration successful', 'success');
+
+        toast.success('Extreme team has sent an OTP to your email for verification.', {
+          onClose: () => {
+            localStorage.setItem('randomUserEmail', email);
+            navigate('/verify-email');
+          }
+        });
       } else {
-        // Registration failed
-        console.error('Registration failed:', data);
-        showToast('Registration failed: ' + data.error);
+        console.log(data);
+        toast.error('Invalid Details');
       }
     } catch (error) {
-      // Handle network errors or other exceptions
-      console.error('Registration failed:', error.message);
-      showToast('Registration failed: ' + error.message);
+      console.log(error);
+      toast.error('An error occurred. Please try again.');
     }
+        // Registration successful
+    //     navigate('/login');
+    //     console.log('Registration successful:', data);
+    //     showToast('Registration successful', 'success');
+    //   } else {
+    //     // Registration failed
+    //     console.error('Registration failed:', data);
+    //     showToast('Registration failed: ' + data.error);
+    //   }
+    // } catch (error) {
+    //   // Handle network errors or other exceptions
+    //   console.error('Registration failed:', error.message);
+    //   showToast('Registration failed: ' + error.message);
+    // }
   };
+ 
 
   return (
     <div>
-      <div className='signup template d-flex justify-content-center align-items-center vh-100 bg-blue-200' >
-        <div className='form_container p-5 rounded bg-white'>
+      <div className='signup template d-flex justify-content-center align-items-center vh-100 bg-gray-200' >
+        <div className='form_container p-3 rounded bg-white'>
+        <Avatar sx={{
+      display: 'flex',
+      flexDirection: 'row-reverse',
+      bgcolor: 'primary.main',
+      padding: '10px',
+      mx:'130px',
+    
+    }}>
+            <LockOutlinedIcon />
+          </Avatar>
           <form onSubmit={handleSubmit}>
             <h3 className='text-center'>Sign Up</h3>
             <div className='mb-3'>
-              <input type="text" name="first_name" placeholder='Enter Name' className='form-control' onChange={handleInputChange} />
-              
+              <input type="text" name="firstName" placeholder='Enter Name' className='form-control' onChange={handleInputChange} />
+              {validationErrors.firstName && <p className="error-message">{validationErrors.firstName}</p>}
             </div>
+            
             <div className='mb-3'>
               <input type="email" name="email" placeholder='Enter Email' className='form-control' onChange={handleInputChange} />
               {validationErrors.email && <p className="error-message">{validationErrors.email}</p>}
@@ -231,7 +285,7 @@ function Register() {
         
             </div>
             <p className='text-end mt-2'>
-              <Link to='/login' className='ms-2'>Sign In</Link>
+            Already have an account? <Link to='/login' className='ms-2'>Sign In</Link>
             </p>
           </form>
         </div>

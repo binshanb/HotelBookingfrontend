@@ -9,16 +9,35 @@ import { adminInstance } from "../../../utils/Axios";
 export default function EditRoomModal({
   isOpen,
   onRequestClose,
+  onUpdateRoom,
   roomData, // Pass the room data to edit
 }) {
   const [formError, setFormError] = useState({});
+  const [title, setTitle] = useState(roomData?.title || "");
+  const [pricePerNight, setPricePerNight] = useState(roomData?.price_per_night || 0);
+  const [roomSlug, setRoomSlug] = useState(roomData?.room_slug || 0);
+  const [capacity, setCapacity] = useState(roomData?.capacity || 0);
+  const [roomSize, setRoomSize] = useState(roomData?.room_size || 0);
+  const [description, setDescription] = useState(roomData?.description || "");
+
+  const [selectedImage, setSelectedImage] = useState(roomData?.cover_image || null);
   const [editedRoomData, setEditedRoomData] = useState(roomData); // Set initial room data for editing
   console.log(editedRoomData,"edittttt");
   
   const [availableFeatures, setAvailableFeatures] = useState([]);
   console.log(availableFeatures,"available");
   const [categories,setCategories]=useState([]);
-  const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(() => {
+    setTitle(roomData?.title || "");
+    setPricePerNight(roomData?.price_per_night || 0);
+    setRoomSlug(roomData?.room_slug || 0);
+    setCapacity(roomData?.capacity || 0);
+    setRoomSize(roomData?.room_size || 0);
+    setDescription(roomData?.description || "");
+    setSelectedImage(roomData?.cover_image || null);
+  }, [roomData]);
+ 
 
   useEffect(() => {
     // Fetch categories and set the state
@@ -51,35 +70,49 @@ export default function EditRoomModal({
     e.preventDefault();
     const errors = validate(editedRoomData);
     setFormError(errors);
-
+    console.log(roomData?.cover_image,'00000000000');
     if (Object.keys(errors).length === 0) {
       try {
-        const roomFormData = new FormData();
-        for (const key in editedRoomData) {
-          if (key === 'cover_image' && editedRoomData[key] !== roomData[key]) {
-            roomFormData.append(key, editedRoomData[key]);
-          } else if (editedRoomData[key] !== roomData[key]) {
-            roomFormData.append(key, editedRoomData[key]);
-          }
-        }
+        const updatedRoomData = new FormData();
+        updatedRoomData.append('title', title);
+        updatedRoomData.append('price_per_night', pricePerNight);
+        updatedRoomData.append('room_slug', roomSlug);
+        updatedRoomData.append('capacity', capacity);
+        updatedRoomData.append('room_size',roomSize);
+        updatedRoomData.append('description', description);
+        updatedRoomData.append('title', title);
 
-        const response = await adminInstance.put(`booking/admin/edit-room/${editedRoomData.id}/`, roomFormData, {
+
+        updatedRoomData.append('image', selectedImage);
+        
+
+        const response = await onUpdateRoom(updatedRoomData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
 
-        if (response.status === 200) {
+        if (response === null) {
+          setTitle("");
+          setPricePerNight(0);
+          setRoomSlug(0);
+          setCapacity(0);
+          setRoomSize(0);
+          setDescription("")
           setFormError({});
+          setSelectedImage(null);
           onRequestClose();
           showToast('Room updated successfully!', 'success');
         }
-      } catch (error) {
+        }catch (error) {
         console.error('Error updating room:', error.response.data);
         showToast('Error updating room', 'error');
       }
     }
   };
+
+
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);

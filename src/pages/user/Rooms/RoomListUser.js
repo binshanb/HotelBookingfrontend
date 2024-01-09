@@ -6,8 +6,10 @@ import MenuItem from '@mui/material/MenuItem';
 import { adminInstance } from '../../../utils/Axios';
 import { baseUrl } from '../../../utils/constants';
 import { useParams } from 'react-router-dom';
-import { log } from 'util';
-// import RoomFilter from './RoomFilter';
+import { Pagination } from '@mui/lab';
+
+
+
 
 function RoomListUser() {
   const [roomList, setRoomList] = useState([]);
@@ -15,6 +17,11 @@ function RoomListUser() {
   console.log(selectedCategory,"selected");
   const [priceRange, setPriceRange] = useState([0, 10000]); // State for price range selection
   const {id} = useParams()
+
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const roomsPerPage = 6; 
+ 
   
 
   useEffect(() => {
@@ -47,44 +54,60 @@ console.log(roomList,'RRRRRRRRRRR');
   
     return meetsCategoryCriteria && meetsPriceCriteria;
   });
+ 
+  const selectStyle = {
+    marginBottom: '8px',
+    width: '20%',
+    
+  };
+
+  const sliderStyle = {
+    marginTop: '16px', 
+    
+  };
   
-  
+  const indexOfLastRoom = currentPage * roomsPerPage;
+  const indexOfFirstRoom = indexOfLastRoom - roomsPerPage;
+  const currentRooms = filteredRooms.slice(indexOfFirstRoom, indexOfLastRoom);
+
+  // Function to handle page changes
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
 
   return (
+    <>
       <Box p={4} className="room-container">
         {/* Category dropdown for filtering */}
-        <Card mb={4}>
-        <CardContent>
-          <Typography gutterBottom>Categories:</Typography>
-          <Select value={selectedCategory} onChange={handleCategoryChange} displayEmpty >
-            <MenuItem value="all" >All</MenuItem>
-            {categories.map((category, index) => (
-           <MenuItem key={index} value={category} >
-            {category}
-          </MenuItem>
-          
+        <Card style={{ width: '50%', maxWidth: '400px', margin: 'auto' }}>
+      <CardContent>
+        <Typography variant="h6" gutterBottom>Select Category:</Typography>
+        <Select
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          displayEmpty
+          style={selectStyle}
+        >
+          <MenuItem value="all">All</MenuItem>
+          {categories.map((category, index) => (
+            <MenuItem key={index} value={category}>
+              {category}
+            </MenuItem>
           ))}
-           {/* <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem> */}
         </Select>
-        </CardContent>
-      </Card>
-  
-        <Card mb={4}>
-          <CardContent>
-            {/* Slider for price range */}
-            <Typography gutterBottom>Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}</Typography>
-            <Slider
-              value={priceRange}
-              onChange={(e, value) => setPriceRange(value)}
-              valueLabelDisplay="auto"
-              min={0}
-              max={10000}
-            />
-          </CardContent>
-        </Card>
+
+        <Typography variant="h6" gutterBottom>Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}</Typography>
+        <Slider
+          value={priceRange}
+          onChange={(e, value) => setPriceRange(value)}
+          valueLabelDisplay="auto"
+          min={0}
+          max={10000}
+          style={sliderStyle}
+        />
+      </CardContent>
+    </Card>
   
         <Typography variant="h4" align="center" gutterBottom>
           Room List
@@ -116,6 +139,19 @@ console.log(roomList,'RRRRRRRRRRR');
           ))}
         </Grid>
       </Box>
+        {/* Pagination component */}
+        <Box mt={4} display="flex" justifyContent="center">
+        <Pagination
+          count={Math.ceil(filteredRooms.length / roomsPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+          size="large"
+          boundaryCount={1} // Show first and last pages
+          siblingCount={2} // Show two pages before and after the current page
+        />
+      </Box>
+      </>
     );
   }
 

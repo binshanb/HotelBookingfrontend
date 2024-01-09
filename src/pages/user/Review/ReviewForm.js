@@ -1,5 +1,4 @@
 // ReviewForm.js
-
 import React, { useState,useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
 import instance from '../../../utils/Axios';
@@ -14,6 +13,10 @@ import {
     Typography,
     Grid
 } from '@material-ui/core';
+
+import Box from '@mui/material/Box';
+import Rating from '@mui/material/Rating';
+import StarIcon from '@mui/icons-material/Star';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector,useDispatch } from 'react-redux';
@@ -43,18 +46,33 @@ const useStyles = makeStyles((theme) => ({
 
 
 const ReviewForm = () => {
+
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(-1);
+  const labels = {
+    0.5: 'Terrible',
+    1: 'Bad',
+    1.5: 'Poor',
+    2: 'Okay',
+    2.5: 'Not Bad',
+    3: 'Good',
+    3.5: 'Very Good',
+    4: 'Great',
+    4.5: 'Excellent',
+    5: 'Outstanding',
+  };
     const classes = useStyles();
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const [roomIds, setRoomId] = useState('');
     const [userIds, setUserId] = useState('');
-    const [rating, setRating] = useState(0);
+   
     const [comment, setComment] = useState('');
 
     const rooms = useSelector((state) => state.room.roomInfo);
 
     const userInfos = useSelector((state) => state.auth.userInfo);
     const [decodedUserInfo, setDecodedUserInfo] = useState({});
-    console.log(decodedUserInfo,"userInfo");
+
 
     const roomId = rooms.id
     const userId =  decodedUserInfo.user_id
@@ -98,12 +116,36 @@ const ReviewForm = () => {
             <Grid item xs={12} sm={6}>
                 <form className={classes.formContainer}>
                     <Typography variant="h6">Add Review</Typography>
-                    <TextField
+                    {/* <TextField
                         type="number"
                         label="Rating"
                         value={rating}
                         onChange={(e) => setRating(e.target.value)}
-                    />
+                    /> */}
+
+<Box
+      sx={{
+        width: 200,
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      <Rating
+        name="hover-feedback"
+        value={rating}
+        precision={0.5}
+        onChange={(event, newValue) => {
+          setRating(newValue);
+        }}
+        onChangeActive={(event, newHover) => {
+          setHover(newHover);
+        }}
+        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
+      />
+      {rating !== null && (
+        <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : rating]}</Box>
+      )}
+    </Box>
                  <TextField
                     label="Comment"
                     multiline

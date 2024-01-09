@@ -66,7 +66,7 @@ useEffect(() => {
   const fetchBookingData = async () => {
     try {
       const response = await instance.get(`/api/booking/roombooking-page/${bookingId}/`);
-      console.log(response.data,"booking room datas")
+      console.log(response.data,"booking room data")
       setBookingData(response.data);
     } catch (error) {
       console.error('Error fetching booking data:', error);

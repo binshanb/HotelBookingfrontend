@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import {activateRoomInfo} from '../../../redux/slices/roomslices/roomSlice'
 import { makeStyles } from '@material-ui/core/styles';
 import ReviewList from '../Review/ReviewList';
+import jwtDecode from 'jwt-decode';
 import CustomButton from '../../../components/TextInput/Button';
 import {
   Card,
@@ -15,6 +16,7 @@ import {
 } from '@material-ui/core';
 
 import RoomImages from '../../admin/RoomCategories/RoomImages'; 
+import { useSelector} from 'react-redux';
 
 
 
@@ -47,9 +49,18 @@ function RoomDetail({rooms}) {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
- 
+  const userInfos = useSelector((state) => state.auth.userInfo);
+  const [decodedUserInfo, setDecodedUserInfo] = useState({});
 
-  
+  useEffect(() => {
+    if (userInfos) {
+      // Decode the token and set the user info state
+      const decodedInfo = jwtDecode(userInfos.access); // Assuming 'access' contains user details
+      setDecodedUserInfo(decodedInfo);
+    }
+;
+}, [userInfos]);
+ const userId = decodedUserInfo.user_id
 
   useEffect(() => {
     // Fetch the room detail for the specified room ID
@@ -67,7 +78,7 @@ function RoomDetail({rooms}) {
       });
   }, [id]);
   const handleReview = ()=>{
-   navigate(`/add-review/${id}/`);
+   navigate(`/add-review/${id}/${userId}`);
   }
   const handleRooms=()=>{
     navigate('/roomlistuser')

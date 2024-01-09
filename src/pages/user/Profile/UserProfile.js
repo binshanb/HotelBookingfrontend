@@ -4,50 +4,109 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-// import EditIcon from '@material-ui/icons/Edit';
-
-import { useNavigate } from 'react-router-dom';
-import AddProfile from './AddProfile';
-import { useSelector } from 'react-redux';
+import instance from '../../../utils/Axios';
 import { useParams } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
-import instance from '../../../utils/Axios';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import profileImg from '../../../assets/profile-img.jpg';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import TableContainer from '@material-ui/core/TableContainer';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableBody from '@material-ui/core/TableBody';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import {
+  Avatar
+} from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    flexGrow: 1,
+    padding: theme.spacing(2),
+  },
+  leftContainer: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#fcdad1',
   },
   card: {
-    maxWidth: 345,
+    minWidth: 275,
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: theme.spacing(3),
   },
   avatar: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
-    margin: '0 auto',
+    width: theme.spacing(6),
+    height: theme.spacing(6),
+    marginBottom: theme.spacing(2),
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%',
+    objectFit: 'cover',
   },
   button: {
     margin: theme.spacing(1),
   },
+  formContainer: {
+    padding: theme.spacing(2),
+  },
 }));
 
-
-
-
 function UserProfile() {
+  const classes = useStyles();
   const { user_id } = useParams();
+  const [profileImage, setProfileImage] = useState('');
   const userInfos = useSelector((state) => state.auth.userInfo);
   const [decodedUserInfo, setDecodedUserInfo] = useState({});// Access userId from Redux state
-  const token = useSelector((state) => state.auth.access);
-  const uid = useSelector((state) => state.auth.uidb64);
+  // const token = useSelector((state) => state.auth.access);
+  // const uid = useSelector((state) => state.auth.uidb64);
   const navigate = useNavigate();
-  const classes = useStyles();
+ 
   const [showForm, setShowForm] = useState(false);
   const [userData , setUserData] = useState('');
-  
+  console.log(userData,"dataaaaaaaaa");
+  const [formData, setFormData] = useState({
+    user:decodedUserInfo.user_id,
+    name: '',
+    address: '',
+    city: '',
+    state: '',
+    country: '',
+  });
+console.log(formData,"formdataaaaa");
+
+const handleSubmit = async () => {
+  try {
+    navigate('/add-profile');
+  }catch (error) {
+    showToast('Error adding user details', 'error');
+    console.error('Error adding profile details', error);
+  }
+};
+  useEffect(() => {
+    console.log('decodedUserInfo:', decodedUserInfo); // Log decodedUserInfo
+    if (decodedUserInfo && decodedUserInfo.user_id) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        user: decodedUserInfo.user_id,
+      }));
+    }
+  }, [decodedUserInfo]);
+
+  // const handleChange = (e) => {
+  //   const { id, value } = e.target;
+  //   setFormData((prevData) => ({ ...prevData, [id]: value }));
+  // };
 
 useEffect(() => {
     if (userInfos) {
@@ -55,35 +114,34 @@ useEffect(() => {
       const decodedInfo = jwtDecode(userInfos.access); // Assuming 'access' contains user details
       setDecodedUserInfo(decodedInfo);
     }},[]);
+useEffect(() => {
+    if (decodedUserInfo && decodedUserInfo.user_id) {
+        fetchUserProfile(); // Fetch user profile data when decodedUserInfo changes
+      }
+    }, [decodedUserInfo]);
 
 const userIds = decodedUserInfo.user_id;
-useEffect(() => {
-  console.log('id',userIds)
-  const fetchUserData = async () =>{
-    try{
-      const response = await instance.get(`/api/user/detail-view/${userIds}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(response.data,'data')
-      setUserData(response.data)
-    }catch (error) {
-      console.error("Error fetching user data", error);
-    }
+
+const fetchUserProfile = async () => {
+  try {
+    const response = await instance.get(`/api/user/detail-view/${decodedUserInfo.user_id}/`);
+    setUserData(response.data); // Set user profile data to state
+  } catch (error) {
+    console.error("Error fetching user profile data", error);
+    // Handle error scenarios or display an error message to the user
   }
-  fetchUserData();
-}, [userIds, token]);
+};
+
 const handleUpdateProfileClick = () => {
-  navigate(`/user/update-profile/${userIds}`); // Navigate to My Bookings page with the userId
+  navigate(`/user/edit-profile/${userIds}`); // Navigate to My Bookings page with the userId
 };
 const handleMyBookingsClick = () => {
   navigate(`/my-bookings/${userIds}/`); // Navigate to My Bookings page with the userId
 };
 const handleResetPasswordClick = () => {
-  // Check if uidb64 and token have valid values
-  if (uid && token) {
-    navigate(`/change-password/${userIds}`);
+
+  if (userIds) {
+    navigate('/reset-password/');
   } else {
     // Handle scenario where uidb64 and token are missing or invalid
     console.error('Invalid uidb64 or token');
@@ -91,9 +149,9 @@ const handleResetPasswordClick = () => {
   }
 };
 
-const {first_name} = userData
+const {name} = userData
   const  handleEditClick = () => {
-    navigate (`/user/update-profile/${userIds}`)
+    navigate (`/edit-profile/${userIds}`)
     setShowForm((prevShowForm) => !prevShowForm);
   }; 
   const  handleWallet = () => {
@@ -101,73 +159,359 @@ const {first_name} = userData
     setShowForm((prevShowForm) => !prevShowForm);
   }; 
 
+  const showToast = (message, type = 'error') => {
+    toast[type](message, {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
 
+
+  
   return (
     <div className={classes.root}>
-      <Card className={classes.card}>
-        <CardContent>
+    <Grid container spacing={3}>
+      <Grid item xs={12} sm={4} className={classes.leftContainer}>
+        <Card className={classes.card}>
           <div className={classes.avatar}>
-            <img
-              src=""
-              alt="Profile"
-              className="w-24 h-24 mx-auto rounded-full border-2 border-gold transition-transform hover:scale-125"
-            />
+            {/* Placeholder for image */}
+            <Avatar alt="Profile Image" src={profileImage || profileImg} className={classes.avatarImage} />
           </div>
-          <Typography gutterBottom variant="h5" component="h2" align="center">
-            {first_name}
+          <Typography variant="h5" gutterBottom>
+            User:{decodedUserInfo.first_name}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p" align="center">
-            {userData.email}
+          <Typography variant="body2" color="textSecondary" component="p">
+            Email:{decodedUserInfo.email}
           </Typography>
-          <div className="centered-container">
-            {/* Other buttons and icons */}
+          <div>
             <Button
               variant="contained"
               color="primary"
               className={classes.button}
-              // startIcon={<EditIcon />}
               onClick={handleEditClick}
             >
               Edit Profile
             </Button>
+         
+            {/* Additional buttons */}
+          </div>
+          <div>
             <Button
               variant="contained"
               color="primary"
               className={classes.button}
-              // startIcon={<EditIcon />}
               onClick={handleMyBookingsClick}
             >
               My Bookings
             </Button>
+         
+            {/* Additional buttons */}
+          </div>
+          <div>
             <Button
               variant="contained"
               color="primary"
               className={classes.button}
-              // startIcon={<EditIcon />}
               onClick={handleResetPasswordClick}
             >
-              Reset Password
+              ResetPassword
             </Button>
+         
+            {/* Additional buttons */}
+          </div>
+          <div>
             <Button
               variant="contained"
               color="primary"
               className={classes.button}
-              // startIcon={<EditIcon />}
               onClick={handleWallet}
             >
-              Wallet
+              My Wallet
             </Button>
-            {/* Other buttons */}
+         
+            {/* Additional buttons */}
           </div>
-        </CardContent>
-      </Card>
-      <AddProfile />
-    </div>
-  );
-}
-
+        </Card>
+      </Grid>
+      <Grid item xs={12} sm={8}>
+        <div className={classes.formContainer}>
+          <form className={classes.root}>
+            <Typography variant="h5" gutterBottom>
+              User Information
+            </Typography>
+            <br/><br/>
+            <TableContainer component={Paper} className={classes.tableContainer}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            {/* <TableCell>Field</TableCell>
+            <TableCell>Value</TableCell> */}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        {userData && userData.map((user) =>
+            <>
+              <TableRow>
+                <TableCell component="th" scope="row">Name</TableCell>
+                <TableCell>{user.name}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th" scope="row">Address</TableCell>
+                <TableCell>{user.address}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th" scope="row">City</TableCell>
+                <TableCell>{user.city}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th" scope="row">State</TableCell>
+                <TableCell>{user.state}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th" scope="row">Country</TableCell>
+                <TableCell>{user.country}</TableCell>
+              </TableRow>
+              {/* Add more rows for other user details */}
+            </>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
+        
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={handleSubmit}
+            >
+              Add Profile
+            </Button>
+          </form>
+        </div>
+      </Grid>
+    </Grid>
+  </div>
+);
+};
 
 export default UserProfile;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import { makeStyles } from '@material-ui/core/styles';
+// import Card from '@material-ui/core/Card';
+// import CardContent from '@material-ui/core/CardContent';
+// import Typography from '@material-ui/core/Typography';
+// import Button from '@material-ui/core/Button';
+// // import EditIcon from '@material-ui/icons/Edit';
+
+// import { useNavigate } from 'react-router-dom';
+// import AddProfile from './AddProfile';
+// import { useSelector } from 'react-redux';
+// import { useParams } from 'react-router-dom';
+// import jwtDecode from 'jwt-decode';
+// import instance from '../../../utils/Axios';
+
+// const useStyles = makeStyles((theme) => ({
+//   root: {
+//     display: 'flex',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     height: '100vh',
+//     backgroundColor: '#fcdad1',
+//   },
+//   card: {
+//     maxWidth: 345,
+//   },
+//   avatar: {
+//     width: theme.spacing(7),
+//     height: theme.spacing(7),
+//     margin: '0 auto',
+//   },
+//   button: {
+//     margin: theme.spacing(1),
+//   },
+// }));
+
+
+
+
+// function UserProfile() {
+//   const { user_id } = useParams();
+//   const userInfos = useSelector((state) => state.auth.userInfo);
+//   const [decodedUserInfo, setDecodedUserInfo] = useState({});// Access userId from Redux state
+//   const token = useSelector((state) => state.auth.access);
+//   const uid = useSelector((state) => state.auth.uidb64);
+//   const navigate = useNavigate();
+//   const classes = useStyles();
+//   const [showForm, setShowForm] = useState(false);
+//   const [userData , setUserData] = useState('');
+  
+
+// useEffect(() => {
+//     if (userInfos) {
+//       // Decode the token and set the user info state
+//       const decodedInfo = jwtDecode(userInfos.access); // Assuming 'access' contains user details
+//       setDecodedUserInfo(decodedInfo);
+//     }},[]);
+
+// const userIds = decodedUserInfo.user_id;
+// useEffect(() => {
+//   console.log('id',userIds)
+//   const fetchUserData = async () =>{
+//     try{
+//       const response = await instance.get(`/api/user/detail-view/${userIds}/`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+//       console.log(response.data,'data')
+//       setUserData(response.data)
+//     }catch (error) {
+//       console.error("Error fetching user data", error);
+//     }
+//   }
+//   fetchUserData();
+// }, [userIds, token]);
+// const handleUpdateProfileClick = () => {
+//   navigate(`/user/update-profile/${userIds}`); // Navigate to My Bookings page with the userId
+// };
+// const handleMyBookingsClick = () => {
+//   navigate(`/my-bookings/${userIds}/`); // Navigate to My Bookings page with the userId
+// };
+// const handleResetPasswordClick = () => {
+//   // Check if uidb64 and token have valid values
+//   if (uid && token) {
+//     navigate(`/change-password/${userIds}`);
+//   } else {
+//     // Handle scenario where uidb64 and token are missing or invalid
+//     console.error('Invalid uidb64 or token');
+//     // You might want to display an error message to the user or perform some other action here
+//   }
+// };
+
+// const {first_name} = userData
+//   const  handleEditClick = () => {
+//     navigate (`/user/update-profile/${userIds}`)
+//     setShowForm((prevShowForm) => !prevShowForm);
+//   }; 
+//   const  handleWallet = () => {
+//     navigate (`/wallet/${userIds}`)
+//     setShowForm((prevShowForm) => !prevShowForm);
+//   }; 
+
+
+//   return (
+//     <div className={classes.root}>
+//       <Card className={classes.card}>
+//         <CardContent>
+//           <div className={classes.avatar}>
+//             <img
+//               src=""
+//               alt="Profile"
+//               className="w-24 h-24 mx-auto rounded-full border-2 border-gold transition-transform hover:scale-125"
+//             />
+//           </div>
+//           <Typography gutterBottom variant="h5" component="h2" align="center">
+//             {first_name}
+//           </Typography>
+//           <Typography variant="body2" color="textSecondary" component="p" align="center">
+//             {userData.email}
+//           </Typography>
+//           <div className="centered-container">
+//             {/* Other buttons and icons */}
+//             <Button
+//               variant="contained"
+//               color="primary"
+//               className={classes.button}
+//               // startIcon={<EditIcon />}
+//               onClick={handleEditClick}
+//             >
+//               Edit Profile
+//             </Button>
+//             <Button
+//               variant="contained"
+//               color="primary"
+//               className={classes.button}
+//               // startIcon={<EditIcon />}
+//               onClick={handleMyBookingsClick}
+//             >
+//               My Bookings
+//             </Button>
+//             <Button
+//               variant="contained"
+//               color="primary"
+//               className={classes.button}
+//               // startIcon={<EditIcon />}
+//               onClick={handleResetPasswordClick}
+//             >
+//               Reset Password
+//             </Button>
+//             <Button
+//               variant="contained"
+//               color="primary"
+//               className={classes.button}
+//               // startIcon={<EditIcon />}
+//               onClick={handleWallet}
+//             >
+//               Wallet
+//             </Button>
+//             {/* Other buttons */}
+//           </div>
+//         </CardContent>
+//       </Card>
+//       <AddProfile />
+//     </div>
+//   );
+// }
+
+
+// export default UserProfile;
 
 
 

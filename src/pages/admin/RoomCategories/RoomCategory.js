@@ -105,16 +105,26 @@ const RoomCategory = () => {
 
   const handleBlockUnblockCategory = async (categoryId, isBlocked) => {
     try {
-      await adminInstance.patch(`booking/admin/room-category/block-unblock/${categoryId}/`, {
+      const endpoint = `booking/admin/room-category/block-unblock/${categoryId}/`;
+      const updatedStatus = !isBlocked ? 'Unblocked' : 'Blocked';
+  
+      await adminInstance.patch(endpoint, {
         is_active: !isBlocked,
       });
+  
       fetchCategories();
-      showToast(`Category ${isBlocked ? 'Unblocked' : 'Blocked'}`, "success");
+  
+      if (!isBlocked) {
+        showToast(`Category ${updatedStatus}`, 'success');
+      } else {
+        showToast(`Category ${updatedStatus}`, 'error');
+      }
     } catch (error) {
-      showToast("Error updating category", "error");
-      console.error("Error updating category", error);
+      showToast('Error updating category', 'error');
+      console.error('Error updating category', error);
     }
   };
+  
 
   const columnsWithActions = [
     ...columns,
@@ -151,7 +161,7 @@ const RoomCategory = () => {
   ];
 
   return (
-    <div style={{ backgroundColor: "cyan", height: "100vh" }}>
+    <div style={{ backgroundColor: "#f0f0f0", height: "100vh" }}>
       <div className="data-grid-container">
         <div className="header d-flex justify-content-between align-items-center mb-4">
           <div style={{ fontWeight: "bold" }}>Category Management</div>

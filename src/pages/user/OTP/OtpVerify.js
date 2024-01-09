@@ -18,7 +18,7 @@ const OTPVerify = () => {
 
   const handleVerifyOTP = async () => {
     try {
-      const response = await instance.post(`/api/verify-otp/${phone}`,{otp: otp});
+      const response = await instance.post(`/verify-otp/`, { phone, otp });
       console.log(response.data,"responseeeeeeeee");
       
       

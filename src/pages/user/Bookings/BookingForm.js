@@ -1,13 +1,13 @@
 import React, { useState,useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import instance from '../../utils/Axios';
+import instance from '../../../utils/Axios';
 import { useNavigate } from 'react-router-dom';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import  {userInfo} from "../../redux/slices/userslices/authSlice"
-import { activateRoomInfo } from '../../redux/slices/roomslices/roomSlice';
+import { activateRoomInfo } from '../../../redux/slices/roomslices/roomSlice';
 
 
 
@@ -168,11 +168,13 @@ const BookingForm = ({roomId}) => {
 
 
     try {
+    const formattedCheckInDate = new Date(updatedFormData.check_in).toISOString();
+    const formattedCheckOutDate = new Date(updatedFormData.check_out).toISOString();
       
       console.log(formData.diffDays,"dddd");
       const response = await instance.post('/api/booking/check-overlapping-bookings/', {
-        check_in: updatedFormData.check_in,
-        check_out: updatedFormData.check_out,
+        check_in: formattedCheckInDate,
+        check_out: formattedCheckOutDate,
         number_of_guests:updatedFormData.number_of_guests,
         user: updatedFormData.user.user_id,
         room: updatedFormData.room.id,

@@ -11,6 +11,7 @@ import UserManagement from '../pages/admin/UserManagement'
 import Logout from '../pages/user/Auth/Logout'
 import AdminLogout from '../pages/admin/AdminLogout'
 import UserProfile from '../pages/user/Profile/UserProfile'
+import AddProfile from '../pages/user/Profile/AddProfile'
 import EditProfile from '../pages/user/Profile/EditProfile'
 import CategoryList from '../pages/user/Rooms/CategoryList'
 import Services from '../pages/user/Services/Services'
@@ -20,7 +21,7 @@ import RoomCategory from '../pages/admin/RoomCategories/RoomCategory'
 import RoomList from '../pages/admin/RoomCategories/RoomList'
 import RoomListUser from '../pages/user/Rooms/RoomListUser'
 import RoomDetail from '../pages/user/Rooms/RoomDetail'
-import BookingForm from '../components/Bookings/BookingForm'
+import BookingForm from '../pages/user/Bookings/BookingForm'
 import BookingPage from '../pages/user/Bookings/BookingPage'
 import BookingList from '../pages/admin/Booking/BookingList'
 import RoomFeatureList from '../pages/admin/Features/RoomFeatureList'
@@ -28,10 +29,11 @@ import RoomFilter from '../pages/user/Rooms/RoomFilter';
 import BookingSuccessPage from '../pages/user/Bookings/BookingSuccessPage'
 import MyBookings from '../pages/user/Profile/MyBookings'
 import CancelMyBooking from '../pages/user/Profile/CancelMyBooking'
-import AvailableRoomsPage from '../pages/user/Bookings/AvailableRoomsPage'
+import AvailableRoomsPage from '../pages/user/Rooms/AvailableRoomsPage'
 import ReviewForm from '../pages/user/Review/ReviewForm'
 import ReviewList from '../pages/user/Review/ReviewList'
-import ResetPasswordWrapper from '../pages/user/Auth/ResetPassword'
+
+import ResetPasswordUser from '../pages/user/Auth/ResetPasswordUser'
 import ForgotPassword from '../pages/user/Auth/ForgotPassword'
 import ChatPage from '../pages/Chat/ChatPage'
 import AdminChat from '../pages/Chat/AdminChat'
@@ -41,6 +43,9 @@ import ChangePassword from '../pages/user/Auth/ChangePassword'
 import WalletDetails from '../pages/user/Wallet/WalletDetails'
 import OtpLogin from '../pages/user/OTP/OtpLogin'
 import OtpVerify from '../pages/user/OTP/OtpVerify'
+import PrivacyPolicy from '../pages/user/Privacy/PrivacyPolicy'
+import TermsAndConditions from '../pages/user/Privacy/TermsandConditions'
+import EmailVerification from '../pages/user/Auth/EmailVerification'
 
 
 
@@ -61,6 +66,7 @@ const Routers = () => {
         
          
       <Route path='/signup' element={<Register />} />
+      <Route path='/verify-email' element={<EmailVerification/>} />
       <Route path='/login' element={<Login/>} />
       
       <Route path='/forgot-password' element={<ForgotPassword/>} />
@@ -71,16 +77,19 @@ const Routers = () => {
       <Route path='' element={<RouteUser/>} >
         
          
-        <Route path='/user/user-profile' element={<UserProfile/>} />
+        <Route path='/user-profile' element={<UserProfile/>} />
        
-        <Route path='/user/update-profile/:user_id' element={<EditProfile/>} />
+        <Route path='/edit-profile/:user_id' element={<EditProfile/>} />
+        <Route path='/add-profile' element={<AddProfile/>} />
         
         <Route path='/logout' element={<Logout/>} />
 
      
-        <Route path='/reset-password-confirm/:uid/:token' element={< ResetPasswordWrapper/>} />
+        <Route path='/reset-password' element={<ResetPasswordUser/>} />
         
         <Route path='/chat-messages' element={<ChatPage/>} ></Route>
+        <Route path='/privacy-policy' element={<PrivacyPolicy/>} ></Route>
+        <Route path='/terms-conditions' element={<TermsAndConditions/>} ></Route>
  
     
 
@@ -111,7 +120,7 @@ const Routers = () => {
         <Route path='/my-bookings/:user_id' element={<MyBookings/>} />
         <Route path='/booking-report' element={<BookingReport/>} />
 
-        <Route path='/add-review/:roomId' element={<ReviewForm/>} />
+        <Route path='/add-review/:roomId/:userId' element={<ReviewForm/>} />
         <Route path='/reviews' element={<ReviewList/>} />
         <Route path='/wallet/:userId' element={<WalletDetails/>} />
 

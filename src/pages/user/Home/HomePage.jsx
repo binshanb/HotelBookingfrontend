@@ -28,6 +28,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 // import Footer from './home/Footer';
 import Typography from '@mui/material/Typography';
+import CardActionArea from '@mui/material/CardActionArea';
 import Banner from './Banner';
 import './HomePage.css'
 import hotelImage from '../../../assets/hotel10.jpg';
@@ -37,7 +38,7 @@ import hotelImage3 from '../../../assets/hotel13.jpg';
 import hotelImage4 from '../../../assets/hotel14.jpg';
 import hotelImage5 from '../../../assets/hotel15.jpg';
 import ImageCarousel from './Banner';
-import RoomAvailabilityChecker from '../Bookings/AvailableRoomsPage';
+import RoomAvailabilityChecker from '../Rooms/AvailableRoomsPage';
 import { Box, Container, Flex, Text, SimpleGrid, Button,Grid,Link,Card } from '@mui/material';
 import { TextField,List, ListItem, ListItemText  } from '@mui/material';
 import { makeStyles } from '@mui/styles';
@@ -180,24 +181,25 @@ function HomePage() {
 
   const handleCheckAvailability = async () => {
     try {
-      const response = await instance.get(`/api/booking/roomlistuser/?check_in=${formData.check_in}&check_out=${formData.check_out}`);
+      const formattedCheckInDate = format(formData.check_in, "yyyy-MM-dd'T'HH:mm:ss");
+      const formattedCheckOutDate = format(formData.check_out, "yyyy-MM-dd'T'HH:mm:ss");
+      
+      const response = await instance.get(`/api/booking/roomlistuser/?check_in=${formattedCheckInDate}&check_out=${formattedCheckOutDate}`);
       console.log(response.data, "Response Data");
+  
       if (Array.isArray(response.data)) {
         const availableRooms = response.data.filter(room => room.is_active === true);
         setAvailableRooms(availableRooms);
         console.log(availableRooms, "Available Rooms Data");
-       
-        
-      } 
-      else {
-        setAvailableRooms([]); // If not active, set available rooms to empty array
+      } else {
+        setAvailableRooms([]);
       }
     } catch (error) {
       console.error('Error fetching available rooms:', error);
-      setAvailableRooms([]); // Set availability to false in case of an error
+      setAvailableRooms([]);
     }
   };
-
+  
 useEffect(()=>{
 
   if(availableRooms.length>0){
@@ -224,7 +226,7 @@ return (
       border="1px solid #ccc"
       borderRadius="5px"
     > */}
-<Box padding={5} margin={17} border="1px solid #ccc" borderRadius="5px" bgcolor="#FFC0CB">
+<Box padding={5} margin={3} border="1px solid #ccc" borderRadius="5px" bgcolor="#f0f0f0">
 
       <Container maxWidth="xl">
         <Grid container direction="column" alignItems="center">
@@ -378,6 +380,7 @@ return (
 
     {/* <Container sx={{ py: 8 }} maxWidth="md">
   <h2 className="text-4xl font-bold text-gray-800 underline">Features</h2> */}
+
 
 <Container py={8} maxWidth="md">
       <Typography variant="h2" component="h2" fontWeight="italic" color="textPrimary" textDecoration="underline" mb={4}>

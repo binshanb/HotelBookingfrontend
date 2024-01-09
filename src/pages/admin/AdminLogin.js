@@ -66,7 +66,7 @@ function AdminLogin() {
       return errors
   }
   return (
-    <div className='login template d-flex justify-content-center align-items-center vh-100 'style={{ backgroundColor:'#90EE90'}}>
+    <div className='login template d-flex justify-content-center align-items-center vh-100 'style={{ backgroundColor:'#f0f0f0'}}>
     <div className='form_container bg-white p-5 rounded'>
       <form onSubmit={submitHandler}>
       <h1 className="text-4xl font-bold text-gray-800">Admin Login</h1>

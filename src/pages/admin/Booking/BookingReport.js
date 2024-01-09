@@ -66,7 +66,11 @@ const BookingReport = () => {
     }, [bookings]);
 
     return (
-        <div>
+        <div style={{ backgroundColor: '#f0f0f0', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            
+       
+            <div className='login template'>
+            
             <Typography variant="h4" gutterBottom>Booking Report</Typography>
             {loading ? (
                 <CircularProgress />
@@ -102,7 +106,9 @@ const BookingReport = () => {
                     </Table>
                 </TableContainer>
             )}
-        </div>
+            </div>
+            </div>
+    
     );
 };
 

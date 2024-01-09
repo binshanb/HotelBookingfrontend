@@ -1,15 +1,37 @@
 import React, { useState } from 'react';
 import instance from '../../../utils/Axios';
-import { Typography, TextField, Button, Grid } from '@mui/material';
-
+import { Avatar, Button, TextField, Grid, Typography, Container } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import changePasswordApi from "../../../api/changePasswordApi"
 import { ToastContainer, toast } from "react-toastify";
+import { makeStyles } from '@mui/styles';
 
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', 
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
 
 const ChangePassword = () => {
+  const classes = useStyles();
+
   const [errors, setErrors] = useState({});
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
@@ -113,122 +135,121 @@ const ChangePassword = () => {
   // };
 
   return (
-    <>
-    <main className="flex-1">
-    <div className="relative mx-auto px-8 mt-16">
-      <div className="pt-10 pb-16">
-
-        
-      <div className="mt-10 divide-y divide-gray-500">
-                  <div className="space-y-1">
-                    <h3 className="text-lg leading-6 font-medium text-[#4b2848]">
-                      Change Password
-                    </h3>
-                    {/* <p className="max-w-2xl text-sm text-gray-500">
-                      Change your password.
-                    </p> */}
-                  </div>
-                  <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form className="space-y-6 public" onSubmit={onSubmit}>
-                      <div>
-                        <label
-                          htmlFor="old_password"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Old Password
-                        </label>
-                        <div className="mt-2">
-                          <input
-                            id="old_password"
-                            name="old_password"
-                            onChange={(e) => setOldPassword(e.target.value)}
-                            value={oldPassword}
-                            type="password"
-                            required
-                            className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#92638f] sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                        {errors.confirm_password && (
-                          <div className="text-red-600 text-sm">
-                            {errors.confirm_password}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <label
-                            htmlFor="password"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            New Password
-                          </label>
-                          <div className="text-sm"></div>
-                        </div>
-                        <div className="mt-2">
-                          <input
-                            id="password"
-                            name="password"
-                            onChange={(e) => setPassword(e.target.value)}
-                            value={password}
-                            type="password"
-                            required
-                            className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#92638f] sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                        {errors.password && (
-                          <div className="text-red-600 text-sm">
-                            {errors.password}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="confirm_password"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Confirm New Password
-                        </label>
-                        <div className="mt-2">
-                          <input
-                            id="confirm_password"
-                            name="confirm_password"
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            value={confirmPassword}
-                            type="password"
-                            required
-                            className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#92638f] sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                        {errors.confirm_password && (
-                          <div className="text-red-600 text-sm">
-                            {errors.confirm_password}
-                          </div>
-                        )}
-                        {errors.spaces && (
-                          <div className="text-red-600 text-sm">
-                            {errors.spaces}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <button
-                          type="submit"
-                          className="flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm bg-[#4d2c4d] hover:bg-[#92638f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4d2c4d]"
-                        >
-                          Change
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                  </div>
-
+    <Container component="main" maxWidth="xs">
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Change Password
+        </Typography>
+        <form className={classes.form} onSubmit={onSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="old_password"
+                label="Old Password"
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
+              {errors.old_password && (
+                <Typography variant="caption" color="error">
+                  {errors.old_password}
+                </Typography>
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="New Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {errors.password && (
+                <Typography variant="caption" color="error">
+                  {errors.password}
+                </Typography>
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="confirm_password"
+                label="Confirm New Password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              {errors.confirm_password && (
+                <Typography variant="caption" color="error">
+                  {errors.confirm_password}
+                </Typography>
+              )}
+              {errors.spaces && (
+                <Typography variant="caption" color="error">
+                  {errors.spaces}
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Change
+          </Button>
+        </form>
       </div>
-      </div>
-      </main>
-        </>
-);
-};
+    </Container>
+  )
+              };
   export default ChangePassword;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

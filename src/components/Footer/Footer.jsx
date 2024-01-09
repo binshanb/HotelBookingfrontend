@@ -17,7 +17,7 @@ const Footer = () => {
           <Typography variant="h6" gutterBottom>
             Explore Our Hotel
           </Typography>
-          <Link href="/rooms" color="inherit" underline="hover" gutterBottom>
+          <Link href="/categorylist" color="inherit" underline="hover" gutterBottom>
             Rooms & Suites
           </Link>
           {/* Add more links for dining options, amenities, etc. */}
@@ -57,12 +57,12 @@ const Footer = () => {
           </Link>
           </Box>
           <Box>
-          <Link href="#" color="inherit" sx={{ marginRight: '10px' }}>
+          <Link href="privacy-policy" color="inherit" sx={{ marginRight: '10px' }}>
           Privacy Policy
           </Link>
           </Box>
           <Box>
-          <Link href="#" color="inherit" sx={{ marginRight: '10px' }}>
+          <Link href="/terms-conditions" color="inherit" sx={{ marginRight: '10px' }}>
           Terms and Conditions
           </Link>
           </Box>

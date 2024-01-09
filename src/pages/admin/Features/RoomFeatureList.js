@@ -108,17 +108,34 @@ const RoomFeatureList = () => {
 
   const handleBlockUnblockFeature = async (featureId, isBlocked) => {
     try {
-      await adminInstance.patch(`booking/admin/room-feature/block-unblock/${featureId}/`, {
-        is_blocked: !isBlocked,
+      const endpoint = `booking/admin/room-feature/block-unblock/${featureId}/`;
+      const updatedStatus = !isBlocked ? 'Unblocked' : 'Blocked';
+      // let updatedStatus = '';
+      
+      // if (!isBlocked) {
+      //   updatedStatus = 'Unblocked';
+      // } else {
+      //   updatedStatus = 'Blocked';
+      // }
+  
+      await adminInstance.patch(endpoint, {
+        is_active: !isBlocked,
       });
+  
       fetchFeatures();
-      showToast(`Feature ${isBlocked ? 'Unblocked' : 'Blocked'}`, "success");
+  
+      if (!isBlocked) {
+        showToast(`Feature ${updatedStatus}`, 'success');
+      } else {
+        showToast(`Feature ${updatedStatus}`, 'error');
+      }
     } catch (error) {
-      showToast("Error updating feature", "error");
-      console.error("Error updating feature", error);
+      showToast('Error updating feature', 'error');
+      console.error('Error updating feature', error);
     }
   };
-
+  
+  
   const columnsWithActions = [
     ...columns,
     {
@@ -154,7 +171,7 @@ const RoomFeatureList = () => {
   ];
 
   return (
-    <div style={{ backgroundColor: "pink", height: "100vh" }}>
+    <div style={{ backgroundColor: "#f0f0f0", height: "100vh" }}>
       <div className="data-grid-container">
         <div className="header d-flex justify-content-between align-items-center mb-4">
           <div style={{ fontWeight: "bold" }}>Room Features</div>

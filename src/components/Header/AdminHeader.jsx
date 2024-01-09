@@ -2,7 +2,7 @@
 import React from 'react';
 import '../../components/Header/AdminHeader.css';
 import { FaSearch } from 'react-icons/fa';
-import img from "../../assets/logo7.png";
+import img from "../../assets/booking1-logo.png";
 
 function AdminHeader() {
   return (

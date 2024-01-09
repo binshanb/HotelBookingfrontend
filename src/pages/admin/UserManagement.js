@@ -17,7 +17,6 @@ export default function UserManagement() {
     { field: "email", headerName: "Email", width: 130 },
     { field: "phone_number", headerName: "Mobile Number", width: 130 },
     { field: "first_name", headerName: "First Name", width: 100 },
-    { field: "last_name", headerName: "Last Name", width: 90 },
     { field: "date_joined", headerName: "Joined Date", width: 150 },
     { field: "last_login_display", headerName: "Last Login", width: 150 },
     {
@@ -100,7 +99,9 @@ export default function UserManagement() {
 
   return (
     <>
-      <div className="data-grid-container">
+     <div style={{ backgroundColor: '#f0f0f0', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+
+      <div className="data-grid-container" >
         <div className="header d-flex justify-content-between align-items-center mb-4">
           <div>
             <Link to="/users" style={{ textDecoration: "none" }}>
@@ -121,6 +122,7 @@ export default function UserManagement() {
             </button>
           </div>
         </div>
+        
         <DataGrid
           rows={filteredRows}
           columns={columns}
@@ -129,6 +131,9 @@ export default function UserManagement() {
           getRowId={(row) => row.id}
         />
       </div>
+      </div>
+      
+      
     </>
   );
 }

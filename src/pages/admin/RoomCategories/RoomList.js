@@ -130,17 +130,24 @@ useEffect(() => {
 
   const handleBlockUnblockRoom = async (roomId, isBlocked) => {
     try {
-      await adminInstance.patch(`booking/admin/room-list/block-unblock/${roomId}/`, {
+      const endpoint=`booking/admin/room-list/block-unblock/${roomId}/`;
+      const updatedStatus = !isBlocked ? 'Unblocked' : 'Blocked';
+      await adminInstance.patch(endpoint, {
         is_active: !isBlocked,
       });
       fetchRooms();
-      showToast(`Room ${isBlocked ? 'Unblocked' : 'Blocked'}`, "success");
+      if (!isBlocked) {
+        showToast(`Room ${updatedStatus}`, 'success');
+      } else {
+        showToast(`Room ${updatedStatus}`, 'error');
+      }
     } catch (error) {
-      showToast("Error updating room", "error");
-      console.error("Error updating room", error);
+      showToast('Error updating category', 'error');
+      console.error('Error updating category', error);
     }
   };
 
+  
   const columnsWithActions = [
     ...columns,
     {
@@ -177,7 +184,8 @@ useEffect(() => {
 
 
   return (
-    <div style={{ backgroundColor: "secondary", height: "100vh" }}>
+    <div style={{ backgroundColor:"#f0f0f0", height: "100vh" }}>
+
     <div className="data-grid-container">
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <div style={{ fontWeight: "bold" }}>Room Management</div>
@@ -220,6 +228,7 @@ useEffect(() => {
       />
     </div>
   </div>
+
 );
 };
 
