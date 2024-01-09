@@ -3,7 +3,7 @@
 }
 .error-message {
     font-size: 10px;
-    color: red; /* or any other color you prefer */
+    color: red; 
 }
 
 @media screen and (max-width: 1000px){
