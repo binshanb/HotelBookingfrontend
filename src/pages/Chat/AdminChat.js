@@ -109,7 +109,7 @@ function AdminChat() {
             };
         
     
-            instance.post(`${baseUrl}/api/chat/chat-messages/`,messageData) 
+            instance.post('/api/chat/chat-messages/',messageData) 
               .then(response => {
                 // After successfully sending the message, fetch updated chats
                   setChats(prevChats => [...prevChats, messageData]);

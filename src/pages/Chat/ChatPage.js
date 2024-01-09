@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import instance from '../../utils/Axios';
 import { useSelector } from 'react-redux';
 import jwtDecode from 'jwt-decode';
-import { baseUrl } from '../../utils/constants';
 import { w3cwebsocket } from 'websocket';
 import Avatar from '@mui/material/Avatar';
 
@@ -88,7 +87,7 @@ function ChatPage() {
       };
 
     const fetchChats = () => {
-        instance.get(`${baseUrl}/api/chat/chat-messages/`) 
+        instance.get('/api/chat/chat-messages/') 
             .then(response => {
                 setChats(response.data);
             })
@@ -109,7 +108,7 @@ function ChatPage() {
             };
         
     
-            instance.post(`${baseUrl}/api/chat/chat-messages/`,messageData) 
+            instance.post('/api/chat/chat-messages/',messageData) 
               .then(response => {
                 // After successfully sending the message, fetch updated chats
                   setChats(prevChats => [...prevChats, messageData]);
