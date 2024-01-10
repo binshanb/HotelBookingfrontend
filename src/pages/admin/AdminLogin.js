@@ -21,7 +21,7 @@ function AdminLogin() {
 
   useEffect(() => {
     if (adminInfo) {
-      navigate("/admin/dashboard");
+      navigate("/admin/dashboard-data");
     }
   }, [navigate, adminInfo]);
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
 import {selectUserInfo,logout} from "../../redux/slices/userslices/authSlice"; 
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon,Divider  } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon,Divider,Button  } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
 
@@ -11,8 +11,6 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import LockIcon from "@mui/icons-material/Lock";
 import img from "../../assets/booking1-logo.png";
-import "./Navbar.css";
-
 
 function Navbar() {
 
@@ -68,7 +66,7 @@ function Navbar() {
 
   return (
     <>
-     <AppBar position="static" sx={{ backgroundColor: '#fff', color: '#333',height: '64px' }}>
+     <AppBar position="static" sx={{ backgroundColor: '#fff', color: '#333',height: '65px' }}>
         <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 400,fontSize: '1.5rem' }}>
             {/* Logo */}
@@ -105,32 +103,30 @@ function Navbar() {
               </ListItemIcon>
               {/* <ListItemText primary={userInfo ? 'Profile' : 'Login'} /> */}
             </ListItem>
-            {userInfo ? (
-              <>
-                <Divider orientation="vertical" flexItem />
-                <ListItem sx={{ display: 'flex', alignItems: 'center' }}>
-                  <ListItem button onClick={() => dispatch(logout())}>
-                    <ListItemIcon>
-                      <LogoutIcon />
-                    </ListItemIcon>
-                    {/* <ListItemText primary="Logout" /> */}
-                  </ListItem>
-                  <Divider orientation="vertical" flexItem />
-                  <ListItem button component={Link} to="/change-password">
-                    <ListItemIcon>
-                      <LockIcon />
-                    </ListItemIcon>
-                    {/* <ListItemText primary="Change Password" /> */}
-                  </ListItem>
-                </ListItem>
-              </>
-            ) : (
-              <ListItem component={Link} to="/login">
-                <ListItemIcon>
-                  <LoginIcon />
-                </ListItemIcon>
-              </ListItem>
-            )}
+            
+            <List sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+  {userInfo ? (
+    <>
+      <Divider orientation="vertical" flexItem />
+      <ListItem sx={{ display: 'flex', alignItems: 'center' }}>
+        <Button variant="contained" color="secondary" onClick={() => dispatch(logout())}>
+          Logout
+        </Button>
+        {/* <Divider orientation="vertical" flexItem />
+        <Button component={Link} to="/change-password" variant="contained" sx={{  width: 150, height: 30, padding: '5px 10px', bgcolor: 'linear-gradient(to right, #f0f0f0, #e0e0e0)', fontSize: 10, fontWeight: 'bold', letterSpacing: 0.2 }}>
+        Change Password
+         </Button> */}
+
+      </ListItem>
+    </>
+  ) : (
+    <ListItem component={Link} to="/login">
+      <Button variant="contained" color="primary" sx={{ m: 1, fontSize: 16 }}>
+        Login
+      </Button>
+    </ListItem>
+  )}
+</List>   
           </List>
         </Toolbar>
       </AppBar>

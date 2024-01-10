@@ -89,8 +89,7 @@ const ReviewForm = () => {
         
     
               const requestData = {
-                  room: roomId,
-                  user: userId,
+               
                   rating: rating,
                   comment: comment
               };
@@ -100,9 +99,7 @@ const ReviewForm = () => {
               const response = await instance.post(`/api/booking/add-review/${roomId}/${userId}/`, requestData);
               console.log('Response data:', response.data); // Log the response
               toast.success('Review added successfully!');
-              setRoomId('');
-              setUserId('');
-              setRating('');
+              setRating('0');
               setComment('');
            
           } catch (error) {

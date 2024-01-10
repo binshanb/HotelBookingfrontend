@@ -133,7 +133,7 @@ function UserLogin() {
 
         <RouterLink to="/otp-sent"> OTP Login |</RouterLink> 
            
-           
+        <RouterLink to="/change-password/"> Change Password | </RouterLink> 
           <RouterLink to="/forgot-password/"> Forgot Password ? </RouterLink> 
            
         </Typography>

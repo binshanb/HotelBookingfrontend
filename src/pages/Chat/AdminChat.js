@@ -50,8 +50,8 @@ function AdminChat() {
 
     const setupWebSocket = () => {
 
-      const newSocket = new w3cwebsocket('wss://backend.extremehotelbooking.online/ws/chat/chat-messages/');
-      // const newSocket = new w3cwebsocket('ws://127.0.0.1:8003/ws/chat/chat-messages/'); 
+      // const newSocket = new w3cwebsocket('wss://backend.extremehotelbooking.online/ws/chat/chat-messages/');
+      const newSocket = new w3cwebsocket('ws://127.0.0.1:8003/ws/chat/chat-messages/'); 
     
         newSocket.onopen = function(event) {
           console.log('WebSocket connection established.');
@@ -127,7 +127,7 @@ function AdminChat() {
         const adminId = decodedAdminInfo.user_id;
     
         // Check if the sender_id matches the current user ID or the admin ID
-        return msg.sender_id === userId || msg.sender_id === adminId;
+        return msg.sender_id === adminId || msg.sender_id === adminId;
     };
     
 
@@ -136,20 +136,18 @@ function AdminChat() {
             <div className="flex-none bg-gray-200 p-4">
                 <h1 className="text-2xl font-semibold">Admin Chat</h1>
             </div>
-            <div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
-            {chats.map((msg, index) => (
-            
-            <div key={index} className={msg.sender === 8 ?  'flex justify-start':'flex justify-end'}>
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          </Avatar>
+            <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={chatContainerRef}>
+        {chats.map((msg, index) => (
+          <div key={index} className={`flex ${msg.sender === 1 ? 'justify-start' : 'justify-end'} items-center space-x-2`}>
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: '50%', height: '50%'}}> {/* Adjust Avatar size */}
+              {/* Avatar content */}
+            </Avatar>
             <div className={`p-2 max-w-xs rounded-lg ${isAdminMessage(msg) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
-            <p className="m-0">{msg.message}</p>
-            <p>{msg.sender != 8 ?  decodedUserInfo.email : 'Admin' }</p>
-            <p>{new Date(msg.timestamp).toLocaleString()}</p>
+              <p className="m-0">{msg.message}</p>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
 
             <div className="flex-none bg-gray-200 p-4">
                 <div className="flex items-center">
