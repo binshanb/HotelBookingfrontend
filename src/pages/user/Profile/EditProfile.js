@@ -43,7 +43,7 @@ const EditProfile = () => {
     state: '',
     country: '',
   });
-
+const userId = decodedUserInfo.user_id
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [id]: value }));
@@ -51,7 +51,7 @@ const EditProfile = () => {
 
   const handleSubmit = async () => {
     try {
-     const response = await instance.put(`/api/user/edit-profile/${decodedUserInfo.user_id}/`, formData);
+     const response = await instance.put(`/api/user/edit-profile/${userId}/`, formData);
      console.log(response,"responseeeeeeeeeeeee");
       
       showToast('Profile details updated', 'success');
@@ -62,39 +62,41 @@ const EditProfile = () => {
     }
   };
 
-  useEffect(() => {
-    console.log('decodedUserInfo:', decodedUserInfo); // Log decodedUserInfo
-    if (decodedUserInfo && decodedUserInfo.user_id) {
-      // Fetch user profile details and set form data
-      // You may need to make an API call to get the existing profile details
-      // setFormData with the retrieved data
-    }
-  }, [decodedUserInfo]);
+
 
   useEffect(() => {
     if (userInfos) {
       // Decode the token and set the user info state
       const decodedInfo = jwtDecode(userInfos.access); // Assuming 'access' contains user details
       setDecodedUserInfo(decodedInfo);
+    }},[userInfos]);
+useEffect(() => {
+  console.log('decodedUserInfo:', decodedUserInfo); 
 
-
+  if (decodedUserInfo && decodedUserInfo.user_id) {
   const fetchUserProfile = async () => {
 
     try {
-      const response = await instance.get(`/api/user/detail-view/${decodedInfo.user_id}/`);
+      const response = await instance.get(`/api/user/detail-view/${decodedUserInfo.user_id}/`);
       console.log(response.data,"response");
-      const userProfileData = response.data[0]; // User profile data from the API
+      if (response.ok) {
+         const profileData = response.data[0]; // User profile data from the API
 
       // Set the retrieved user profile data into the form fields
       setFormData({
-        ...formData,
-        name: userProfileData.name,
-        address: userProfileData.address,
-        city: userProfileData.city,
-        state: userProfileData.state,
-        country: userProfileData.country,
-      });
-    } catch (error) {
+        
+        user: decodedUserInfo.user_id,
+        name: profileData.name || '',
+        address: profileData.address || '',
+        city: profileData.city || '',
+        state: profileData.state || '',
+        country: profileData.country || '',
+    });
+   } else{
+    console.error('Failed to fetch user profile details');
+   }
+
+  }catch (error) {
       console.error('Error fetching user profile data', error);
       // Handle error scenarios or display an error message to the user
     }
@@ -102,7 +104,7 @@ const EditProfile = () => {
 
   fetchUserProfile(); // Call the function to fetch user profile data
 }
-}, [userInfos]);
+}, [decodedUserInfo, setFormData]);
 
   const showToast = (message, type = 'error') => {
     toast[type](message, {

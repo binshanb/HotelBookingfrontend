@@ -79,7 +79,7 @@ const Routers = () => {
          
         <Route path='/user-profile' element={<UserProfile/>} />
        
-        <Route path='/edit-profile/:user_id' element={<EditProfile/>} />
+        <Route path='/edit-profile' element={<EditProfile/>} />
         <Route path='/add-profile' element={<AddProfile/>} />
         
         <Route path='/logout' element={<Logout/>} />

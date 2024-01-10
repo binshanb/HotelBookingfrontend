@@ -95,7 +95,7 @@ const AddProfile = () => {
                 label="Full Name"
                 variant="outlined"
                 fullWidth
-                value={formData.name}
+                value={formData?.name}
                 onChange={handleChange}
                 margin="normal"
                 className={classes.textField}
@@ -105,7 +105,7 @@ const AddProfile = () => {
                 label="Address"
                 variant="outlined"
                 fullWidth
-                value={formData.address}
+                value={formData?.address}
                 onChange={handleChange}
                 margin="normal"
                 className={classes.textField}
@@ -117,7 +117,7 @@ const AddProfile = () => {
                     label="City"
                     variant="outlined"
                     fullWidth
-                    value={formData.city}
+                    value={formData?.city}
                     onChange={handleChange}
                     margin="normal"
                     className={classes.textField}
@@ -129,7 +129,7 @@ const AddProfile = () => {
                     label="State"
                     variant="outlined"
                     fullWidth
-                    value={formData.state}
+                    value={formData?.state}
                     onChange={handleChange}
                     margin="normal"
                     className={classes.textField}
@@ -141,7 +141,7 @@ const AddProfile = () => {
                     label="Country"
                     variant="outlined"
                     fullWidth
-                    value={formData.country}
+                    value={formData?.country}
                     onChange={handleChange}
                     margin="normal"
                     className={classes.textField}
