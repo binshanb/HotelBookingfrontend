@@ -1,90 +1,68 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { FaTimes, FaImage, FaTrash } from "react-icons/fa";
+import { FaTimes, FaTrash } from "react-icons/fa";
 import { FcAddImage } from "react-icons/fc";
+import "./AddCategory.css";
 import { toast } from 'react-toastify';
-import axios from 'axios'; // import axios for HTTP requests
 import { adminInstance } from "../../../utils/Axios";
 
 export default function EditRoomModal({
   isOpen,
   onRequestClose,
   onUpdateRoom,
-  roomData, // Pass the room data to edit
+  roomData
 }) {
   const [formError, setFormError] = useState({});
   const [title, setTitle] = useState(roomData?.title || "");
-  const [pricePerNight, setPricePerNight] = useState(roomData?.price_per_night || 0);
-  const [roomSlug, setRoomSlug] = useState(roomData?.room_slug || 0);
-  const [capacity, setCapacity] = useState(roomData?.capacity || 0);
-  const [roomSize, setRoomSize] = useState(roomData?.room_size || 0);
+  const [pricePerNight, setPricePerNight] = useState(roomData?.price_per_night || "");
+  const [capacity, setCapacity] = useState(roomData?.capacity || "");
+  const [roomSize, setRoomSize] = useState(roomData?.room_size || "");
   const [description, setDescription] = useState(roomData?.description || "");
-
-  const [selectedImage, setSelectedImage] = useState(roomData?.cover_image || null);
-  const [editedRoomData, setEditedRoomData] = useState(roomData); // Set initial room data for editing
-  console.log(editedRoomData,"edittttt");
-  
-  const [availableFeatures, setAvailableFeatures] = useState([]);
-  console.log(availableFeatures,"available");
   const [categories,setCategories]=useState([]);
+  const [features,setFeatures] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(roomData?.cover_image || "");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
 
   useEffect(() => {
+
+    console.log("Initial selectedCategories:", roomData?.category);
     setTitle(roomData?.title || "");
     setPricePerNight(roomData?.price_per_night || 0);
-    setRoomSlug(roomData?.room_slug || 0);
     setCapacity(roomData?.capacity || 0);
     setRoomSize(roomData?.room_size || 0);
     setDescription(roomData?.description || "");
-    setSelectedImage(roomData?.cover_image || null);
+    setSelectedImage(roomData?.image || null);
+    setSelectedCategories(Array.isArray(roomData?.category) ? roomData?.category : []);
+    setSelectedFeatures(Array.isArray(roomData?.features) ? roomData?.features : []);
+
   }, [roomData]);
- 
-
-  useEffect(() => {
-    // Fetch categories and set the state
-    const fetchCategories = async () => {
-      try {
-        // Make an API call to get categories
-        const response = await adminInstance.get('booking/admin/room-category');
-        setCategories(response.data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-
-    // Fetch available features and set the state
-    const fetchAvailableFeatures = async () => {
-      try {
-        // Make an API call to get available features
-        const response = await adminInstance.get('booking/admin/room-feature');
-        setAvailableFeatures(response.data);
-      } catch (error) {
-        console.error('Error fetching available features:', error);
-      }
-    };
-
-    fetchCategories(); // Fetch categories data
-    fetchAvailableFeatures(); // Fetch available features data
-  }, []);
-  
-  const handleEditRoom = async (e) => {
+  const handleUpdateRoom = async (e) => {
     e.preventDefault();
-    const errors = validate(editedRoomData);
-    setFormError(errors);
-    console.log(roomData?.cover_image,'00000000000');
+  const errors = validate({
+    title,
+    pricePerNight,
+    capacity,
+    roomSize,
+    description,
+  });
+
+  setFormError(errors);
+  
+   
+
     if (Object.keys(errors).length === 0) {
       try {
         const updatedRoomData = new FormData();
         updatedRoomData.append('title', title);
         updatedRoomData.append('price_per_night', pricePerNight);
-        updatedRoomData.append('room_slug', roomSlug);
         updatedRoomData.append('capacity', capacity);
-        updatedRoomData.append('room_size',roomSize);
+        updatedRoomData.append('room_size', roomSize);
         updatedRoomData.append('description', description);
-        updatedRoomData.append('title', title);
-
-
-        updatedRoomData.append('image', selectedImage);
-        
+        updatedRoomData.append('cover_image', selectedImage);
+        updatedRoomData.append('category', selectedCategories);
+        updatedRoomData.append('features',selectedFeatures);
+      
 
         const response = await onUpdateRoom(updatedRoomData, {
           headers: {
@@ -95,62 +73,91 @@ export default function EditRoomModal({
         if (response === null) {
           setTitle("");
           setPricePerNight(0);
-          setRoomSlug(0);
           setCapacity(0);
           setRoomSize(0);
-          setDescription("")
+          setDescription("");
+          setSelectedCategories([]);
+          setSelectedFeatures([]);
           setFormError({});
           setSelectedImage(null);
           onRequestClose();
           showToast('Room updated successfully!', 'success');
         }
-        }catch (error) {
+      } catch (error) {
         console.error('Error updating room:', error.response.data);
         showToast('Error updating room', 'error');
       }
-    }
+    };
+};
+
+
+
+  useEffect(() => {
+    const fetchCategoriesAndFeatures = async () => {
+      try {
+        const categoriesResponse = await adminInstance.get('booking/admin/room-category/');
+        console.log(categoriesResponse,"categoriesssssssss");
+        const featuresResponse = await adminInstance.get('booking/admin/room-feature/');
+        console.log(featuresResponse,"featresponseeeeee");
+        
+        setCategories(categoriesResponse.data);
+        setFeatures(featuresResponse.data);
+  
+        if (!categoriesResponse.ok || !featuresResponse.ok) {
+          throw new Error('Failed to fetch categories or features');
+        }
+      } catch (error) {
+        console.error('Error fetching categories or features:', error);
+      }
+    };
+  
+    fetchCategoriesAndFeatures();
+  }, []);
+
+const categoriesArray = Array.isArray(selectedCategories) ? selectedCategories : [];
+  const handleCategoryChange = (selectedCategory) => {
+      const isCategorySelected = categoriesArray.includes(selectedCategory);
+      setSelectedCategories((prevSelectedCategories) => {
+          if (isCategorySelected) {
+              return prevSelectedCategories.filter(
+                  (category) => category !== selectedCategory
+              );
+          } else {
+              return [...prevSelectedCategories, selectedCategory];
+          }
+      });
   };
-
-
-
+  const handleFeatureChange = (selectedFeature) => {
+    const isFeatureSelected = selectedFeatures.includes(selectedFeature);
+      setSelectedFeatures((prevSelectedFeatures) => {
+      if (isFeatureSelected) {
+        return prevSelectedFeatures.filter(
+          (feature) => feature !== selectedFeature
+        );
+      } else {
+        return [...prevSelectedFeatures, selectedFeature];
+      }
+    });
+  }; 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);
-    setEditedRoomData({ ...roomData, cover_image: file });
   };
 
   const handleRemoveImage = () => {
     setSelectedImage(null);
-    setEditedRoomData({ ...roomData, cover_image: null });
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditedRoomData({ ...roomData, [name]: value });
-  };
-
-  const validate = (roomData) => {
+  const validate = (title) => {
     const errors = {};
 
-    // Perform validation checks here for each field in roomData
-    // For example:
-    if (!roomData.title) {
-      errors.title = "Title is required";
+    if (!title) {
+      errors.title = "Room name is required";
+    } else if (title.length < 3) {
+      errors.title = "Enter at least 3 characters";
     }
-    // Add more validations for other fields...
 
     return errors;
-  };
-  const handleCategoryChange = (e) => {
-    setEditedRoomData({ ...roomData, category: e.target.value });
-  };
-
-  const handleFeatureChange = (e) => {
-    const selectedFeatures = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value
-    );
-    setEditedRoomData({ ...roomData, features: selectedFeatures });
   };
   const showToast = (message, type = 'error') => {
     toast[type](message, {
@@ -163,9 +170,6 @@ export default function EditRoomModal({
       progress: undefined,
     });
   };
-  useEffect(() => {
-    setEditedRoomData(roomData); // Set room data for editing when it changes
-  }, [roomData]);
 
   return (
     <Modal
@@ -173,146 +177,105 @@ export default function EditRoomModal({
       onRequestClose={onRequestClose}
       contentLabel="Edit Room Modal"
       className="custom-modal"
-      overlayClassName="custom-overlay "
+      overlayClassName="custom-overlay"
+      style={{
+        content: {
+          width: '70%',
+          height: '70%',
+          overflow: 'auto', // or 'scroll' depending on your preference
+        },
+      }}
     >
-        <div className="modal-content p-4" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+      <div className="modal-content p-4">
         <div className="header">
           <div className="close-icon" onClick={onRequestClose}>
             <FaTimes className="text-gray-500 hover:text-red-500 cursor-pointer" />
           </div>
         </div>
+        <h2 className="text-3xl font-bold mt-4">Edit Room</h2>
+        <input
+          type="text"
+          placeholder="Room Name"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full border rounded p-2 mt-2"
+        />
+        <span className="text-red-500">
+          {formError?.title ? formError.title : ""}
+        </span>
   
-      <h2 className="text-3xl font-bold mt-4">Edit Room</h2>
-      <form onSubmit={handleEditRoom}>
-      <div className="mt-2">
-            <label htmlFor="title" className="block text-gray-700 font-bold">
-              Room Name
-            </label>
-            <input
-           type="text"
-           placeholder="Room Name"
-           name="title"
-           value={editedRoomData ? editedRoomData.title : ''}
-           onChange={handleInputChange}
-          className="w-full border rounded p-2 mt-2"
-/>
-             <span className="text-red-500">
-            {formError?.title ? formError.title : ""}
-          </span>
-          </div>
-
-                    {/* Select dropdown for categories */}
-                    <div className="mt-2">
-            <label htmlFor="category" className="block text-gray-700 font-bold">
-              Category
-            </label>
-            <select
-           id="category"
-          name="category"
-          value={roomData && roomData.category ? roomData.category : ''}
-          onChange={handleCategoryChange}
-          className="w-full border rounded p-2 mt-2"
-             >
-              <option value="">Select Category</option>
-              {categories && Array.isArray(categories) && categories.map((category) => (
-              <option key={category.id} value={category.id}>
-              {category.category_name}
-             </option>
-             ))}
-            </select>
-          </div>
-          <div className="mt-2">
-            <label htmlFor="capacity" className="block text-gray-700 font-bold">
-              Price Per Night
-            </label>
-          <input
-            type="number"
-            placeholder="Price per Night"
-            name="price_per_night"
-            value={editedRoomData ? editedRoomData.price_per_night: ''}
-            onChange={handleInputChange}
-            className="w-full border rounded p-2 mt-2"
-          />
+      {/* Category selection */}
+        <div className="category-selection mt-4">
+          <h3>Select Categories:</h3>
+          {categories.map((category) => (
+            <div key={category.id} className="category-checkbox">
+              <input
+                type="checkbox"
+                id={`category-${category.id}`}
+                checked={selectedCategories.includes(category.id)}
+                onChange={() => handleCategoryChange(category.id)}
+              />
+              <label htmlFor={`category-${category.id}`}>{category.category_name}</label>
             </div>
-            <div className="mt-2">
-            <label htmlFor="capacity" className="block text-gray-700 font-bold">
-              Room Size
-            </label>
-           <input
-            type="number"
-            placeholder="Room Size"
-            name="room_size"
-            value={editedRoomData ? editedRoomData.room_size: ''}
-            onChange={handleInputChange}
-            className="w-full border rounded p-2 mt-2"
-          />
-          </div>
-               <div className="mt-2">
-            <label htmlFor="capacity" className="block text-gray-700 font-bold">
-              Capacity
-            </label>
-            <input
-              type="number"
-              placeholder="Capacity"
-              name="capacity"
-              value={editedRoomData ? editedRoomData.capacity: ''}
-              onChange={handleInputChange}
-              className="w-full border rounded p-2 mt-2"
-            />
-          </div>
-          <div className="mt-2">
-            <label htmlFor="room_slug" className="block text-gray-700 font-bold">
-              Room Slug
-            </label>
-            <input
-            type="text"
-            placeholder="Room Slug"
-            name="room_slug"
-            value={editedRoomData ? editedRoomData.room_slug: ''}
-            onChange={handleInputChange}
-            className="w-full border rounded p-2 mt-2"
-          />
-          </div>
-          <div className="mt-2">
-            <label htmlFor="capacity" className="block text-gray-700 font-bold">
-              Description
-            </label>
-            <textarea
-            placeholder="Description"
-            name="description"
-            value={editedRoomData ? editedRoomData.description: ''}
-            onChange={handleInputChange}
-            className="w-full border rounded p-2 mt-2"
-          />
-          </div>
-                  {/* Multi-select dropdown for features */}
-                  
-  {roomData && roomData.features && (
-  <div className="mt-4">
-    <label htmlFor="features" className="block text-gray-700 font-bold">
-      Features
-    </label>
-    <select
-      id="features"
-      name="features"
-      multiple
-      value={roomData.features || []}
-      onChange={handleFeatureChange}
-      className="w-full border rounded p-2 mt-2"
-    >
-      {/* Populate features dynamically */}
-      <option value="">Select Features</option>
-      {availableFeatures.map(feature => (
-        <option key={feature.id} value={feature.id}>
-          {feature.name}
-        </option>
-      ))}
-    </select>
-  </div>
-)}
+          ))}
+        </div>
+        <input
+          type="text"
+          placeholder="Price"
+          value={pricePerNight}
+          onChange={(e) => setPricePerNight(e.target.value)}
+          className="w-full border rounded p-2 mt-2"
+        />
+        <span className="text-red-500">
+          {formError?.pricePerNight ? formError.pricePerNight : ""}
+        </span>
+        <input
+          type="text"
+          placeholder="Capacity"
+          value={capacity}
+          onChange={(e) => setCapacity(e.target.value)}
+          className="w-full border rounded p-2 mt-2"
+        />
+        <span className="text-red-500">
+          {formError?.capacity ? formError.capacity : ""}
+        </span>
+        <input
+          type="text"
+          placeholder="Room Size"
+          value={roomSize}
+          onChange={(e) => setRoomSize(e.target.value)}
+          className="w-full border rounded p-2 mt-2"
+        />
+        <span className="text-red-500">
+          {formError?.roomSize ? formError.roomSize : ""}
+        </span>
 
-          {/* Input field for cover image */}
-          <div className="image-input mt-4">
+                         {/* Feature selection */}
+          <div className="feature-selection mt-4">
+          <h3>Select Features:</h3>
+          {features.map((feature) => (
+            <div key={feature.id} className="feature-checkbox">
+              <input
+                type="checkbox"
+                id={`feature-${feature.id}`}
+                checked={selectedFeatures.includes(feature.id)}
+                onChange={() => handleFeatureChange(feature.id)}
+              />
+              <label htmlFor={`feature-${feature.id}`}>{feature.name}</label>
+            </div>
+          ))}
+        </div>
+        <input
+          type="text"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full border rounded p-2 mt-2"
+        />
+        <span className="text-red-500">
+          {formError?.description ? formError.description : ""}
+        </span>
+        <div className="image-input mt-4">
           {/* Image Preview */}
           {selectedImage ? (
             <div className="image-preview-container" style={{display:"flex",justifyContent:"space-between"}}>
@@ -355,19 +318,421 @@ export default function EditRoomModal({
           )}
         </div>
 
-          <div className="buttonDiv mt-4">
-        <button
-          type="submit"
-          className="add-button bg-blue-500 text-white px-4 py-2 rounded cursor-pointer mx-auto"
-        >
-          Update
-        </button>
+        <div className="buttonDiv mt-4">
+          <button
+            onClick={handleUpdateRoom}
+            className="add-button bg-blue-500 text-white px-4 py-2 rounded cursor-pointer mx-auto"
+          >
+            Update
+          </button>
         </div>
-      </form>
       </div>
     </Modal>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from "react";
+// import Modal from "react-modal";
+// import { FaTimes, FaImage, FaTrash } from "react-icons/fa";
+// import { FcAddImage } from "react-icons/fc";
+// import { toast } from 'react-toastify';
+// import axios from 'axios'; // import axios for HTTP requests
+// import { adminInstance } from "../../../utils/Axios";
+
+// export default function EditRoomModal({
+//   isOpen,
+//   onRequestClose,
+//   onUpdateRoom,
+//   roomData, // Pass the room data to edit
+// }) {
+//   const [formError, setFormError] = useState({});
+//   const [title, setTitle] = useState(roomData?.title || "");
+//   const [pricePerNight, setPricePerNight] = useState(roomData?.price_per_night || 0);
+//   const [roomSlug, setRoomSlug] = useState(roomData?.room_slug || 0);
+//   const [capacity, setCapacity] = useState(roomData?.capacity || 0);
+//   const [roomSize, setRoomSize] = useState(roomData?.room_size || 0);
+//   const [description, setDescription] = useState(roomData?.description || "");
+
+//   const [selectedImage, setSelectedImage] = useState(roomData?.cover_image || null);
+//   const [editedRoomData, setEditedRoomData] = useState(roomData); // Set initial room data for editing
+//   console.log(editedRoomData,"edittttt");
+  
+//   const [availableFeatures, setAvailableFeatures] = useState([]);
+//   console.log(availableFeatures,"available");
+//   const [categories,setCategories]=useState([]);
+
+//   useEffect(() => {
+//     setTitle(roomData?.title || "");
+//     setPricePerNight(roomData?.price_per_night || 0);
+//     setRoomSlug(roomData?.room_slug || 0);
+//     setCapacity(roomData?.capacity || 0);
+//     setRoomSize(roomData?.room_size || 0);
+//     setDescription(roomData?.description || "");
+//     setSelectedImage(roomData?.cover_image || null);
+//   }, [roomData]);
+ 
+
+//   useEffect(() => {
+//     // Fetch categories and set the state
+//     const fetchCategories = async () => {
+//       try {
+//         // Make an API call to get categories
+//         const response = await adminInstance.get('booking/admin/room-category');
+//         setCategories(response.data);
+//       } catch (error) {
+//         console.error('Error fetching categories:', error);
+//       }
+//     };
+
+//     // Fetch available features and set the state
+//     const fetchAvailableFeatures = async () => {
+//       try {
+//         // Make an API call to get available features
+//         const response = await adminInstance.get('booking/admin/room-feature');
+//         setAvailableFeatures(response.data);
+//       } catch (error) {
+//         console.error('Error fetching available features:', error);
+//       }
+//     };
+
+//     fetchCategories(); // Fetch categories data
+//     fetchAvailableFeatures(); // Fetch available features data
+//   }, []);
+  
+//   const handleEditRoom = async (e) => {
+//     e.preventDefault();
+//     const errors = validate(editedRoomData);
+//     setFormError(errors);
+//     console.log(roomData?.cover_image,'00000000000');
+//     if (Object.keys(errors).length === 0) {
+//       try {
+//         const updatedRoomData = new FormData();
+//         updatedRoomData.append('title', title);
+//         updatedRoomData.append('price_per_night', pricePerNight);
+//         updatedRoomData.append('room_slug', roomSlug);
+//         updatedRoomData.append('capacity', capacity);
+//         updatedRoomData.append('room_size',roomSize);
+//         updatedRoomData.append('description', description);
+//         updatedRoomData.append('title', title);
+
+
+//         updatedRoomData.append('image', selectedImage);
+        
+
+//         const response = await onUpdateRoom(updatedRoomData, {
+//           headers: {
+//             'Content-Type': 'multipart/form-data',
+//           },
+//         });
+
+//         if (response === null) {
+//           setTitle("");
+//           setPricePerNight(0);
+//           setRoomSlug(0);
+//           setCapacity(0);
+//           setRoomSize(0);
+//           setDescription("")
+//           setFormError({});
+//           setSelectedImage(null);
+//           onRequestClose();
+//           showToast('Room updated successfully!', 'success');
+//         }
+//         }catch (error) {
+//         console.error('Error updating room:', error.response.data);
+//         showToast('Error updating room', 'error');
+//       }
+//     }
+//   };
+
+
+
+//   const handleImageChange = (e) => {
+//     const file = e.target.files[0];
+//     setSelectedImage(file);
+//     setEditedRoomData({ ...roomData, cover_image: file });
+//   };
+
+//   const handleRemoveImage = () => {
+//     setSelectedImage(null);
+//     setEditedRoomData({ ...roomData, cover_image: null });
+//   };
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setEditedRoomData({ ...roomData, [name]: value });
+//   };
+
+//   const validate = (roomData) => {
+//     const errors = {};
+
+//     // Perform validation checks here for each field in roomData
+//     // For example:
+//     if (!roomData.title) {
+//       errors.title = "Title is required";
+//     }
+//     // Add more validations for other fields...
+
+//     return errors;
+//   };
+//   const handleCategoryChange = (e) => {
+//     setEditedRoomData({ ...roomData, category: e.target.value });
+//   };
+
+//   const handleFeatureChange = (e) => {
+//     const selectedFeatures = Array.from(
+//       e.target.selectedOptions,
+//       (option) => option.value
+//     );
+//     setEditedRoomData({ ...roomData, features: selectedFeatures });
+//   };
+//   const showToast = (message, type = 'error') => {
+//     toast[type](message, {
+//       position: toast.POSITION.TOP_RIGHT,
+//       autoClose: 3000,
+//       hideProgressBar: false,
+//       closeOnClick: true,
+//       pauseOnHover: true,
+//       draggable: true,
+//       progress: undefined,
+//     });
+//   };
+//   useEffect(() => {
+//     setEditedRoomData(roomData); // Set room data for editing when it changes
+//   }, [roomData]);
+
+//   return (
+//     <Modal
+//       isOpen={isOpen}
+//       onRequestClose={onRequestClose}
+//       contentLabel="Edit Room Modal"
+//       className="custom-modal"
+//       overlayClassName="custom-overlay "
+//     >
+//         <div className="modal-content p-4" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+//         <div className="header">
+//           <div className="close-icon" onClick={onRequestClose}>
+//             <FaTimes className="text-gray-500 hover:text-red-500 cursor-pointer" />
+//           </div>
+//         </div>
+  
+//       <h2 className="text-3xl font-bold mt-4">Edit Room</h2>
+//       <form onSubmit={handleEditRoom}>
+//       <div className="mt-2">
+//             <label htmlFor="title" className="block text-gray-700 font-bold">
+//               Room Name
+//             </label>
+//             <input
+//            type="text"
+//            placeholder="Room Name"
+//            name="title"
+//            value={editedRoomData ? editedRoomData.title : ''}
+//            onChange={handleInputChange}
+//           className="w-full border rounded p-2 mt-2"
+// />
+//              <span className="text-red-500">
+//             {formError?.title ? formError.title : ""}
+//           </span>
+//           </div>
+
+//                     {/* Select dropdown for categories */}
+//                     <div className="mt-2">
+//             <label htmlFor="category" className="block text-gray-700 font-bold">
+//               Category
+//             </label>
+//             <select
+//            id="category"
+//           name="category"
+//           value={roomData && roomData.category ? roomData.category : ''}
+//           onChange={handleCategoryChange}
+//           className="w-full border rounded p-2 mt-2"
+//              >
+//               <option value="">Select Category</option>
+//               {categories && Array.isArray(categories) && categories.map((category) => (
+//               <option key={category.id} value={category.id}>
+//               {category.category_name}
+//              </option>
+//              ))}
+//             </select>
+//           </div>
+//           <div className="mt-2">
+//             <label htmlFor="capacity" className="block text-gray-700 font-bold">
+//               Price Per Night
+//             </label>
+//           <input
+//             type="number"
+//             placeholder="Price per Night"
+//             name="price_per_night"
+//             value={editedRoomData ? editedRoomData.price_per_night: ''}
+//             onChange={handleInputChange}
+//             className="w-full border rounded p-2 mt-2"
+//           />
+//             </div>
+//             <div className="mt-2">
+//             <label htmlFor="capacity" className="block text-gray-700 font-bold">
+//               Room Size
+//             </label>
+//            <input
+//             type="number"
+//             placeholder="Room Size"
+//             name="room_size"
+//             value={editedRoomData ? editedRoomData.room_size: ''}
+//             onChange={handleInputChange}
+//             className="w-full border rounded p-2 mt-2"
+//           />
+//           </div>
+//                <div className="mt-2">
+//             <label htmlFor="capacity" className="block text-gray-700 font-bold">
+//               Capacity
+//             </label>
+//             <input
+//               type="number"
+//               placeholder="Capacity"
+//               name="capacity"
+//               value={editedRoomData ? editedRoomData.capacity: ''}
+//               onChange={handleInputChange}
+//               className="w-full border rounded p-2 mt-2"
+//             />
+//           </div>
+//           <div className="mt-2">
+//             <label htmlFor="room_slug" className="block text-gray-700 font-bold">
+//               Room Slug
+//             </label>
+//             <input
+//             type="text"
+//             placeholder="Room Slug"
+//             name="room_slug"
+//             value={editedRoomData ? editedRoomData.room_slug: ''}
+//             onChange={handleInputChange}
+//             className="w-full border rounded p-2 mt-2"
+//           />
+//           </div>
+//           <div className="mt-2">
+//             <label htmlFor="capacity" className="block text-gray-700 font-bold">
+//               Description
+//             </label>
+//             <textarea
+//             placeholder="Description"
+//             name="description"
+//             value={editedRoomData ? editedRoomData.description: ''}
+//             onChange={handleInputChange}
+//             className="w-full border rounded p-2 mt-2"
+//           />
+//           </div>
+//                   {/* Multi-select dropdown for features */}
+                  
+//   {roomData && roomData.features && (
+//   <div className="mt-4">
+//     <label htmlFor="features" className="block text-gray-700 font-bold">
+//       Features
+//     </label>
+//     <select
+//       id="features"
+//       name="features"
+//       multiple
+//       value={roomData.features || []}
+//       onChange={handleFeatureChange}
+//       className="w-full border rounded p-2 mt-2"
+//     >
+//       {/* Populate features dynamically */}
+//       <option value="">Select Features</option>
+//       {availableFeatures.map(feature => (
+//         <option key={feature.id} value={feature.id}>
+//           {feature.name}
+//         </option>
+//       ))}
+//     </select>
+//   </div>
+// )}
+
+//           {/* Input field for cover image */}
+//           <div className="image-input mt-4">
+//           {/* Image Preview */}
+//           {selectedImage ? (
+//             <div className="image-preview-container" style={{display:"flex",justifyContent:"space-between"}}>
+//               <img
+//                 src={typeof selectedImage === 'string' ? selectedImage : URL.createObjectURL(selectedImage)}
+//                 alt="Selected Image"
+//                 className="image-preview"
+//               />
+//               <div
+//                 className="remove-image text-red-500 cursor-pointer"
+//                 onClick={handleRemoveImage}
+//               >
+//                 <FaTrash />
+//               </div>
+//             </div>
+//           ) : (
+//             // Upload Image Button
+//             <div
+//               style={{
+//                 color: "#fff",
+//                 padding: "8px 12px",
+//                 borderRadius: "5px",
+//                 cursor: "pointer",
+//                 display: "inline-flex",
+//                 alignItems: "center",
+//               }}
+//               onClick={() => document.getElementById("editCategoryImage").click()}
+//             >
+//               <FcAddImage
+//                 style={{ marginRight: "5px", height: "100px", width: "100px" }}
+//               />
+//               <input
+//                 type="file"
+//                 id="editCategoryImage"
+//                 accept="image/*"
+//                 onChange={handleImageChange}
+//                 style={{ display: "none" }}
+//               />
+//             </div>
+//           )}
+//         </div>
+
+//           <div className="buttonDiv mt-4">
+//         <button
+//           type="submit"
+//           className="add-button bg-blue-500 text-white px-4 py-2 rounded cursor-pointer mx-auto"
+//         >
+//           Update
+//         </button>
+//         </div>
+//       </form>
+//       </div>
+//     </Modal>
+//   );
+// }
 
 
 

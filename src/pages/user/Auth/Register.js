@@ -208,7 +208,8 @@ function Register() {
 
         toast.success('Extreme team has sent an OTP to your email for verification.', {
           onClose: () => {
-            localStorage.setItem('randomUserEmail', email);
+            localStorage.setItem('randomUserEmail', formData.email);
+            console.log(email,"email success");
             navigate('/verify-email');
           }
         });

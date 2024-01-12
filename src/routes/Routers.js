@@ -33,7 +33,7 @@ import AvailableRoomsPage from '../pages/user/Rooms/AvailableRoomsPage'
 import ReviewForm from '../pages/user/Review/ReviewForm'
 import ReviewList from '../pages/user/Review/ReviewList'
 
-import ResetPasswordUser from '../pages/user/Auth/ResetPasswordUser'
+import ResetPassword from '../pages/user/Auth/ResetPassword'
 import ForgotPassword from '../pages/user/Auth/ForgotPassword'
 import ChatPage from '../pages/Chat/ChatPage'
 import AdminChat from '../pages/Chat/AdminChat'
@@ -79,13 +79,13 @@ const Routers = () => {
          
         <Route path='/user-profile' element={<UserProfile/>} />
        
-        <Route path='/edit-profile' element={<EditProfile/>} />
+        <Route path='/edit-profile/:userId' element={<EditProfile/>} />
         <Route path='/add-profile' element={<AddProfile/>} />
         
         <Route path='/logout' element={<Logout/>} />
 
      
-        <Route path='/reset-password' element={<ResetPasswordUser/>} />
+        <Route path='/reset-password' element={<ResetPassword/>} />
         
         <Route path='/chat-messages' element={<ChatPage/>} ></Route>
         <Route path='/privacy-policy' element={<PrivacyPolicy/>} ></Route>

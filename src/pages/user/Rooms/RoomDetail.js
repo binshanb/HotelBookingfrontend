@@ -65,16 +65,23 @@ function RoomDetail({rooms}) {
   useEffect(() => {
     // Fetch the room detail for the specified room ID
     adminInstance
-      .get(`${baseUrl}/api/booking/room-detail/${id}/`)
+      .get(`booking/room-detail/${id}/`)
       .then((response) => response.data)
       .then((data) => {
         console.log('Room data:',data);
+        if (Array.isArray(data) && data.length > 0) {
+
         setRoomData(data[0]);
         dispatch(activateRoomInfo(data[0]))
         setIsRoomData(true);
-      })
+      }      else {
+        console.error('Error: Invalid room data format');
+      }
+    })
       .catch((error) => {
         console.error('Error fetching room detail:', error);
+        setIsRoomData(false);
+
       });
   }, [id]);
   const handleReview = ()=>{

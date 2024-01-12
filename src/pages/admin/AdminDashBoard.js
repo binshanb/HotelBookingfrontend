@@ -17,6 +17,7 @@ import {
   Tooltip,
   Legend,
   Cell,
+  ResponsiveContainer
 } from 'recharts';
 import { adminInstance } from '../../utils/Axios';
 
@@ -39,37 +40,61 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  const getFillColor = (value) => {
+    // Define your logic here to assign colors based on value ranges or conditions
+    if (value > 10) {
+      return '#ff0000'; // Red color if value is greater than 50
+    } else {
+      return '#8884d8'; // Default color for other values
+    }
+  };
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
         Admin Dashboard
       </Typography>
       <Grid container spacing={3}>
-      <Grid item xs={12} md={6}>
-        <Paper>
+        <Grid item xs={12} md={6}>
+          <Paper>
           <Typography variant="h6">Pie Chart</Typography>
-          <PieChart width={400} height={300}>
-            <Pie data={dashboardData.pieChart} dataKey="count">
-              {dashboardData.pieChart.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={`#${Math.floor(Math.random() * 16777215).toString(16)}`} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </Paper>
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={dashboardData.pieChart}
+            dataKey="count" // Replace with the appropriate data key from your API response
+            nameKey="room__category__category_name" // Replace with the appropriate key representing the name/id in your data
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            fill="#8884d8"
+            label
+          >
+            {dashboardData.pieChart.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={`#${Math.floor(Math.random() * 16777215).toString(16)}`} />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </ResponsiveContainer>
+      </Paper>
       </Grid>
 
         <Grid item xs={12} md={6}>
           <Paper>
-            <Typography variant="h6">Bar Graph</Typography>
-            <BarChart width={400} height={300} data={dashboardData.barGraph}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="_id" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="totalBookings" fill="#8884d8" />
-            </BarChart>
+          <Typography variant="h6">Bar Graph</Typography>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={dashboardData.barGraph}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis  dataKey="room__title" />
+             
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="totalBookings" fill={getFillColor} />
+            
+        </BarChart>
+      </ResponsiveContainer>
           </Paper>
         </Grid>
         <Grid item xs={12}>

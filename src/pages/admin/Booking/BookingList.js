@@ -93,7 +93,9 @@ const handleCheckout = async () => {
             <TableCell>Booked by</TableCell>
             <TableCell>Check-in</TableCell>
             <TableCell>Check-out</TableCell>
+            <TableCell>Booking Amount</TableCell>
             <TableCell>Booking Status</TableCell>
+           
             <TableCell>Current Status</TableCell>
             {/* <TableCell>Room Name</TableCell>
             <TableCell>User Email</TableCell> */}
@@ -104,11 +106,12 @@ const handleCheckout = async () => {
         {roomBookings.map((booking) => (
             <TableRow key={booking.id}>
               <TableCell>{booking.id}</TableCell>
-              <TableCell>{booking.room_title || 'N/A'}</TableCell>  
+              <TableCell>{booking.room_title || 'N/A'}</TableCell> 
               <TableCell>{booking.user_email || 'N/A'}</TableCell>     
               
               <TableCell>{booking.check_in}</TableCell>
               <TableCell>{booking.check_out}</TableCell>
+              <TableCell>{booking.total_amount}</TableCell>
               <TableCell>
         <AdminBookingStatusChange
           bookingId={booking.id}

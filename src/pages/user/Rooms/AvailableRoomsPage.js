@@ -1,7 +1,10 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Typography, List, ListItem,Button, ListItemText } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { useSelector } from 'react-redux';
+import jwtDecode from 'jwt-decode';
+
 
 
 
@@ -31,29 +34,45 @@ const useStyles = makeStyles({
 
 
 const AvailableRoomsPage = () => {
+
   const location = useLocation();
   const navigate = useNavigate();
   const classes = useStyles();
   console.log(location.state,'state2222')
   const  availableRooms  = location.state || { availableRooms: [] };
   console.log(availableRooms,"roooooooooooooooooms");
-  const handleBookNow = () => {
+  const userInfos = useSelector((state) => state.auth.userInfo);
+  const [decodedUserInfo, setDecodedUserInfo] = useState({});
+  const room = useSelector((state) => state.room.roomInfo);
+  const handleBookNow = async(e) => {
+  e.preventDefault(); 
     // Logic to handle booking for the selected room
-    const isLoggedIn = checkUserLoggedIn(); // Implement your user authentication logic here
+   // Implement your user authentication logic here
 
-    if (isLoggedIn) {
+    if (userId) {
       // User is logged in, proceed to the booking form page
-      navigate('/add-roombooking');
+      navigate(`/room-detail/${room.id}/`);
     } else {
       // User is not logged in, redirect to the login page
       navigate('/login');
     }
   };
-  const checkUserLoggedIn = () => {
-    // Simulated check for logged-in user (example using local storage)
-    const userLoggedIn = localStorage.getItem('setCredentials');
-    return userLoggedIn === 'true'; 
-  };
+
+
+  // const checkUserLoggedIn = () => {
+  //   // Simulated check for logged-in user (example using local storage)
+  //   const userLoggedIn = localStorage.getItem('setCredentials');
+  //   return userLoggedIn === 'true'; 
+  // };
+
+  useEffect(() => {
+    if (userInfos) {
+      // Decode the token and set the user info state
+      const decodedInfo = jwtDecode(userInfos.access); // Assuming 'access' contains user details
+      setDecodedUserInfo(decodedInfo);
+    }
+  }, []); 
+const userId = decodedUserInfo.user_id
   return (
         <div>
           <Typography variant="h4" gutterBottom>
@@ -74,7 +93,7 @@ const AvailableRoomsPage = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => handleBookNow(room.id)}
+            onClick={() => handleBookNow()}
           >
             Book Now
           </Button>

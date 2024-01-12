@@ -15,7 +15,7 @@ const columns = [
   { field: "title", headerName: "Room Name", width: 130 },
   { field: "category", headerName: "Category", width: 130, valueGetter: (params) => params.row.category.category_name || "", },
     { field: "price_per_night", headerName: "Price Per Night", width: 150 },
-    { field: "room_slug", headerName: "Room Slug", width: 130 },
+   
   
     { field: "capacity", headerName: "Capacity", width: 120 },
     { field: "room_size", headerName: "Room Size", width: 120 },
@@ -97,17 +97,23 @@ useEffect(() => {
   fetchRooms();
 }, []);
 
-  const handleAddRoom = async (roomData) => {
-    try {
-      await adminInstance.post(`booking/admin/add-room/`,roomData);
-      fetchRooms();
-      showToast("Room added", "success");
-      setIsAddModalOpen(false);
-    } catch (error) {
-      showToast("Error adding room", "error");
-      console.error("Error adding room", error);
-    }
-  };
+const handleAddRoom = async (roomData) => {
+  try {
+    const response = await adminInstance.post(`booking/admin/add-room/`, roomData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+
+    fetchRooms();  // Assuming fetchRooms is a function to update the list of rooms
+    showToast("Room added", "success");
+    setIsAddModalOpen(false);
+  } catch (error) {
+    showToast("Error adding room", "error");
+    console.error("Error adding room", error);
+  }
+};
 
   const handleEditRoom = (room) => {
     setSelectedRoom(room);

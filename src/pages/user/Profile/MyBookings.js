@@ -1,7 +1,7 @@
   import React, { useState, useEffect } from 'react';
   import { Typography, Table, TableBody, TableCell, Button, TableContainer, TableHead, TableRow, Paper, makeStyles } from '@material-ui/core';
   import instance from '../../../utils/Axios';
-  import { baseUrl } from '../../../utils/constants';
+
   import { useSelector } from 'react-redux';
   import jwtDecode from 'jwt-decode';
   import Dialog from '@material-ui/core/Dialog';
@@ -95,74 +95,76 @@
   //   };
   // }
     return (
-      <div className={classes.root}>
-        <Typography variant="h4" gutterBottom>
-          My Room Bookings
-        </Typography>
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="bookings table">
-            <TableHead>
-              <TableRow>
-              <TableCell>Booking ID</TableCell>
-                <TableCell>Room Title</TableCell>
-                <TableCell align="centre">Check-in</TableCell>
-                <TableCell align="centre">Check-out</TableCell>
-                <TableCell align="right">Total Amount</TableCell>
-
-                <TableCell align="right">Actions</TableCell>
+      <div className="container mx-auto p-4">
+      <Typography variant="h4" gutterBottom className="text-2xl mb-4">
+        My Room Bookings
+      </Typography>
+      <TableContainer component={Paper} className="mb-8">
+        <Table className="w-full border" aria-label="bookings table">
+          <TableHead>
+            <TableRow>
+              <TableCell className="border p-2">Booking ID</TableCell>
+              <TableCell className="border p-2">Room Title</TableCell>
+              <TableCell className="border p-2 text-center">Check-in</TableCell>
+              <TableCell className="border p-2 text-center">Check-out</TableCell>
+              <TableCell className="border p-2 text-right">Total Amount</TableCell>
+              <TableCell className="border p-2 text-right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {roomBookings.map((booking) => (
+              <TableRow key={booking.id} className="hover:bg-gray-100">
+                <TableCell className="border p-2 text-center">{booking.id}</TableCell>
+                <TableCell className="border p-2">{booking?.room_title || 'null'}</TableCell>
+                <TableCell className="border p-2 text-center">{booking.check_in}</TableCell>
+                <TableCell className="border p-2 text-center">{booking.check_out}</TableCell>
+                <TableCell className="border p-2 text-right">{booking?.total_amount || 'null'}</TableCell>
+                <TableCell className="border p-2 text-right">
+                  {booking.booking_status !== 'cancelled' && (
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => {
+                        setCancellationReason('');
+                        setOpenConfirmationDialog(true);
+                      }}
+                    >
+                      Cancel Booking
+                    </Button>
+                  )}
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {roomBookings.map((booking) => (
-                <TableRow key={booking.id}>
-                  <TableCell align="centre">{booking.id}</TableCell>
-                  <TableCell component="th" scope="row">
-                    {booking?.room_title || 'null'}
-                  </TableCell>
-                  <TableCell align="centre">{booking.check_in}</TableCell>
-                  <TableCell align="centre">{booking.check_out}</TableCell>
-                  <TableCell align="right">{booking?.total_amount ||'null'}</TableCell>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-                  <TableCell align="right">
-                    {booking.booking_status !== 'cancelled' && (
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() => handleCancelBooking(booking.id)}
-                      >
-                        Cancel Booking
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        
-        <Dialog open={openConfirmationDialog} onClose={handleDialogClose}>
-      <DialogTitle>Confirm Cancellation</DialogTitle>
-      <DialogContent>
-        <p>Are you sure you want to cancel this booking?</p>
-        <input
-          type="text"
-          value={cancellationReason}
-          onChange={(e) => setCancellationReason(e.target.value)}
-          placeholder="Enter reason for cancellation"
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleDialogClose} color="primary">
-          No
-        </Button>
-        <Button onClick={handleCancel} color="secondary">
-          Yes, Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
-      </div>
-    );
-  };
+      <Dialog open={openConfirmationDialog} onClose={handleDialogClose}>
+        <DialogTitle>Confirm Cancellation</DialogTitle>
+        <DialogContent>
+          <p className="mb-4">Are you sure you want to cancel this booking?</p>
+          <input
+            type="text"
+            value={cancellationReason}
+            onChange={(e) => setCancellationReason(e.target.value)}
+            placeholder="Enter reason for cancellation"
+            className="border border-gray-400 p-2 w-full"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            No
+          </Button>
+          <Button onClick={handleCancel} color="secondary">
+            Yes, Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
+
+
 
 export default MyBookings;
 

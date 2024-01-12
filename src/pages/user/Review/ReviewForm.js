@@ -89,7 +89,8 @@ const ReviewForm = () => {
         
     
               const requestData = {
-               
+                  room:roomId,
+                  user:userId,
                   rating: rating,
                   comment: comment
               };

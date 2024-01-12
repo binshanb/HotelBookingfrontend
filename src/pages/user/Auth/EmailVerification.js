@@ -70,8 +70,10 @@ const [timer, setTimer] = useState(100);
   
       if (response.status === 200) {
         console.log(response.data, 'responseeeeeee');
+        localStorage.removeItem('randomUserEmail');
         toast.success('The user details have been updated.', {
           position: toast.POSITION.TOP_RIGHT,
+          
         });
         navigate('/login');
       } else {

@@ -1,33 +1,15 @@
 import React, { useState,useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+
 import jwtDecode from 'jwt-decode';
 import { useSelector } from 'react-redux';
 import instance from '../../../utils/Axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
-  formContainer: {
-    padding: theme.spacing(2),
-  },
-  textField: {
-    marginBottom: theme.spacing(2),
-  },
-  button: {
-    marginTop: theme.spacing(2),
-  },
-}));
+
 
 const AddProfile = () => {
-  const classes = useStyles();
+  
   const userInfos = useSelector((state) => state.auth.userInfo);
   const [decodedUserInfo, setDecodedUserInfo] = useState({});
   const [formData, setFormData] = useState({
@@ -82,84 +64,86 @@ const AddProfile = () => {
   
 
   return (
-    <div className={classes.root}>
-      <Grid container justifyContent="center">
-        <Grid item xs={12} sm={8} md={6}>
-          <div className={classes.formContainer}>
-          <Typography variant="h5" gutterBottom>
-              Add Profile Information
-            </Typography>
-            <form onSubmit={handleSubmit}>
-              <TextField
-                id="name"
-                label="Full Name"
-                variant="outlined"
-                fullWidth
-                value={formData?.name}
-                onChange={handleChange}
-                margin="normal"
-                className={classes.textField}
-              />
-              <TextField
-                id="address"
-                label="Address"
-                variant="outlined"
-                fullWidth
-                value={formData?.address}
-                onChange={handleChange}
-                margin="normal"
-                className={classes.textField}
-              />
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    id="city"
-                    label="City"
-                    variant="outlined"
-                    fullWidth
-                    value={formData?.city}
-                    onChange={handleChange}
-                    margin="normal"
-                    className={classes.textField}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    id="state"
-                    label="State"
-                    variant="outlined"
-                    fullWidth
-                    value={formData?.state}
-                    onChange={handleChange}
-                    margin="normal"
-                    className={classes.textField}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    id="country"
-                    label="Country"
-                    variant="outlined"
-                    fullWidth
-                    value={formData?.country}
-                    onChange={handleChange}
-                    margin="normal"
-                    className={classes.textField}
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                className={classes.button}
-              >
-                Submit
-              </Button>
-            </form>
+<div className="flex justify-center items-center min-h-screen bg-gray-100 p-8">
+  <div className="max-w-md w-full bg-white p-4 shadow-md rounded-md">
+    <h1 className="text-2xl font-semibold mb-6">Add Profile Information</h1>
+    <form onSubmit={handleSubmit}>
+
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-600">
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+            />
           </div>
-        </Grid>
-      </Grid>
+
+          <div className="mb-4">
+            <label htmlFor="address" className="block text-sm font-medium text-gray-600">
+              Address
+            </label>
+            <input
+              type="text"
+              id="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="city" className="block text-sm font-medium text-gray-600">
+              City
+            </label>
+            <input
+              type="text"
+              id="city"
+              value={formData.city}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="state" className="block text-sm font-medium text-gray-600">
+              State
+            </label>
+            <input
+              type="text"
+              id="state"
+              value={formData.state}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="country" className="block text-sm font-medium text-gray-600">
+              Country
+            </label>
+            <input
+              type="text"
+              id="country"
+              value={formData.country}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+            />
+          </div>
+
+        
+
+          <button
+            type="submit"
+            variant="contained"
+            color="primary"
+            className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

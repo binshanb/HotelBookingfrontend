@@ -6,7 +6,7 @@ import Image1 from '../../../assets/hotel14.jpg'
 import Image2 from '../../../assets/service2.jpg'
 import Image3 from '../../../assets/hotel13.jpg'
 import Image4 from '../../../assets/hotel10.jpg'
-
+import { Link } from "react-router-dom";
 
 export default function Services() {
   const serviceList = [
@@ -47,6 +47,8 @@ export default function Services() {
       <Title title="Services" />
       <div className="flex flex-wrap justify-center">
         {serviceList.map((service, index) => (
+        
+
           <ServiceCard
             service={service.serviceName}
             title={service.title}
@@ -54,9 +56,20 @@ export default function Services() {
             image={service.image}
             key={index}
             className="w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 p-4"
-          />))
+          />
+    
+          ))
         }
       </div>
+           {/* Button for navigation to the next page */}
+      <div className="flex justify-center mt-4">
+        <Link to="/categorylist">
+          <button className="bg-blue-500 text-white px-4 py-2 my-10 rounded-md">
+            More Details
+          </button>
+        </Link>
+        </div>
+
       </React.Fragment>
   );
         }
