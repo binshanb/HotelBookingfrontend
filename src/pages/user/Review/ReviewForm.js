@@ -50,15 +50,15 @@ const ReviewForm = () => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(-1);
   const labels = {
-    0.5: 'Terrible',
+   
     1: 'Bad',
-    1.5: 'Poor',
+
     2: 'Okay',
-    2.5: 'Not Bad',
+ 
     3: 'Good',
-    3.5: 'Very Good',
+  
     4: 'Great',
-    4.5: 'Excellent',
+   
     5: 'Outstanding',
   };
     const classes = useStyles();
@@ -110,60 +110,56 @@ const ReviewForm = () => {
       };
 
     return (
-      <Grid container justifyContent="center">
-            <Grid item xs={12} sm={6}>
-                <form className={classes.formContainer}>
-                    <Typography variant="h6">Add Review</Typography>
-                    {/* <TextField
-                        type="number"
-                        label="Rating"
-                        value={rating}
-                        onChange={(e) => setRating(e.target.value)}
-                    /> */}
-
-<Box
-      sx={{
-        width: 200,
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
-      <Rating
-        name="hover-feedback"
-        value={rating}
-        precision={0.5}
-        onChange={(event, newValue) => {
-          setRating(newValue);
-        }}
-        onChangeActive={(event, newHover) => {
-          setHover(newHover);
-        }}
-        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-      />
-      {rating !== null && (
-        <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : rating]}</Box>
-      )}
-    </Box>
-                 <TextField
-                    label="Comment"
-                    multiline
-                     minRows={4} // Replace 'rows' with 'minRows'
-                    variant="outlined"
-                    value={comment}
-                   onChange={(e) => setComment(e.target.value)}
-                  />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleAddReview}
-                        className={classes.button}
-                    >
-                        Add Review
-                    </Button>
-                </form>
-            </Grid>
-        </Grid>
-    );
+      <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 justify-center">
+        <div className="col-span-12 sm:col-span-6">
+          <form className="bg-white p-8 shadow-md rounded-md">
+            <Typography variant="h6" className="mb-4 text-2xl">
+              Add Review
+            </Typography>
+            <div className="mb-4">
+              <div className="flex items-center">
+                <Rating
+                  name="hover-feedback"
+                  value={rating}
+                  precision={0.5}
+                  onChange={(event, newValue) => {
+                    setRating(newValue);
+                  }}
+                  onChangeActive={(event, newHover) => {
+                    setHover(newHover);
+                  }}
+                  emptyIcon={<StarIcon className="opacity-55" fontSize="inherit" />}
+                />
+                {rating !== null && (
+                  <span className="ml-2">{labels[hover !== -1 ? hover : rating]}</span>
+                )}
+              </div>
+            </div>
+            <TextField
+              label="Comment"
+              multiline
+              rows={4}
+              variant="outlined"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="w-full mb-4"
+            />
+            <Button
+            variant="contained"
+           color="primary"
+                onClick={handleAddReview}
+           className="w-full"
+            size="small"  
+            style={{ width: '150px' }} // or size="medium" depending on your preference
+             >
+           Add Review
+            </Button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ReviewForm;

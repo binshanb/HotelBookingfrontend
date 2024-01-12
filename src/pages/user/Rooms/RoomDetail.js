@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Typography, Button, Grid, CircularProgress } from '@mui/material';
+import { List, ListItem, ListItemText } from '@material-ui/core';
 import { adminInstance } from '../../../utils/Axios';
 import { baseUrl } from '../../../utils/constants';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import {activateRoomInfo} from '../../../redux/slices/roomslices/roomSlice'
 import { makeStyles } from '@material-ui/core/styles';
 import ReviewList from '../Review/ReviewList';
+import instance from '../../../utils/Axios';
 import jwtDecode from 'jwt-decode';
 import CustomButton from '../../../components/TextInput/Button';
 import {
@@ -48,6 +50,7 @@ function RoomDetail({rooms}) {
   const[isRoomData, setIsRoomData] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [reviews,setReviews] = useState([]);
   const dispatch = useDispatch();
   const userInfos = useSelector((state) => state.auth.userInfo);
   const [decodedUserInfo, setDecodedUserInfo] = useState({});
@@ -104,6 +107,18 @@ function RoomDetail({rooms}) {
   console.log("isRoomData:", isRoomData);
 
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await instance.get(`/api/booking/room-reviews/${id}/`);
+        setReviews(response.data);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+  
+    fetchReviews();
+  }, [id]);
   return (
     <Box p={4} className="room-container">
       <Box textAlign="center" my={5}>
@@ -196,7 +211,16 @@ function RoomDetail({rooms}) {
         </CustomButton>
         </Box>
          <ReviewList/>
-    
+         <Typography variant="h2">Reviews</Typography>
+      <List>
+        {reviews.map((review) => (
+          <ListItem key={review.id}>
+            <ListItemText primary={`Rating: ${review.rating}`} />
+            <ListItemText primary={`Comment: ${review.comment}`} />
+            {/* Add more details as needed */}
+          </ListItem>
+        ))}
+      </List>
       </CardContent>
       </Box>
     )}
