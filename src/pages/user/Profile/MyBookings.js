@@ -26,6 +26,7 @@
     const classes = useStyles();
     const [roomBookings,setRoomBookings] = useState([])
     console.log(roomBookings,"bkkkkkkkkkkkkkkkkkkkkk");
+   
     const userInfo = useSelector((state) => state.auth.userInfo);
     console.log(userInfo,"daatttttttttttttttttttttt");
     const [decodedUserInfo, setDecodedUserInfo] = useState({});
@@ -84,6 +85,7 @@
 
 
     const handleCancelBooking = (bookingId) => {
+      console.log(bookingId,"bookiiiiiiii");
       setSelectedBookingId(bookingId);
 
       setOpenConfirmationDialog(true);
@@ -126,7 +128,7 @@
                       color="secondary"
                       onClick={() => {
                         setCancellationReason('');
-                        setOpenConfirmationDialog(true);
+                        handleCancelBooking(booking.id);
                       }}
                     >
                       Cancel Booking

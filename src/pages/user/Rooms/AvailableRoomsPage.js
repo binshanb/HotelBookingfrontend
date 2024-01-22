@@ -44,14 +44,14 @@ const AvailableRoomsPage = () => {
   const userInfos = useSelector((state) => state.auth.userInfo);
   const [decodedUserInfo, setDecodedUserInfo] = useState({});
   const room = useSelector((state) => state.room.roomInfo);
-  const handleBookNow = async(e) => {
+  const handleBookNow = async(e,roomId) => {
   e.preventDefault(); 
     // Logic to handle booking for the selected room
    // Implement your user authentication logic here
 
     if (userId) {
       // User is logged in, proceed to the booking form page
-      navigate(`/room-detail/${room.id}/`);
+      navigate(`/room-detail/${roomId}/`);
     } else {
       // User is not logged in, redirect to the login page
       navigate('/login');
@@ -86,6 +86,7 @@ const userId = decodedUserInfo.user_id
                   <div className={classes.roomDetails}>
                     <Typography variant="h6">{room.title}</Typography>
                     <Typography variant="body1">Price per night: ₹ {room.price_per_night}</Typography>
+                    <Typography variant="body1">Status: {room.is_active ===true ? "Available":"Booked"}</Typography>
                     {/* Add other room details as needed */}
                           {/* Book Now button */}
                   {/* Book Now button aligned to the right */}
@@ -93,9 +94,9 @@ const userId = decodedUserInfo.user_id
           <Button
             variant="contained"
             color="primary"
-            onClick={() => handleBookNow()}
+            onClick={(e) => handleBookNow(e,room.id)}
           >
-            Book Now
+            Details
           </Button>
           </div>
                   </div>

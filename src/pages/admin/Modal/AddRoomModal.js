@@ -77,7 +77,17 @@ export default function AddRoomModal({
     }
   };
 
-
+  const handleAfterClose = () => {
+    setTitle("");
+    setPricePerNight(0);
+    setCapacity(0);
+    setRoomSize(0);
+    setDescription("");
+    setFormError({});
+    setSelectedImage(null);
+    setSelectedCategories([]);
+    setSelectedFeatures([]);
+  };
 
   useEffect(() => {
     const fetchCategoriesAndFeatures = async () => {
@@ -123,6 +133,15 @@ export default function AddRoomModal({
       }
     });
   }; 
+
+  const handleCategoryDropdownChange = (e) => {
+    setSelectedCategories(e.target.value);
+    // You can choose to call handleCategoryChange here if you want to update selectedCategories immediately.
+  };
+  const handleFeatureDropdownChange = (e) => {
+    setSelectedFeatures(e.target.value);
+    // You can choose to call handleFeatureChange here if you want to update selectedFeatures immediately.
+  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);
@@ -132,35 +151,43 @@ export default function AddRoomModal({
     setSelectedImage(null);
   };
 
-  const validate = (title) => {
+  const validate = (title, pricePerNight, capacity, roomSize, description) => {
     const errors = {};
-     if (!title) {
+  
+    if (!title) {
       errors.title = "Room name is required";
     } else if (title.length < 3) {
       errors.title = "Enter at least 3 characters";
     }
+  
     if (!pricePerNight) {
-      errors.pricePerNight = "Price Need to Add";
-    } else if (pricePerNight.length < 3) {
-      errors.pricePerNight = "Enter price";
+      errors.pricePerNight = "Price needs to be added";
+    } else if (!/^[1-9]\d*$/u.test(pricePerNight.trim())) {
+      errors.pricePerNight = "Enter a valid positive integer for price";
     }
+  
     if (!capacity) {
-      errors.title = "Add capacity";
-    } else if (title.length < 3) {
-      errors.capacity = "Enter value";
+      errors.capacity = "Add capacity";
+    } else if (!/^[1-9]\d*$/u.test(capacity.trim())) {
+      errors.capacity = "Enter a valid positive integer for capacity";
     }
+  
     if (!roomSize) {
-      errors.roomSize = "Room name is required";
-    } else if (roomSize.length < 3) {
-      errors.roomSize = "Enter value";
+      errors.roomSize = "Room size is required";
+    } else if (!/^[1-9]\d*$/u.test(roomSize.trim())) {
+      errors.roomSize = "Enter a valid positive integer for room size";
     }
+  
     if (!description) {
       errors.description = "Add description";
-    } else if (title.length < 3) {
-      errors.title = "Enter at least 3 characters";
+    } else if (description.length < 3) {
+      errors.description = "Enter at least 3 characters for description";
     }
+  
     return errors;
   };
+  
+  
   const showToast = (message, type = 'error') => {
     toast[type](message, {
       position: toast.POSITION.TOP_RIGHT,
@@ -180,6 +207,7 @@ export default function AddRoomModal({
             contentLabel="Add Room Modal"
             className="custom-modal w-70 h-70 overflow"
             overlayClassName="custom-overlay"
+            onAfterClose={handleAfterClose} 
             style={{
               content: {
                 width: '70%',
@@ -206,20 +234,21 @@ export default function AddRoomModal({
               {formError?.title ? formError.title : ""}
             </span>
                   {/* Category selection */}
-        <div className="category-selection mt-4">
-          <h3>Select Categories:</h3>
-          {categories.map((category) => (
-            <div key={category.id} className="category-checkbox">
-              <input
-                type="checkbox"
-                id={`category-${category.id}`}
-                checked={selectedCategories.includes(category.id)}
-                onChange={() => handleCategoryChange(category.id)}
-              />
-              <label htmlFor={`category-${category.id}`}>{category.category_name}</label>
-            </div>
-          ))}
-        </div>
+                  <div className="category-selection mt-4">
+      <h3>Select Category:</h3>
+      <select
+        value={selectedCategories}
+        onChange={handleCategoryDropdownChange}
+        className="w-full border rounded p-2 mt-2"
+      >
+        <option value="">Select a category</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.category_name}
+          </option>
+        ))}
+      </select>
+    </div>
             <input
               type="text"
               placeholder="Enter Price"
@@ -253,22 +282,23 @@ export default function AddRoomModal({
             </span>
             
                   {/* Feature selection */}
-        <div className="feature-selection mt-4">
-          <h3>Select Features:</h3>
-          {features.map((feature) => (
-            <div key={feature.id} className="feature-checkbox">
-              <input
-                type="checkbox"
-                id={`feature-${feature.id}`}
-                checked={selectedFeatures.includes(feature.id)}
-                onChange={() => handleFeatureChange(feature.id)}
-              />
-              <label htmlFor={`feature-${feature.id}`}>{feature.name}</label>
-            </div>
-          ))}
-        </div>
+                  <div className="feature-selection mt-4">
+      <h3>Select Feature:</h3>
+      <select
+        value={selectedFeatures}
+        onChange={handleFeatureDropdownChange}
+        className="w-full border rounded p-2 mt-2"
+      >
+        <option value="">Select a feature</option>
+        {features.map((feature) => (
+          <option key={feature.id} value={feature.id}>
+            {feature.name}
+          </option>
+        ))}
+      </select>
+    </div>
             <input
-              type="text"
+              type="text" 
               placeholder="Enter description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}

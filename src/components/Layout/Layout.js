@@ -17,7 +17,8 @@ function Layout() {
     },
   });
   
-  let adminHeader = location.pathname.startsWith("/admin");
+  const adminHeader = location.pathname.startsWith("/admin");
+  
   return (
     <>
     <ThemeProvider theme={theme}>

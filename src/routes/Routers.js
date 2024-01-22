@@ -25,7 +25,6 @@ import BookingForm from '../pages/user/Bookings/BookingForm'
 import BookingPage from '../pages/user/Bookings/BookingPage'
 import BookingList from '../pages/admin/Booking/BookingList'
 import RoomFeatureList from '../pages/admin/Features/RoomFeatureList'
-import RoomFilter from '../pages/user/Rooms/RoomFilter';
 import BookingSuccessPage from '../pages/user/Bookings/BookingSuccessPage'
 import MyBookings from '../pages/user/Profile/MyBookings'
 import CancelMyBooking from '../pages/user/Profile/CancelMyBooking'
@@ -33,11 +32,15 @@ import AvailableRoomsPage from '../pages/user/Rooms/AvailableRoomsPage'
 import ReviewForm from '../pages/user/Review/ReviewForm'
 import ReviewList from '../pages/user/Review/ReviewList'
 
+import ProviderChatRooms from '../api/chat/ProviderChatRooms'
+
 import ResetPassword from '../pages/user/Auth/ResetPassword'
 import ForgotPassword from '../pages/user/Auth/ForgotPassword'
-import ChatPage from '../pages/Chat/ChatPage'
-import AdminChat from '../pages/Chat/AdminChat'
 
+import ProviderChatPage from '../pages/Chat/ChatPage'
+
+
+// import UserChat from '../api/chat/UserChat'
 import BookingReport from '../pages/admin/Booking/BookingReport'
 import ChangePassword from '../pages/user/Auth/ChangePassword'
 import WalletDetails from '../pages/user/Wallet/WalletDetails'
@@ -46,6 +49,7 @@ import OtpVerify from '../pages/user/OTP/OtpVerify'
 import PrivacyPolicy from '../pages/user/Privacy/PrivacyPolicy'
 import TermsAndConditions from '../pages/user/Privacy/TermsandConditions'
 import EmailVerification from '../pages/user/Auth/EmailVerification'
+
 
 
 
@@ -87,11 +91,19 @@ const Routers = () => {
      
         <Route path='/reset-password' element={<ResetPassword/>} />
         
-        <Route path='/chat-messages' element={<ChatPage/>} ></Route>
-        <Route path='/privacy-policy' element={<PrivacyPolicy/>} ></Route>
-        <Route path='/terms-conditions' element={<TermsAndConditions/>} ></Route>
+        <Route path="/provider-chatrooms" element={<ProviderChatRooms/>}/>
+        
+      
+     
  
     
+    
+        <Route path='/privacy-policy' element={<PrivacyPolicy/>} ></Route>
+        <Route path='/terms-conditions' element={<TermsAndConditions/>} ></Route>
+     
+ 
+    
+
 
 
 
@@ -103,7 +115,7 @@ const Routers = () => {
         <Route path='/about' element={<About/>} />
         <Route path='/contact' element={<Contact/>} />
         <Route path='/room-detail/:id' element={<RoomDetail/>} />
-        <Route path='/room-filter' element={<RoomFilter/>} />
+       
   
 
         
@@ -126,6 +138,8 @@ const Routers = () => {
 
         
         <Route path='/roombooking-page/cancel-booking/:bookingId' element={<CancelMyBooking/>} />
+
+        {/* <Route path="/user-chat" element={<UserChat/>}/> */}
         
     </Route>
       
@@ -152,15 +166,20 @@ const Routers = () => {
         <Route path='/admin/room-list' element={<RoomList/>} />
         <Route path='/admin/room-feature' element={<RoomFeatureList/>} />
         <Route path='/admin/booking-list' element= {<BookingList/>} />
-        
+        <Route path="/admin/provider-chatapp" element={<ProviderChatPage/>}/>
+    
+
         <Route path='/admin/booking-report' element= {<BookingReport/>} />
-        <Route path='/admin/chat-messages' element={<AdminChat/>} />
+     
+
+
 
 
       
 
-
+         
       </Route>
+      
             
     </Routes>
    

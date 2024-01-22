@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { Link } from "react-router-dom";
+import instance from "../../utils/Axios";
 import { useSelector,useDispatch } from "react-redux";
 import {selectUserInfo,logout} from "../../redux/slices/userslices/authSlice"; 
 import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon,Divider,Button  } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
-
+import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
@@ -15,9 +16,13 @@ import img from "../../assets/booking1-logo.png";
 function Navbar() {
 
   const userInfo = useSelector(selectUserInfo);
+  const token = userInfo?.access
+  const navigate = useNavigate();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentActive, setCurrentActive] = useState(null);
+  const [unseenMessageCount, setUnseenMessageCount] = useState(0);
+
   const dispatch = useDispatch();
   const handleMobileMenuClick = () => {
     setMobileMenuOpen((prevState) => !prevState);
@@ -29,11 +34,48 @@ function Navbar() {
     setCurrentActive(index);
   };
 
+ 
+
+  
+
+  // useEffect(() => {
+  //   // Fetch unseen message count from the backend when the component mounts
+  //   updateUnseenMessageCount();
+
+  //   // Cleanup function
+  //   return () => {
+  //     // Additional cleanup, if needed
+  //   };
+  // }, []);
+
+  // const updateUnseenMessageCount = async () => {
+  //   // Make an API call to the Django backend to get the unseen message count
+  //   try {
+  //     const response = await instance.get('/api/chat/unseen/', {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     const data = await response.data;
+  //     setUnseenMessageCount(data.unseen_count);
+  //   } catch (error) {
+  //     console.error('Error fetching unseen message count:', error);
+  //   }
+  // };
+  
+  // const handleInboxClick = async (event) => {
+  //   event.preventDefault();
+
+  //  navigate('/chat')
+  //   // Reset the unseen message count and update the badge
+  //   setUnseenMessageCount(0);
+  // };
   const navLinks = [
     { id: 1, text: "Home", path: "/" },
     { id: 2, text: "Rooms", path: "/categorylist" },
     { id: 3, text: "Services", path: "/services" },
-    { id: 4, text: "Inbox", path: "/chat-messages" },
+    { id: 4, text: "Inbox", path: "/provider-chatrooms" },
+    
     { id: 5, text: "About", path: "/about" },
     { id: 6, text: "Contact", path: "/contact" },
   ];
@@ -45,13 +87,22 @@ function Navbar() {
       component={Link}
       to={link.path}
       selected={link.id === currentActive}
+      
       onClick={() => {
         handleClick(link.id);
         if (window.innerWidth <= 769) {
           handleMobileMenuClick();
         }
       }}
+
+      style={{
+        padding: '8px 16px', // Adjust the padding as needed
+        backgroundColor: link.id === currentActive ? 'white' : 'inherit',
+        color: link.id === currentActive ? 'black' : 'inherit',
+      }}
     >
+  
+    
       {/* <ListItemIcon>
         {link.id === 1 && <HomeIcon />}
         {link.id === 2 && <RoomIcon />}
@@ -60,8 +111,22 @@ function Navbar() {
         {link.id === 5 && <InfoIcon />}
         {link.id === 6 && <ContactPhoneIcon />}
       </ListItemIcon> */}
-      <ListItemText primary={link.text} />
-    </ListItem>
+       <ListItemText
+      primary={
+        <span style={{ display: 'flex', alignItems: 'center' }}>
+          {link.text === 'Inbox' && (
+            <>
+              <span style={{ marginRight: '5px' }}>{link.text}</span>
+              {/* <span style={{ backgroundColor: 'red', color: 'white', borderRadius: '50%', padding: '2px 5px', fontSize: '0.8rem' }}>0</span> */}
+            </>
+          )}
+          {link.text !== 'Inbox' && <span>{link.text}</span>}
+        </span>
+      }
+    />
+  </ListItem>
+
+    
   ));
 
   return (
@@ -91,6 +156,8 @@ function Navbar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
           <List component="nav" aria-labelledby="main navigation" sx={{ display: { xs: 'none', md: 'flex' } }}>
             {menuItems}
+  
+    
             <ListItem
               component={Link}
               to={userInfo ? '/user-profile' : '/login'}

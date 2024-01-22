@@ -3,6 +3,8 @@ import authReducer from '../slices/userslices/authSlice'
 import  {apiSlice}  from '../slices/userslices/apiSlice'
 import adminAuthReducer from '../slices/adminslices/adminAuthSlice'
 import roomReducer from '../slices/roomslices/roomSlice'
+import chatReducer from '../slices/chatslices/chatSlice';
+
 // import bookingReducer from '../slices/bookingslices/bookingslice'
 
 const store =configureStore({
@@ -10,6 +12,8 @@ const store =configureStore({
         auth:authReducer,
         adminAuth:adminAuthReducer,
         room:roomReducer,
+        chat: chatReducer,
+
         // booking:bookingReducer,
         [apiSlice.reducerPath]:apiSlice.reducer,
         
@@ -19,6 +23,8 @@ const store =configureStore({
 })
 
 
+
+ 
 export default store
 
 

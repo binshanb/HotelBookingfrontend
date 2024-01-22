@@ -14,7 +14,7 @@ const AddFeatureModal = ({ isOpen, onRequestClose, onAddFeature }) => {
     const errors = validate(featureName);
     setFormError(errors);
     // Add additional validation/error handling as needed
-  
+ 
   
   if (Object.keys(errors).length === 0) {
     try {
@@ -30,6 +30,8 @@ const AddFeatureModal = ({ isOpen, onRequestClose, onAddFeature }) => {
 
       if (response === null) {
         setFeatureName("");
+        console.log("Feature name cleared:", featureName);
+
         setFormError({});
         onRequestClose();
         showToast('Feature added successfully!', 'success');
@@ -39,6 +41,11 @@ const AddFeatureModal = ({ isOpen, onRequestClose, onAddFeature }) => {
       showToast('Error adding feature', 'error');
     }
   }
+};
+const handleAfterClose = () => {
+  setFeatureName("");
+  
+  setFormError({});
 };
 const validate = (featureName) => {
   const errors = {};
@@ -71,6 +78,7 @@ const showToast = (message, type = 'error') => {
       contentLabel="Add Feature Modal"
       className="custom-modal"
       overlayClassName="custom-overlay"
+      onAfterClose={handleAfterClose}
     >
       <div className="modal-content p-4">
         <div className="header">
@@ -83,6 +91,7 @@ const showToast = (message, type = 'error') => {
           type="text"
           placeholder="Feature Name"
           value={featureName}
+         
           onChange={(e) => setFeatureName(e.target.value)}
           className="w-full border rounded p-2 mt-2"
         />

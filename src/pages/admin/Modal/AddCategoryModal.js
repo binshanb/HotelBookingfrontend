@@ -35,6 +35,8 @@ export default function AddCategoryModal({
 
         if (response === null) {
           setCategoryName("");
+          console.log("Category name cleared:", categoryName);
+
           setFormError({});
           setSelectedImage(null);
           onRequestClose();
@@ -46,7 +48,11 @@ export default function AddCategoryModal({
       }
     }
   };
-
+  const handleAfterClose = () => {
+    setCategoryName("");
+    setSelectedImage(null);
+    setFormError({});
+  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);
@@ -87,6 +93,7 @@ export default function AddCategoryModal({
       contentLabel="Add Category Modal"
       className="custom-modal"
       overlayClassName="custom-overlay"
+      onAfterClose={handleAfterClose} 
     >
       <div className="modal-content p-4">
         <div className="header">

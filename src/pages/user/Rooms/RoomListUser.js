@@ -125,6 +125,7 @@ console.log(roomList,'RRRRRRRRRRR');
                   <Typography variant="subtitle1" gutterBottom>
                     Price Per Day: ₹ {room.price_per_night}
                   </Typography>
+               
                   <Button
                     component={RouterLink}
                     to={`/room-detail/${room.id}/`}

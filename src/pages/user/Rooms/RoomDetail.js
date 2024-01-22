@@ -176,6 +176,9 @@ function RoomDetail({rooms}) {
           <Typography variant="subtitle1" color="textPrimary" gutterBottom>
             Price Per Day: ₹{roomData.price_per_night}
           </Typography>
+          <Typography variant="subtitle1" color="textPrimary" gutterBottom>
+          Room Status: {roomData?.is_active === true ? "Available" : "Not Available"}
+          </Typography>
           <Typography variant="body1" color="textPrimary" gutterBottom>
             Description: {roomData.description}
           </Typography>
@@ -185,9 +188,7 @@ function RoomDetail({rooms}) {
           <Typography variant="body1" color="textPrimary" gutterBottom>
             Room Size: {roomData.room_size} sq.ft
           </Typography>
-          <Typography variant="body1" color="textPrimary" gutterBottom>
-            Room Availability: {roomData.is_active}
-          </Typography>
+         
           <Typography variant="body1" color="textPrimary" gutterBottom>
             Meals Included
           </Typography>
@@ -211,16 +212,7 @@ function RoomDetail({rooms}) {
         </CustomButton>
         </Box>
          <ReviewList/>
-         <Typography variant="h2">Reviews</Typography>
-      <List>
-        {reviews.map((review) => (
-          <ListItem key={review.id}>
-            <ListItemText primary={`Rating: ${review.rating}`} />
-            <ListItemText primary={`Comment: ${review.comment}`} />
-            {/* Add more details as needed */}
-          </ListItem>
-        ))}
-      </List>
+ 
       </CardContent>
       </Box>
     )}

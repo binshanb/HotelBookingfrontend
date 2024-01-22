@@ -23,6 +23,9 @@ export default function EditRoomModal({
   const [selectedImage, setSelectedImage] = useState(roomData?.cover_image || "");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedFeatures, setSelectedFeatures] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [selectedFeature, setSelectedFeature] = useState([]);
+
 
   useEffect(() => {
 
@@ -33,8 +36,8 @@ export default function EditRoomModal({
     setRoomSize(roomData?.room_size || 0);
     setDescription(roomData?.description || "");
     setSelectedImage(roomData?.image || null);
-    setSelectedCategories(Array.isArray(roomData?.category) ? roomData?.category : []);
-    setSelectedFeatures(Array.isArray(roomData?.features) ? roomData?.features : []);
+    setSelectedCategory(Array.isArray(roomData?.category) ? roomData?.category : []);
+    setSelectedFeature(Array.isArray(roomData?.features) ? roomData?.features : []);
 
   }, [roomData]);
   const handleUpdateRoom = async (e) => {
@@ -60,8 +63,8 @@ export default function EditRoomModal({
         updatedRoomData.append('room_size', roomSize);
         updatedRoomData.append('description', description);
         updatedRoomData.append('cover_image', selectedImage);
-        updatedRoomData.append('category', selectedCategories);
-        updatedRoomData.append('features',selectedFeatures);
+        updatedRoomData.append('category', selectedCategory);
+        updatedRoomData.append('features',selectedFeature);
       
 
         const response = await onUpdateRoom(updatedRoomData, {
@@ -76,8 +79,8 @@ export default function EditRoomModal({
           setCapacity(0);
           setRoomSize(0);
           setDescription("");
-          setSelectedCategories([]);
-          setSelectedFeatures([]);
+          setSelectedCategory([]);
+          setSelectedFeature([]);
           setFormError({});
           setSelectedImage(null);
           onRequestClose();
@@ -114,7 +117,7 @@ export default function EditRoomModal({
     fetchCategoriesAndFeatures();
   }, []);
 
-const categoriesArray = Array.isArray(selectedCategories) ? selectedCategories : [];
+const categoriesArray = Array.isArray(selectedCategory) ? selectedCategory : [];
   const handleCategoryChange = (selectedCategory) => {
       const isCategorySelected = categoriesArray.includes(selectedCategory);
       setSelectedCategories((prevSelectedCategories) => {
@@ -123,12 +126,12 @@ const categoriesArray = Array.isArray(selectedCategories) ? selectedCategories :
                   (category) => category !== selectedCategory
               );
           } else {
-              return [...prevSelectedCategories, selectedCategory];
+              return [...prevSelectedCategories, selectedCategories];
           }
       });
   };
-  const handleFeatureChange = (selectedFeature) => {
-    const isFeatureSelected = selectedFeatures.includes(selectedFeature);
+  const handleFeatureChange = (selectedFeatures) => {
+    const isFeatureSelected = selectedFeature.includes(selectedFeatures);
       setSelectedFeatures((prevSelectedFeatures) => {
       if (isFeatureSelected) {
         return prevSelectedFeatures.filter(
@@ -170,7 +173,14 @@ const categoriesArray = Array.isArray(selectedCategories) ? selectedCategories :
       progress: undefined,
     });
   };
-
+  const handleCategoryDropdownChange = (e) => {
+    setSelectedCategory(e.target.value);
+    // You can choose to call handleCategoryChange here if you want to update selectedCategories immediately.
+  };
+  const handleFeatureDropdownChange = (e) => {
+    setSelectedFeature(e.target.value);
+    // You can choose to call handleFeatureChange here if you want to update selectedFeatures immediately.
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -205,20 +215,21 @@ const categoriesArray = Array.isArray(selectedCategories) ? selectedCategories :
         </span>
   
       {/* Category selection */}
-        <div className="category-selection mt-4">
-          <h3>Select Categories:</h3>
-          {categories.map((category) => (
-            <div key={category.id} className="category-checkbox">
-              <input
-                type="checkbox"
-                id={`category-${category.id}`}
-                checked={selectedCategories.includes(category.id)}
-                onChange={() => handleCategoryChange(category.id)}
-              />
-              <label htmlFor={`category-${category.id}`}>{category.category_name}</label>
-            </div>
-          ))}
-        </div>
+      <div className="category-selection mt-4">
+      <h3>Select Category:</h3>
+      <select
+        value={selectedCategory}
+        onChange={handleCategoryDropdownChange}
+        className="w-full border rounded p-2 mt-2"
+      >
+        <option value="">Select a category</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.category_name}
+          </option>
+        ))}
+      </select>
+    </div>
         <input
           type="text"
           placeholder="Price"
@@ -251,20 +262,21 @@ const categoriesArray = Array.isArray(selectedCategories) ? selectedCategories :
         </span>
 
                          {/* Feature selection */}
-          <div className="feature-selection mt-4">
-          <h3>Select Features:</h3>
-          {features.map((feature) => (
-            <div key={feature.id} className="feature-checkbox">
-              <input
-                type="checkbox"
-                id={`feature-${feature.id}`}
-                checked={selectedFeatures.includes(feature.id)}
-                onChange={() => handleFeatureChange(feature.id)}
-              />
-              <label htmlFor={`feature-${feature.id}`}>{feature.name}</label>
-            </div>
-          ))}
-        </div>
+                         <div className="feature-selection mt-4">
+      <h3>Select Feature:</h3>
+      <select
+        value={selectedFeature}
+        onChange={handleFeatureDropdownChange}
+        className="w-full border rounded p-2 mt-2"
+      >
+        <option value="">Select a feature</option>
+        {features.map((feature) => (
+          <option key={feature.id} value={feature.id}>
+            {feature.name}
+          </option>
+        ))}
+      </select>
+    </div>
         <input
           type="text"
           placeholder="Description"
