@@ -109,39 +109,46 @@ export default function AddRoomModal({
   
     fetchCategoriesAndFeatures();
   }, []);
-  const handleCategoryChange = (selectedCategory) => {
-    const isCategorySelected = selectedCategories.includes(selectedCategory);
+
+
+  const handleCategoryDropdownChange = (e) => {
+    // Get the selected value from the dropdown
+    const selectedCategory = e.target.value;
+  
+    // Update the selected categories
     setSelectedCategories((prevSelectedCategories) => {
+      // Check if the selected category is already in the list
+      const isCategorySelected = prevSelectedCategories.includes(selectedCategory);
+  
+      // If it's selected, remove it; otherwise, add it
       if (isCategorySelected) {
-        return prevSelectedCategories.filter(
-          (category) => category !== selectedCategory
-        );
+        return prevSelectedCategories.filter((category) => category !== selectedCategory);
       } else {
         return [...prevSelectedCategories, selectedCategory];
       }
     });
   };
-  const handleFeatureChange = (selectedFeature) => {
-    const isFeatureSelected = selectedFeatures.includes(selectedFeature);
+
+
+  const handleFeatureDropdownChange = (e) => {
+    // Get the selected value from the dropdown
+    const selectedFeature = e.target.value;
+  
+    // Update the selected features
     setSelectedFeatures((prevSelectedFeatures) => {
+      // Check if the selected feature is already in the list
+      const isFeatureSelected = prevSelectedFeatures.includes(selectedFeature);
+  
+      // If it's selected, remove it; otherwise, add it
       if (isFeatureSelected) {
-        return prevSelectedFeatures.filter(
-          (feature) => feature !== selectedFeature
-        );
+        return prevSelectedFeatures.filter((feature) => feature !== selectedFeature);
       } else {
         return [...prevSelectedFeatures, selectedFeature];
       }
     });
-  }; 
+  };
 
-  const handleCategoryDropdownChange = (e) => {
-    setSelectedCategories(e.target.value);
-    // You can choose to call handleCategoryChange here if you want to update selectedCategories immediately.
-  };
-  const handleFeatureDropdownChange = (e) => {
-    setSelectedFeatures(e.target.value);
-    // You can choose to call handleFeatureChange here if you want to update selectedFeatures immediately.
-  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);
@@ -151,7 +158,7 @@ export default function AddRoomModal({
     setSelectedImage(null);
   };
 
-  const validate = (title, pricePerNight, capacity, roomSize, description) => {
+  const validate = (title) => {
     const errors = {};
   
     if (!title) {
@@ -162,28 +169,18 @@ export default function AddRoomModal({
   
     if (!pricePerNight) {
       errors.pricePerNight = "Price needs to be added";
-    } else if (!/^[1-9]\d*$/u.test(pricePerNight.trim())) {
-      errors.pricePerNight = "Enter a valid positive integer for price";
     }
-  
     if (!capacity) {
       errors.capacity = "Add capacity";
-    } else if (!/^[1-9]\d*$/u.test(capacity.trim())) {
-      errors.capacity = "Enter a valid positive integer for capacity";
     }
   
     if (!roomSize) {
       errors.roomSize = "Room size is required";
-    } else if (!/^[1-9]\d*$/u.test(roomSize.trim())) {
-      errors.roomSize = "Enter a valid positive integer for room size";
-    }
+    } 
   
     if (!description) {
       errors.description = "Add description";
-    } else if (description.length < 3) {
-      errors.description = "Enter at least 3 characters for description";
     }
-  
     return errors;
   };
   

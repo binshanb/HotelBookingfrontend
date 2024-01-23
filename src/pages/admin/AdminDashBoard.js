@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Assuming axios is used for HTTP requests
 import {
   Container,
   Grid,
@@ -79,24 +78,25 @@ const Dashboard = () => {
       </ResponsiveContainer>
       </Paper>
       </Grid>
+      <Grid item xs={12} md={6}>
+  <Paper>
+    <Typography variant="h6">Bar Graph</Typography>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={dashboardData.barGraph}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="room__title" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="totalBookings" fill={getFillColor} />
+        {dashboardData.barGraph.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={getFillColor(entry.totalBookings)} />
+        ))}
+      </BarChart>
+    </ResponsiveContainer>
+  </Paper>
+</Grid>
 
-        <Grid item xs={12} md={6}>
-          <Paper>
-          <Typography variant="h6">Bar Graph</Typography>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={dashboardData.barGraph}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis  dataKey="room__title" />
-             
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="totalBookings" fill={getFillColor} />
-            
-        </BarChart>
-      </ResponsiveContainer>
-          </Paper>
-        </Grid>
         <Grid item xs={12}>
           <Paper>
             <Typography variant="h6">Statistics</Typography>
