@@ -33,7 +33,8 @@ const useStyles = makeStyles(() => ({
   formContainer: {
     padding: theme.spacing(2),
     '& .MuiTextField-root': {
-      marginBottom: theme.spacing(2),
+      marginBottom: theme.spacing(4),
+     
     },
   },
 }));
@@ -220,6 +221,7 @@ const BookingForm = ({roomId}) => {
     }}
 return (
     <div>
+      <br/><br/>
       <h2>Room Booking Form</h2>
       <form className={classes.formContainer} onSubmit={handleSubmit}>
         <Grid container spacing={3}>

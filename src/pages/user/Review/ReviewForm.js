@@ -110,58 +110,49 @@ const ReviewForm = () => {
       };
 
     return (
-      <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 justify-center">
-        <div className="col-span-12 sm:col-span-6">
-          <form className="bg-white p-8 shadow-md rounded-md">
-            <Typography variant="h6" className="mb-4 text-2xl">
-              Add Review
-            </Typography>
-            <div className="mb-4">
-              <div className="flex items-center">
-                <Rating
-                  name="hover-feedback"
-                  value={rating}
-                  precision={0.5}
-                  onChange={(event, newValue) => {
-                    setRating(newValue);
-                  }}
-                  onChangeActive={(event, newHover) => {
-                    setHover(newHover);
-                  }}
-                  emptyIcon={<StarIcon className="opacity-55" fontSize="inherit" />}
-                />
-                {rating !== null && (
-                  <span className="ml-2">{labels[hover !== -1 ? hover : rating]}</span>
-                )}
-              </div>
-            </div>
-            <TextField
-              label="Comment"
-              multiline
-              rows={4}
-              variant="outlined"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              className="w-full mb-4"
+<div className="container mx-auto p-4">
+  <div className="grid grid-cols-1 justify-center">
+    <div className="col-span-12 sm:col-span-6">
+      <form className="bg-white p-8 shadow-md rounded-md">
+        <h6 className="mb-4 text-2xl">Add Review</h6>
+        <div className="mb-4">
+          <div className="flex items-center">
+            <Rating
+              name="hover-feedback"
+              value={rating}
+              precision={0.5}
+              onChange={(event, newValue) => {
+                setRating(newValue);
+              }}
+              onChangeActive={(event, newHover) => {
+                setHover(newHover);
+              }}
+              emptyIcon={<StarIcon className="opacity-55" fontSize="inherit" />}
             />
-            <Button
-            variant="contained"
-           color="primary"
-                onClick={handleAddReview}
-           className="w-full"
-            size="small"  
-            style={{ width: '150px' }} // or size="medium" depending on your preference
-             >
-           Add Review
-            </Button>
-          </form>
+            {rating !== null && (
+              <span className="ml-2">{labels[hover !== -1 ? hover : rating]}</span>
+            )}
+          </div>
         </div>
-      </div>
+        <textarea
+          placeholder="Comment"
+          rows={4}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <button
+          className="bg-blue-700 text-white w-1/4 py-2 rounded-full transition-transform hover:scale-105"
+          onClick={handleAddReview}
+        >
+          Add Review
+        </button>
+      </form>
     </div>
-  );
-};
-
+  </div>
+</div>
+    )
+            }
 export default ReviewForm;
 
 

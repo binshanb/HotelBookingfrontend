@@ -89,7 +89,7 @@ const cards = [
   {
     id: 2,
     title: 'Spacious Rooms',
-    description: 'Relax in our spacious and well-furnished rooms.',
+    description: 'Relax in our spacious and well-furnished rooms.Enjoy Long Stay here.',
     imageUrl: hotelImage1, // Replace with your image URL
   },
   {

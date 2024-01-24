@@ -77,84 +77,84 @@ console.log(roomList,'RRRRRRRRRRR');
 
 
   return (
-    <>
-      <Box p={4} className="room-container">
-        {/* Category dropdown for filtering */}
-        <Card style={{ width: '50%', maxWidth: '400px', margin: 'auto' }}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>Select Category:</Typography>
-        <Select
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          displayEmpty
-          style={selectStyle}
-        >
-          <MenuItem value="all">All</MenuItem>
-          {categories.map((category, index) => (
-            <MenuItem key={index} value={category}>
-              {category}
-            </MenuItem>
-          ))}
-        </Select>
+    <div className="p-4 room-container">
+      {/* Category dropdown for filtering */}
+      <div className="w-1/2 max-w-400 mx-auto">
+        <div>
+          
+      <h4 className="text-4xl font-bold text-primary-main border-b-4 border-blue-500 inline-block">Room List</h4>
+        <br/><br/>
+          <label htmlFor="category" className="text-base mb-2 block">
+            Select Category:
+          </label>
+          <select
+            id="category"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="w-full border p-2 rounded mb-4"
+          >
+            <option value="all">All</option>
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <Typography variant="h6" gutterBottom>Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}</Typography>
-        <Slider
-          value={priceRange}
-          onChange={(e, value) => setPriceRange(value)}
-          valueLabelDisplay="auto"
-          min={0}
-          max={10000}
-          style={sliderStyle}
-        />
-      </CardContent>
-    </Card>
-  
-        <Typography variant="h4" align="center" gutterBottom>
-          Room List
-        </Typography>
-  
-        <Grid container spacing={4}>
-          {filteredRooms.map((room, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card>
-                <img src={room.cover_image} alt={room.title} style={{ height: '200px', width: '100%', objectFit: 'cover' }} />
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Name: {room.title}
-                  </Typography>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Price Per Day: ₹ {room.price_per_night}
-                  </Typography>
-               
-                  <Button
-                    component={RouterLink}
-                    to={`/room-detail/${room.id}/`}
-                    variant="contained"
-                    color="primary"
-                  >
-                    View Details
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-        {/* Pagination component */}
-        <Box mt={4} display="flex" justifyContent="center">
-        <Pagination
-          count={Math.ceil(filteredRooms.length / roomsPerPage)}
-          page={currentPage}
-          onChange={handlePageChange}
-          color="primary"
-          size="large"
-          boundaryCount={1} // Show first and last pages
-          siblingCount={2} // Show two pages before and after the current page
-        />
-      </Box>
-      </>
-    );
-  }
+        <div>
+          <label htmlFor="priceRange" className="text-base mb-2 block">
+            Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}
+          </label>
+          <input
+            type="range"
+            id="priceRange"
+            value={priceRange[1]}
+            onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+            min={0}
+            max={10000}
+            className="w-full"
+          />
+        </div>
+      </div>
+      <br/><br/>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredRooms.map((room, index) => (
+          <div key={index}>
+            <img src={room.cover_image} alt={room.title} className="h-200 w-full object-cover" />
+            <div className="p-4">
+              <h6 className="text-xl mb-2">Name: {room.title}</h6>
+              <p className="text-lg mb-2">Price Per Day: ₹{room.price_per_night}</p>
+              <RouterLink to={`/room-detail/${room.id}/`}>
+                <button className="bg-blue-700 text-white px-4 py-2 rounded-full transition-transform hover:scale-105 hover:bg-primary-dark">
+                  View Details
+                </button>
+              </RouterLink>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pagination component */}
+      <div className="mt-4 flex justify-center">
+        <nav aria-label="Pagination">
+          <ul className="pagination">
+            {Array.from({ length: Math.ceil(filteredRooms.length / roomsPerPage) }, (_, index) => (
+              <li key={index} className={`page-item ${index + 1 === currentPage ? 'active' : ''}`}>
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  );
+};
 
 export default RoomListUser;
 

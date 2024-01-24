@@ -39,14 +39,7 @@ const BookingsList = () => {
     fetchRoomBookings();
   }, []);   
 
-  // const handleCancel = async (bookingId) => {
-  //   try {
-  //     await instance.delete(`${baseUrl}/api/booking/roombooking-page/${bookingId}/cancel-booking`);
-  //     setBookings(bookings.filter((booking) => booking.id !== bookingId));
-  //   } catch (error) {
-  //     console.error('Error canceling booking:', error);
-  //   }
-  // };
+
 
  
 
@@ -138,15 +131,7 @@ const handleCheckout = async () => {
   )}
 </TableCell>
 
-              {/* <TableCell>
-                <IconButton
-                  color="secondary"
-                  aria-label="Cancel Booking"
-                  onClick={() => handleCancel(booking.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </TableCell> */}
+   
             </TableRow>
           ))}
         </TableBody>

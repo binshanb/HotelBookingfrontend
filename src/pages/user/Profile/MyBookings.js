@@ -98,71 +98,96 @@
   // }
     return (
       <div className="container mx-auto p-4">
-      <Typography variant="h4" gutterBottom className="text-2xl mb-4">
-        My Room Bookings
-      </Typography>
-      <TableContainer component={Paper} className="mb-8">
-        <Table className="w-full border" aria-label="bookings table">
-          <TableHead>
-            <TableRow>
-              <TableCell className="border p-2">Booking ID</TableCell>
-              <TableCell className="border p-2">Room Title</TableCell>
-              <TableCell className="border p-2 text-center">Check-in</TableCell>
-              <TableCell className="border p-2 text-center">Check-out</TableCell>
-              <TableCell className="border p-2 text-right">Total Amount</TableCell>
-              <TableCell className="border p-2 text-right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {roomBookings.map((booking) => (
-              <TableRow key={booking.id} className="hover:bg-gray-100">
-                <TableCell className="border p-2 text-center">{booking.id}</TableCell>
-                <TableCell className="border p-2">{booking?.room_title || 'null'}</TableCell>
-                <TableCell className="border p-2 text-center">{booking.check_in}</TableCell>
-                <TableCell className="border p-2 text-center">{booking.check_out}</TableCell>
-                <TableCell className="border p-2 text-right">{booking?.total_amount || 'null'}</TableCell>
-                <TableCell className="border p-2 text-right">
-                  {booking.booking_status !== 'cancelled' && (
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => {
-                        setCancellationReason('');
-                        handleCancelBooking(booking.id);
-                      }}
-                    >
-                      Cancel Booking
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+  <h4 className="text-2xl mb-4">My Room Bookings</h4>
+  <div className="mb-8">
+    <table className="w-full border" aria-label="bookings table">
+      <thead>
+        <tr>
+          <th className="border p-2">Booking ID</th>
+          <th className="border p-2">Room Title</th>
+          <th className="border p-2 text-center">Check-in</th>
+          <th className="border p-2 text-center">Check-out</th>
+          <th className="border p-2 text-right">Total Amount</th>
+          <th className="border p-2 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {roomBookings.map((booking) => (
+          <tr key={booking.id} className="hover:bg-gray-100">
+            <td className="border p-2 text-center">{booking.id}</td>
+            <td className="border p-2">{booking?.room_title || 'null'}</td>
+            <td className="border p-2 text-center">{booking.check_in}</td>
+            <td className="border p-2 text-center">{booking.check_out}</td>
+            <td className="border p-2 text-right">{booking?.total_amount || 'null'}</td>
+            <td className="border p-2 text-right">
+              {booking.booking_status !== 'cancelled' && (
+                <button
+                  className="border border-red-500 text-red-500 px-4 py-2 rounded-full transition-transform hover:scale-105 hover:bg-red-100"
+                  onClick={() => {
+                    setCancellationReason('');
+                    handleCancelBooking(booking.id);
+                  }}
+                >
+                  Cancel Booking
+                </button>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
 
-      <Dialog open={openConfirmationDialog} onClose={handleDialogClose}>
-        <DialogTitle>Confirm Cancellation</DialogTitle>
-        <DialogContent>
-          <p className="mb-4">Are you sure you want to cancel this booking?</p>
-          <input
-            type="text"
-            value={cancellationReason}
-            onChange={(e) => setCancellationReason(e.target.value)}
-            placeholder="Enter reason for cancellation"
-            className="border border-gray-400 p-2 w-full"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
-            No
-          </Button>
-          <Button onClick={handleCancel} color="secondary">
-            Yes, Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+  <div className={openConfirmationDialog ? 'block' : 'hidden'}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+      <div className="relative w-auto max-w-md mx-auto my-6">
+        <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+          <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
+            <h3 className="text-3xl font-semibold">Confirm Cancellation</h3>
+            <button
+              className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+              onClick={handleDialogClose}
+            >
+              <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                ×
+              </span>
+            </button>
+          </div>
+          <div className="relative p-6 flex-auto">
+            <p className="my-4 text-gray-600 text-lg leading-relaxed">
+              Are you sure you want to cancel this booking?
+            </p>
+            <input
+              type="text"
+              value={cancellationReason}
+              onChange={(e) => setCancellationReason(e.target.value)}
+              placeholder="Enter reason for cancellation"
+              className="border border-gray-400 p-2 w-full mb-4"
+            />
+          </div>
+          <div className="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+            <button
+              className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+              type="button"
+              onClick={handleDialogClose}
+            >
+              No
+            </button>
+            <button
+              className="bg-red-500 text-white active:bg-red-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+              type="button"
+              onClick={handleCancel}
+            >
+              Yes, Cancel
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+    <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+  </div>
+</div>
+
   );
 };
 

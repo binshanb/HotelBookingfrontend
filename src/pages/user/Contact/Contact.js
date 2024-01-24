@@ -1,27 +1,13 @@
 import React,{useEffect} from "react";
 import Image12 from '../../../assets/map1.jpg'
 import Image13 from '../../../assets/contact1.jpg'
-import mapboxgl from 'mapbox-gl';
+import Mapbox from '../../user/Contact/Mapbox'
+
 
 
 const ContactUs = () => {
  
-    useEffect(() => {
-      mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Set your Mapbox access token here
-  
-      const map = new mapboxgl.Map({
-        container: 'map', // Specify the HTML element ID where you want to render the map
-        style: 'mapbox://styles/mapbox/streets-v11', // Replace with your preferred map style
-        center: [76.2673, 9.9312], // Set the initial center of the map [longitude, latitude]
-        zoom: 12, // Set the initial zoom level
-      });
-  
-      // Add navigation controls (optional)
-      map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-  
-      // Clean up map instance on component unmount
-      return () => map.remove();
-    }, []); // Run this effect only once on component mount
+
   
 
   
@@ -60,6 +46,7 @@ const ContactUs = () => {
 
               <h2 className="text-xl font-semibold mb-4">Location</h2>
               <p className="mb-4">Find us on the map below:</p>
+              <Mapbox/>
               <img
                 src= {Image12}
                 alt="Hotel Location"

@@ -167,7 +167,7 @@ const ChatApp = () => {
                 button
                 onClick={() => handleRoomClick(room.name,room.id)}
                 selected={selectedChatRoom === room.name}
-                style={{backgroundColor:'#f3e5f5'}}
+                style={{backgroundColor:'#fffde7'}}
               >
                 <ListItemText 
                   primary={room.username} 

@@ -9,7 +9,7 @@ import { HiOutlineCurrencyRupee } from 'react-icons/hi';
 import { adminLogout } from '../../redux/slices/adminslices/adminAuthSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast} from 'react-toastify';
-import { selectUnseenCount } from '../../redux/slices/chatslices/chatSlice';
+
 
 
 function AdminSidebar() {
@@ -27,31 +27,7 @@ function AdminSidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  
-  // useEffect(() => {
-  //   // Fetch unseen message count from the backend when the component mounts
-  //   updateUnseenMessageCount();
 
-  //   // Cleanup function
-  //   return () => {
-  //     // Additional cleanup, if needed
-  //   };
-  // }, []);
-
-  // const updateUnseenMessageCount = async () => {
-  //   // Make an API call to the Django backend to get the unseen message count
-  //   try {
-  //     const response = await instance.get(`/api/chat/unseen-messages-count/${room.id}/`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     const data = await response.data;
-  //     setUnseenMessageCount(data.unseen_count);
-  //   } catch (error) {
-  //     console.error('Error fetching unseen message count:', error);
-  //   }
-  // };
   
   if (!adminInfo) {
     return null; 
@@ -139,21 +115,16 @@ function AdminSidebar() {
           <li>
               <FaEnvelope className={`sidebar-icon ${isIconsOnly ? "" : ""}`} />
               <span className={`menu-text ${isIconsOnly ? "hidden" : ""}`}>
-              {/* {unseenCount > 0 && <span className="notification-count">{unseenCount}</span>} */}
+           
              
 
 
                 Messages
-                {/* <span style={{ backgroundColor: 'red', color: 'white', borderRadius: '50%', padding: '2px 5px', fontSize: '0.8rem' }}>0</span> */}
+     
               </span>
             </li> 
             </NavLink>
-          {/* <NavLink to='/admin/booking-payment' className="active-link" style={{ textDecoration: 'none', color: 'black' }}>
-          <li>
-            <FaEnvelope className={`sidebar-icon ${isIconsOnly ? 'hidden' : ''}`} />
-            <span className={`menu-text ${isIconsOnly ? 'hidden' : ''}`}>Messages</span>
-          </li>
-          </NavLink> */}
+
             {adminInfo && (
           <li className="logout-button" onClick={handleLogout}>
               <FaSignOutAlt className="sidebar-icon" />

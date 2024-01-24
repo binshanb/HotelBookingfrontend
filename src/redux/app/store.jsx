@@ -5,7 +5,7 @@ import adminAuthReducer from '../slices/adminslices/adminAuthSlice'
 import roomReducer from '../slices/roomslices/roomSlice'
 import chatReducer from '../slices/chatslices/chatSlice';
 
-// import bookingReducer from '../slices/bookingslices/bookingslice'
+
 
 const store =configureStore({
     reducer:{
@@ -14,7 +14,7 @@ const store =configureStore({
         room:roomReducer,
         chat: chatReducer,
 
-        // booking:bookingReducer,
+       
         [apiSlice.reducerPath]:apiSlice.reducer,
         
     },
