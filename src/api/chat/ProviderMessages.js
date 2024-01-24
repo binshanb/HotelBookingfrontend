@@ -153,12 +153,12 @@ const ChatApp = () => {
 
   return (
     <>
-    <Box p={2}style={{ backgroundColor: '#f0f0f0' }}>
+    <Box p={6}style={{ backgroundColor: '#f0f0f0' }}>
       <Grid container spacing={2}>
         {/* Room List (Right Side) */}
         <Grid item xs={12} md={4}>
           <Typography variant="h6"  align="center"
-             sx={{backgroundColor:'#E24871'}}
+             sx={{backgroundColor:'#00bcd4'}}
           >Your Chat Rooms</Typography>
            <List>
             {chatRooms.map((room, index) => (
@@ -167,12 +167,12 @@ const ChatApp = () => {
                 button
                 onClick={() => handleRoomClick(room.name,room.id)}
                 selected={selectedChatRoom === room.name}
-                style={{backgroundColor:'#F1F620'}}
+                style={{backgroundColor:'#f3e5f5'}}
               >
                 <ListItemText 
                   primary={room.username} 
                   secondary={`Unseen Messages: ${unseenCounts[room.id] || 0}`}
-                  style={{ backgroundColor: selectedChatRoom === room.name ? '#E24871' : 'transparent',
+                  style={{ backgroundColor: selectedChatRoom === room.name ? '#00bcd4' : 'transparent',
                   borderRadius: '10px',
                   padding:'5px',
                   }}
