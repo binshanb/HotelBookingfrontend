@@ -10,16 +10,20 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles((theme) => ({
   chatRoomsContainer: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(5),
+    textAlign: 'center',
+    marginBottom: theme.spacing(4),
   },
   listItem: {
+    border: '1px solid #ccc',
+    borderRadius: theme.shape.borderRadius,
+    margin: theme.spacing(1, 0),
     cursor: 'pointer',
     '&:hover': {
-      backgroundColor: theme.palette.grey[200],
+      backgroundColor: '#f5f5f5',
     },
   },
 }));
@@ -83,20 +87,22 @@ const ProviderChatRooms = () => {
 
   return (
     <div>
-       <Typography variant="h5" className={classes.chatRoomsContainer}>
-        Your Chat Rooms
+      <br/><br/>
+    <Box>
+      <Typography variant="h5" className={classes.chatRoomsContainer}>
+        Welcome to Our Hotel Booking Chatting System. We are with you!
       </Typography>
       <List>
         {chatRooms.map((room, index) => (
           <ListItem key={index} onClick={() => handleRoomClick(room.name)} className={classes.listItem}>
             <ListItemText
-              primary={room.name}
-              secondary={`Provider: ${room.provider}, User: ${room.username}`}
+              primary="Need to Chat with Our Admin Team? Click Here"
+              // Add secondary text if needed
             />
-      
           </ListItem>
         ))}
       </List>
+    </Box>
       <br/><br/>
       <ChatModal open={selectedChatRoom} onClose={handleCloseModal} roomName={selectedChatRoom} userId={userId} />
     </div>
