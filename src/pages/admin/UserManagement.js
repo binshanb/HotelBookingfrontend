@@ -11,6 +11,7 @@ export default function UserManagement() {
   const [filteredRows, setFilteredRows] = useState([]);
   const [blocked, setBlocked] = useState(false);
 
+
   // Define columns with details for each field
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
@@ -83,10 +84,15 @@ export default function UserManagement() {
     // }));
   };
 
+
   const fetchData = async () => {
     try {
-      const url = searchTerm ? `/admin/users/?search=${searchTerm}` : "admin/users/";
+      const url = searchTerm ? `/admin/search/?query=${searchTerm}` : "admin/users/";
+      console.log("Fetching data from:", url);
       const res = await adminInstance.get(url);
+      console.log("Response data:", res.data);
+
+      // Update the filteredRows state only when searchTerm is not empty
       setFilteredRows(res.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -96,6 +102,9 @@ export default function UserManagement() {
   useEffect(() => {
     fetchData();
   }, [blocked, searchTerm]);
+
+
+
 
   return (
     <>
@@ -109,19 +118,22 @@ export default function UserManagement() {
             </Link>
           </div>
           <div className="d-flex align-items-center">
-            <input
-              type="text"
-              placeholder="Search User"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-control "
-              style={{ marginRight: '8px' }}
-            />
-            <button className="btn btn-primary" onClick={fetchData}>
-              <FaSearch className="search-icon" />
-            </button>
-          </div>
-        </div>
+        <input
+          type="text"
+          placeholder="Search User"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="form-control"
+          style={{ marginRight: '8px' }}
+        />
+        <button className="btn btn-primary" onClick={fetchData}>
+          <FaSearch className="search-icon" />
+        </button>
+      </div>
+  
+    </div>
+      {/* Display your user list using the filteredRows state */}
+ 
         
         <DataGrid
           rows={filteredRows}
