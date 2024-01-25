@@ -10,12 +10,33 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { makeStyles } from '@material-ui/core/styles';
 import jwtDecode from "jwt-decode";
 import { useSelector } from "react-redux";
 import instance from "../../utils/Axios";
 
+const useStyles = makeStyles((theme) => ({
+  chatRoomsContainer: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(5),
+  },
+  listItem: {
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: theme.palette.grey[200],
+    },
+  },
+  boxContainer: {
+    border: '1px solid #ccc', // Example border style, customize as needed
+    borderRadius: theme.shape.borderRadius, // Example border radius, customize as needed
+    padding: theme.spacing(2), // Example padding, customize as needed
+    marginTop: theme.spacing(2), // Example margin top, customize as needed
+  },
 
+}));
 const ChatApp = () => {
+
+  const classes = useStyles();
   const user = useSelector((state) => state.auth.userInfo);
   const [decodedUserInfo,setDecodedUserInfo] = useState({});
   const userId = decodedUserInfo.user_id;
@@ -24,7 +45,6 @@ const ChatApp = () => {
   const providerId = decodedAdminInfo.user_id;
   console.log(providerId,"provider");
 
-  
 
   const [chatRooms, setChatRooms] = useState([]);
   const [unseenCounts, setUnseenCounts] = useState({});
@@ -221,6 +241,18 @@ const ChatApp = () => {
         ) : ( 
             <Typography variant="h6">
               Select a User to start chatting
+              <Box className={classes.boxContainer}>
+      <List>
+        {chatRooms.map((room, index) => (
+          <ListItem key={index} onClick={() => handleRoomClick(room.name)} className={classes.listItem}>
+            <ListItemText
+              primary={room.name}
+              secondary={`Provider: ${room.provider}, User: ${room.username}`}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
             </Typography>
           )} 
         </Grid>
