@@ -62,7 +62,7 @@ const ProviderChatRooms = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await instance.get(`/api/chat/provider-chat-rooms/${providerId}/`);
+        const response = await instance.get(`/api/chat/provider-chat-rooms/${userId}/`);
         console.log(response.data,"response");
         setChatRooms(response.data);
       } catch (error) {

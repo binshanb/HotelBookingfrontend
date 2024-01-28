@@ -8,6 +8,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import Button from '@mui/material/Button';
 import img from '../../assets/booking1-logo.png';
+import instance from '../../utils/Axios';
+import jwtDecode from 'jwt-decode';
 
 import {selectUserInfo,logout} from "../../redux/slices/userslices/authSlice"
 
@@ -20,9 +22,31 @@ function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.userInfo);
+  const [decodedUserInfo,setDecodedUserInfo] = useState({})
+  console.log(decodedUserInfo,"username");
+  const userId = decodedUserInfo.user_id;
+  const admin = useSelector((state) => state.adminAuth.adminInfo);
+  const [decodedAdminInfo,setDecodedAdminInfo] = useState({})
+  const providerId = decodedAdminInfo.user_id;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentActive, setCurrentActive] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      // Decode the token and set the user info state
+      const decodedInfo = jwtDecode(user.access); // Assuming 'access' contains user details
+      setDecodedUserInfo(decodedInfo);
+    }},[user]);
+
+    
+    useEffect(() => {
+      if (admin) {
+          // Decode the token and set the user info state
+          const decodedInfoAdmin = jwtDecode(admin.access); // Assuming 'access' contains user details
+          setDecodedAdminInfo(decodedInfoAdmin);
+      }},[admin]);
 
   const handleMobileMenuClick = () => {
     setMobileMenuOpen((prevState) => !prevState);
@@ -37,6 +61,21 @@ function Navbar() {
     setCurrentActive(null); // Reset the active link
     navigate(path);
   };
+
+  const handleInboxClick = async () => {
+    try {
+      
+      const response = await instance.post('/api/chat/chat-rooms/',
+      {'user_id':userId,'provider_id':providerId,'first_name':decodedUserInfo.first_name}); // Replace '/api/inbox' with your actual endpoint
+      
+      console.log('Inbox view response:', response.data);
+      
+    } catch (error) {
+      console.error('Error calling inbox view:', error);
+    
+    }
+  };
+  
 
   const navLinks = [
     { id: 1, text: 'Home', path: '/' },
@@ -55,10 +94,15 @@ function Navbar() {
       to={link.path}
       selected={link.id === currentActive}
       onClick={() => {
+        console.log("link clicked",link.id)
         handleClick(link.id);
         if (window.innerWidth <= 769) {
           handleMobileMenuClick();
         }
+        if(link.id===4){
+          handleInboxClick();
+        }
+        
       }}
     >
       <ListItemText primary={link.text} />

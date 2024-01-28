@@ -54,7 +54,7 @@ const ChatApp = () => {
   const [messageInput, setMessageInput] = useState("");
   const { lastMessage, sendMessage } = useWebSocket(
     selectedChatRoom ? `wss://backend.extremehotelbooking.online/ws/chat/${selectedChatRoom}/?userId=${providerId}` : null
-    // selectedChatRoom  ? `wss://127.0.0.1:8000/ws/chat/${selectedChatRoom}/?userId=${providerId}` : null
+    // selectedChatRoom  ? `wss://127.0.0.1:8000/ws/chat/${selectedChatRoom}/?userId=${userId}` : null
 
   );
 
@@ -76,7 +76,7 @@ const ChatApp = () => {
   useEffect(() => {
     // Fetch rooms
     instance
-      .get(`/api/chat/provider-chat-rooms/${providerId}/`)
+      .get(`/api/chat/provider-chat-rooms/${userId}/`)
       .then((response) => {
         setChatRooms(response.data);
       })
