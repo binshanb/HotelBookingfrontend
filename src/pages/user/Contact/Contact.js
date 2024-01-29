@@ -41,7 +41,7 @@ const ContactUs = () => {
                 <strong>Phone:</strong> +0 (123) 456-7890
               </p>
               <p className="mb-4">
-                <strong>Email:</strong> info@luxuryhotel.com
+                <strong>Email:</strong> info@extremehotel.com
               </p>
 
               <h2 className="text-xl font-semibold mb-4">Location</h2>

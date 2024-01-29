@@ -44,7 +44,7 @@ const Footer = () => {
           {/* Add more social media icons */}
         </Box>
         <Typography variant="body2" color="inherit">
-          &#169; {new Date().getFullYear()} Luxury Hotel. All rights reserved.
+          &#169; {new Date().getFullYear()} Extreme Hotel. All rights reserved.
         </Typography>
         <Box>
           <Link href="/about" color="inherit" sx={{ marginRight: '10px' }}>

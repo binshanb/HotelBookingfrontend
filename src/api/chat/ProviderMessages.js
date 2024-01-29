@@ -39,6 +39,7 @@ const ChatApp = () => {
   const classes = useStyles();
   const user = useSelector((state) => state.auth.userInfo);
   const [decodedUserInfo,setDecodedUserInfo] = useState({});
+
   const userId = decodedUserInfo.user_id;
   const admin = useSelector((state) => state.adminAuth.adminInfo);
   const [decodedAdminInfo,setDecodedAdminInfo] = useState({});
@@ -190,7 +191,7 @@ const ChatApp = () => {
                 style={{backgroundColor:'#fffde7'}}
               >
                 <ListItemText 
-                  primary={room.username} 
+                  primary={room.username}
                   secondary={`Unseen Messages: ${unseenCounts[room.id] || 0}`}
                   style={{ backgroundColor: selectedChatRoom === room.name ? '#00bcd4' : 'transparent',
                   borderRadius: '10px',

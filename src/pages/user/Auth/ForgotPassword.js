@@ -12,6 +12,7 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import profileImg from '../../../assets/profile-img.jpg';
 
 
 
@@ -59,81 +60,71 @@ const ForgotPassword = () => {
         toast.dismiss();
       };
 
-    return (
+      return (
         <>
-           <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          </Avatar>
-          <Typography component="h1" variant="h5" >
-            Forgot PassWord
-          </Typography>
-          <br/><br/>
-          <Box component="form" sx={{ mt: 3 }}>
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <TextField
-                    variant="outlined"
-                    label="Enter Phone Number"
+          <div className="min-h-screen flex items-center justify-center bg-gray-100">
+           
+            <div className="bg-white p-8 mt-5  rounded shadow-md max-w-md w-full">
+
+              <div className="text-center mb-4">
+              
+                <img src={profileImg} alt="Profile Image" className="rounded-full w-40 h-40 mb-4 mx-auto md:mx-0" />
+            
+                <h1 className="text-2xl font-bold">Forgot Password</h1>
+              </div>
+              <form>
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    className="border rounded w-full p-2"
+                    placeholder="Enter Phone Number"
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
-                    fullWidth
                     required
-                />
-            </Grid>
-            <Grid item xs={12}>
-                <Button
-                    variant="contained"
-                    color="primary"
+                  />
+                </div>
+                <div className="mb-4">
+                  <button
+                    type="button"
+                    className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
                     onClick={handleSendOTP}
-                >
+                  >
                     Send OTP
-                </Button>
-            </Grid>
-            <Grid item xs={12}>
-                <TextField
-                    variant="outlined"
-                    label="Enter OTP"
+                  </button>
+                </div>
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    className="border rounded w-full p-2"
+                    placeholder="Enter OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    fullWidth
                     required
-                />
-            </Grid>
-            <Grid item xs={12}>
-                <Button
-                    variant="contained"
-                    color="primary"
+                  />
+                </div>
+                <div className="mb-4">
+                  <button
+                    type="button"
+                    className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
                     onClick={handleVerifyOTP}
-                >
+                  >
                     Verify OTP
-                </Button>
-            </Grid>
-      
-        </Grid>
-        </Box>
-        </Box>
-        </Container>
-        <br/><br/>
-        <ToastContainer 
-          position="bottom-right"
-          autoClose={6000}
-          hideProgressBar={false}
-          closeOnClick
-          pauseOnHover
-        />
-        </ThemeProvider>
+                  </button>
+                </div>
+              </form>
+            </div>
+            
+          </div>
+          <ToastContainer
+            position="bottom-right"
+            autoClose={6000}
+            hideProgressBar={false}
+            closeOnClick
+            pauseOnHover
+          />
+          <br/><br/>
         </>
-    );
-};
+      );
+    };
 
 export default ForgotPassword;
