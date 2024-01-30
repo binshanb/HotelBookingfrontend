@@ -9,10 +9,8 @@ import { setCredentials } from '../../../redux/slices/userslices/authSlice';
 const OTPLogin = () => {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
-  const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
 
   const handlePhoneChange = (event) => {
     setPhone(event.target.value);
@@ -37,10 +35,15 @@ const OTPLogin = () => {
     try {
       const response = await instance.post('/api/verify-otp/', { phone_number: phone, otp: otp });
       if (response.status === 200) {
+        // Backend response will contain the JWT token
+        const { access, refresh, email, phone_number, first_name } = response.data;
+
+        // Save the token to your Redux state or local storage if needed
+        dispatch(setCredentials({ access, refresh }));
+
+        // Perform any additional actions upon successful login
         toast.success('OTP verification successful. User logged in.');
-        dispatch(setCredentials(true));
-        navigate('/')
-        // Redirect user or perform further actions upon successful login
+        navigate('/');  // Redirect to the home page or any other route
       }
     } catch (error) {
       toast.error('Invalid OTP. Please try again.');
@@ -77,12 +80,12 @@ const OTPLogin = () => {
         >
           Verify OTP
         </button>
-        <p className="text-red-500 mt-2">{message}</p>
       </div>
     </div>
   );
 };
 
 export default OTPLogin;
+
 
 

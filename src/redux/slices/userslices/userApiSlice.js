@@ -20,13 +20,13 @@ export const userApiSlice =apiSlice.injectEndpoints({
     })
     }),
 
-    // verifyOtp:builder.mutation({
-    //   query:(data)=>({
-    //     url:`${USERS_URL}/verifyOtp`,
-    //     method:'POST',
-    //     body:data
-    //   })
-    // }),
+    verifyOtp:builder.mutation({
+      query:(data)=>({
+        url:`${USERS_URL}/verifyOtp`,
+        method:'POST',
+        body:data
+      })
+    }),
  
 
  
@@ -36,4 +36,4 @@ export const userApiSlice =apiSlice.injectEndpoints({
   
 })
 
-export  const {useLoginMutation,useSignUpMutation}=userApiSlice;
+export  const {useLoginMutation,useSignUpMutation,useVerifyOtpMutation}=userApiSlice;

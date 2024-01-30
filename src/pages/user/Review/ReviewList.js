@@ -17,7 +17,7 @@ const ReviewList = () => {
     const user = useSelector((state) => state.auth.userInfo);
     const [decodedUserInfo, setDecodedUserInfo] = useState({});
     const rooms = useSelector((state)=> state.room.roomInfo);
-    const roomId = rooms.id
+    const roomId = rooms ? rooms.id : null;
     const [reviews, setReviews] = useState([]);
     console.log(reviews,"reviews");
 

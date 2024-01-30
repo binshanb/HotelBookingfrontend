@@ -1,62 +1,62 @@
-import { useState } from 'react';
-import instance from '../../../utils/Axios'; // Assuming Axios is configured for API requests
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+// import { useState } from 'react';
+// import instance from '../../../utils/Axios'; // Assuming Axios is configured for API requests
+// import { useNavigate } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
-const OTPVerify = () => {
-  const [otp, setOtp] = useState('');
-  console.log(otp,"otp");
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate();
-  const { phone } = useParams();
+// const OTPVerify = () => {
+//   const [otp, setOtp] = useState('');
+//   console.log(otp,"otp");
+//   const [message, setMessage] = useState('');
+//   const navigate = useNavigate();
+//   const { phone } = useParams();
   
 
 
-  const handleOTPChange = (event) => {
-    setOtp(event.target.value);
-  };
+//   const handleOTPChange = (event) => {
+//     setOtp(event.target.value);
+//   };
 
-  const handleVerifyOTP = async () => {
-    try {
-      const response = await instance.post(`/verify-otp/`, { phone, otp });
-      console.log(response.data,"responseeeeeeeee");
+//   const handleVerifyOTP = async () => {
+//     try {
+//       const response = await instance.post(`/verify-otp/`, { phone, otp });
+//       console.log(response.data,"responseeeeeeeee");
       
       
-      if (response.status === 200) {
-        setMessage('OTP verified successfully.');
-       navigate('/')
-      } else {
-        setMessage('Invalid OTP. Please try again.');
-      }
-    } catch (error) {
-      setMessage('Error verifying OTP. Please try again.');
-    }
-  };
+//       if (response.status === 200) {
+//         setMessage('OTP verified successfully.');
+//        navigate('/')
+//       } else {
+//         setMessage('Invalid OTP. Please try again.');
+//       }
+//     } catch (error) {
+//       setMessage('Error verifying OTP. Please try again.');
+//     }
+//   };
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="max-w-md w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h1 className="text-2xl mb-4">OTP Verification</h1>
-        <input
-          type="text"
-          placeholder="Enter OTP"
-          value={otp}
-          onChange={handleOTPChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 mb-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-        <button
-          onClick={handleVerifyOTP}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Verify OTP
-        </button>
-        <p className="text-red-500 mt-2">{message}</p>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="flex flex-col items-center justify-center min-h-screen">
+//       <div className="max-w-md w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+//         <h1 className="text-2xl mb-4">OTP Verification</h1>
+//         <input
+//           type="text"
+//           placeholder="Enter OTP"
+//           value={otp}
+//           onChange={handleOTPChange}
+//           className="shadow appearance-none border rounded w-full py-2 px-3 mb-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+//         />
+//         <button
+//           onClick={handleVerifyOTP}
+//           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+//         >
+//           Verify OTP
+//         </button>
+//         <p className="text-red-500 mt-2">{message}</p>
+//       </div>
+//     </div>
+//   );
+// };
 
-export default OTPVerify;
+// export default OTPVerify;
 
 
 
