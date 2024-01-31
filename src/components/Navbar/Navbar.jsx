@@ -10,6 +10,8 @@ import Button from '@mui/material/Button';
 import img from '../../assets/booking1-logo.png';
 import instance from '../../utils/Axios';
 import jwtDecode from 'jwt-decode';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import {selectUserInfo,logout} from "../../redux/slices/userslices/authSlice"
 
@@ -76,7 +78,10 @@ function Navbar() {
     }
   };
   
-
+  const handleLogout = () => {
+    dispatch(logout());
+    toast.success('Successfully logged out!');
+  };
   const navLinks = [
     { id: 1, text: 'Home', path: '/' },
     { id: 2, text: 'Rooms', path: '/categorylist' },
@@ -159,7 +164,7 @@ function Navbar() {
               {userInfo ? (
                 <>
                   <ListItem sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button variant="contained" color="secondary" onClick={() => dispatch(logout())}>
+                    <Button variant="contained" color="secondary" onClick={handleLogout}>
                       Logout
                     </Button>
                   </ListItem>
