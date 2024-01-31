@@ -37,6 +37,7 @@ const ProviderChatRooms = () => {
   const user = useSelector((state) => state.auth.userInfo);
   const [decodedUserInfo,setDecodedUserInfo] = useState({})
   const userId = decodedUserInfo.user_id;
+  console.log(userId,"userId");
   const admin = useSelector((state) => state.adminAuth.adminInfo);
   const [decodedAdminInfo,setDecodedAdminInfo] = useState({})
   const providerId = decodedAdminInfo.user_id;
