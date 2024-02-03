@@ -34,10 +34,10 @@ console.log(userId,"user");
     
     try {
       const response = await instance.put(`/api/user/edit-profile/${userId}/`, formData);
-      showToast('Profile details updated', 'success');
+      toast.success('Profile details updated');
       navigate('/user-profile')
     } catch (error) {
-      showToast('Error updating user details', 'error');
+      toast.error('Error updating user details');
       console.error('Error updating profile details', error);
     }
   };
