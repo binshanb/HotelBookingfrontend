@@ -43,7 +43,7 @@ const WalletDetails = () => {
         <Box mt={2} mb={2}>
           {wallet ? (
             <Box>
-              <Typography variant="body1">User: {decodeUserInfo.email}</Typography>
+              <Typography variant="body1">User: {decodeUserInfo.first_name}</Typography>
               <Typography variant="body1">Balance: {wallet.balance}</Typography>
             </Box>
           ) : (
