@@ -29,7 +29,7 @@ const AddProfile = () => {
   const handleSubmit = async () => {
     try {
       await instance.post('/api/user/add-profile/', formData);
-      toast.success('Profile Details Added Successfully!');
+      toast.success('Profile Details Added Successfully!!');
     } catch (error) {
       toast.error('Error adding user details');
       console.error('Error adding profile details', error);

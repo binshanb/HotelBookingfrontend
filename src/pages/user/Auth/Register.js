@@ -19,7 +19,7 @@ function Register() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [formData, setFormData] = useState({
-    first_name:'',
+    firstName:'',
     email: '',
     mobileNumber: '',
     password: '',
