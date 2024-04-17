@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice";
 const USERS_URL ='/api'
-const baseURL = "https://backs.extremehotelbooking.online";
+const baseURL = "https://backs.extremehotelbookings.online";
 // const baseURL = "http://127.0.0.1:8000";
 
 export const userApiSlice =apiSlice.injectEndpoints({
