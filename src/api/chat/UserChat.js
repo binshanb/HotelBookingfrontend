@@ -33,7 +33,7 @@ const UserChat = ({ room_name,userId,open,onClose }) => {
   console.log(messageInput,"mesInput");
   const { lastMessage, sendMessage } = useWebSocket(
     // room_name ? `wss://backend.rerealise.online/ws/chat/${room_name}/?userId=${userId}` : null
-    room_name ? `ws://127.0.0.1:8000/ws/chat/${room_name}/?userId=${userId}` : null
+    // room_name ? `ws://127.0.0.1:8000/ws/chat/${room_name}/?userId=${userId}` : null
   );
 
   // useEffect(() => {
