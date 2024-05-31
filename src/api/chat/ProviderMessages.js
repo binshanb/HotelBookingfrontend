@@ -55,7 +55,7 @@ const ChatApp = () => {
   const [messageInput, setMessageInput] = useState("");
   const { lastMessage, sendMessage } = useWebSocket(
     selectedChatRoom ? `wss://backs.extremehotelbookings.online/ws/chat/${selectedChatRoom}/?userId=${providerId}` : null
-    // selectedChatRoom  ? `wss://127.0.0.1:8000/ws/chat/${selectedChatRoom}/?userId=${userId}` : null
+    // selectedChatRoom  ? `wss://127.0.0.1:8000/ws/chat/${selectedChatRoom}/?userId=${providerId}` : null
 
   );
 
