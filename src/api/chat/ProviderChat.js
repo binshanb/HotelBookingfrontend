@@ -16,7 +16,7 @@ const ProviderChat = ({ room_name, userId }) => {
   const [messageInput, setMessageInput] = useState("");
   const { lastMessage, sendMessage } = useWebSocket(
     // room_name ? `ws://127.0.0.1:8000/ws/chat/${room_name}/?userId=${userId}` : null
-    room_name ? `wss://backendss.extremehotelbookings.online/ws/chat/${room_name}/?userId=${userId}` : null
+    room_name ? `wss://backend.extremehotelbookings.online/ws/chat/${room_name}/?userId=${userId}` : null
   );
 
   useEffect(() => {

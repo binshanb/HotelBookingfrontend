@@ -193,11 +193,8 @@ function Register() {
     try {
       // Make a POST request to your backend registration endpoint using the Axios instance
       const response = await instance.post('/api/user/register/', {
-        first_name:formData.firstName,
-        email: formData.email,
-        phone_number: formData.mobileNumber,
-        password: formData.password,
-        password2: formData.confirmPassword,
+ 
+        
       });
 
       // Assuming your backend returns some data upon successful registration
