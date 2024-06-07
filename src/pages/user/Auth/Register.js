@@ -171,17 +171,17 @@ function Register() {
 
     const passwordValidation = validatePassword(formData.password);
     if (!passwordValidation.isLowerCaseValid) {
-      validationErrors.password = 'Password must contain at least one lowercase letter';
+       newErrors.password = 'Password must contain at least one lowercase letter';
     } else if (!passwordValidation.isUpperCaseValid) {
-      validationErrors.password = 'Password must contain at least one uppercase letter';
+       newErrors.password = 'Password must contain at least one uppercase letter';
     } else if (!passwordValidation.isNumberValid) {
-      validationErrors.password = 'Password must contain at least one number';
+       newErrors.password = 'Password must contain at least one number';
     } else if (!passwordValidation.isLengthValid) {
-      validationErrors = 'Password must be at least 6 characters long';
+        newErrors = 'Password must be at least 6 characters long';
     }
 
     if (formData.password !== formData.confirmPassword) {
-      validationErrors.confirmPassword = 'Passwords do not match';
+       newErrors.confirmPassword = 'Passwords do not match';
     }
 
     if (Object.keys(newErrors).length > 0) {
