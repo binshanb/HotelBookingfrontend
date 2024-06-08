@@ -277,7 +277,7 @@ function Register() {
               {validationErrors.password && <p className="error-message">{validationErrors.password}</p>}
             </div>
             <div className='mb-3'>
-              <input type="password" name="paasword2" placeholder='Confirm Password' className='form-control' onChange={handleInputChange} />
+              <input type="password" name="password2" placeholder='Confirm Password' className='form-control' onChange={handleInputChange} />
               {validationErrors.password2 && <p className="error-message">{validationErrors.password2}</p>}
             </div>
             <div className='mb-2'>
