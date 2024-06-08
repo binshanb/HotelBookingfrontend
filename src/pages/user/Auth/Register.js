@@ -19,26 +19,26 @@ function Register() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [formData, setFormData] = useState({
-    firstName:'',
+    first_name:'',
     email: '',
-    mobileNumber: '',
+    phone_number: '',
     password: '',
-    confirmPassword: '',
+    password2: '',
   });
   
   const [validationErrors, setValidationErrors] = useState({});
  
-  const validateFirstName = (firstName) => {
+  const validateFirstName = (first_name) => {
     const nameRegex = /^[a-zA-Z -]+$/;
-    return nameRegex.test(firstName);
+    return nameRegex.test(first_name);
   };
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  const validateMobileNumber = (mobileNumber) => {
+  const validateMobileNumber = (phone_number) => {
     const mobileRegex = /^\d{10}$/; 
-    return mobileRegex.test(mobileNumber);
+    return mobileRegex.test(phone_number);
   };
   
   
@@ -86,7 +86,7 @@ function Register() {
     }));
 
     switch (name) {
-      case 'firstName':
+      case 'first_name':
         if (!validateFirstName(value)) {
           setValidationErrors((prevErrors) => ({
             ...prevErrors,
@@ -104,7 +104,7 @@ function Register() {
          
         }
         break;
-      case 'mobileNumber':
+      case 'phone_number':
         if (value && !validateMobileNumber(value)) {
           setValidationErrors((prevErrors) => ({
             ...prevErrors,
@@ -141,7 +141,7 @@ function Register() {
         if (value !== formData.password) {
           setValidationErrors((prevErrors) => ({
             ...prevErrors,
-            confirmPassword: 'Passwords do not match',
+            password2: 'Passwords do not match',
           }));
         }
         break;
@@ -157,16 +157,16 @@ function Register() {
     // Validate form fields
     const newErrors = {};
 
-    if (!validateFirstName(formData.firstName)) {
-      newErrors.firstName = 'Invalid name format';
+    if (!validateFirstName(formData.first_name)) {
+      newErrors.first_name = 'Invalid name format';
     }
 
     if (!validateEmail(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
 
-    if (formData.mobileNumber && !validateMobileNumber(formData.mobileNumber)) {
-      newErrors.mobileNumber = 'Invalid mobile number format';
+    if (formData.mobileNumber && !validateMobileNumber(formData.phone_number)) {
+      newErrors.phone_number = 'Invalid mobile number format';
     }
 
     const passwordValidation = validatePassword(formData.password);
@@ -180,8 +180,8 @@ function Register() {
         newErrors = 'Password must be at least 6 characters long';
     }
 
-    if (formData.password !== formData.confirmPassword) {
-       newErrors.confirmPassword = 'Passwords do not match';
+    if (formData.password !== formData.password2) {
+       newErrors.password2 = 'Passwords do not match';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -198,7 +198,7 @@ function Register() {
     });
     try {
       // Make a POST request to your backend registration endpoint using the Axios instance
-      const response = await instance.post('/api/user/register/',{
+      const response = await instance.post('/api/user/register/',formData,{
         headers:{
           'Content-Type':'application/json'
         }
@@ -261,7 +261,7 @@ function Register() {
             <h3 className='text-center'>Sign Up</h3>
             <div className='mb-3'>
               <input type="text" name="firstName" placeholder='Enter Name' className='form-control' onChange={handleInputChange} />
-              {validationErrors.firstName && <p className="error-message">{validationErrors.firstName}</p>}
+              {validationErrors.firstName && <p className="error-message">{validationErrors.first_name}</p>}
             </div>
             
             <div className='mb-3'>
@@ -270,7 +270,7 @@ function Register() {
             </div>
             <div className='mb-3'>
               <input type="text" name="mobileNumber" placeholder='Enter phone number' className='form-control' onChange={handleInputChange} />
-              {validationErrors.mobileNumber && <p className="error-message">{validationErrors.mobileNumber}</p>}
+              {validationErrors.phone_number && <p className="error-message">{validationErrors.phone_number}</p>}
             </div>
             <div className='mb-3'>
               <input type="password" name="password" placeholder='Enter password' className='form-control' onChange={handleInputChange} />
@@ -278,7 +278,7 @@ function Register() {
             </div>
             <div className='mb-3'>
               <input type="password" name="confirmPassword" placeholder='Confirm Password' className='form-control' onChange={handleInputChange} />
-              {validationErrors.confirmPassword && <p className="error-message">{validationErrors.confirmPassword}</p>}
+              {validationErrors.password2 && <p className="error-message">{validationErrors.password2}</p>}
             </div>
             <div className='mb-2'>
               <input type='checkbox' className='custom-control custom-checkbox' id='check' />
