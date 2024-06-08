@@ -260,8 +260,8 @@ function Register() {
           <form onSubmit={handleSubmit}>
             <h3 className='text-center'>Sign Up</h3>
             <div className='mb-3'>
-              <input type="text" name="firstName" placeholder='Enter Name' className='form-control' onChange={handleInputChange} />
-              {validationErrors.firstName && <p className="error-message">{validationErrors.first_name}</p>}
+              <input type="text" name="first_name" placeholder='Enter Name' className='form-control' onChange={handleInputChange} />
+              {validationErrors.first_name && <p className="error-message">{validationErrors.first_name}</p>}
             </div>
             
             <div className='mb-3'>
@@ -269,7 +269,7 @@ function Register() {
               {validationErrors.email && <p className="error-message">{validationErrors.email}</p>}
             </div>
             <div className='mb-3'>
-              <input type="text" name="mobileNumber" placeholder='Enter phone number' className='form-control' onChange={handleInputChange} />
+              <input type="text" name="phone_number" placeholder='Enter phone number' className='form-control' onChange={handleInputChange} />
               {validationErrors.phone_number && <p className="error-message">{validationErrors.phone_number}</p>}
             </div>
             <div className='mb-3'>
@@ -277,7 +277,7 @@ function Register() {
               {validationErrors.password && <p className="error-message">{validationErrors.password}</p>}
             </div>
             <div className='mb-3'>
-              <input type="password" name="confirmPassword" placeholder='Confirm Password' className='form-control' onChange={handleInputChange} />
+              <input type="password" name="paasword2" placeholder='Confirm Password' className='form-control' onChange={handleInputChange} />
               {validationErrors.password2 && <p className="error-message">{validationErrors.password2}</p>}
             </div>
             <div className='mb-2'>
