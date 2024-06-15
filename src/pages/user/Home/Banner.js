@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -11,11 +11,14 @@ const images = [
 ];
 
 const ImageCarousel = () => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <Box className="banner">
       <Carousel autoPlay infiniteLoop showStatus={false} showThumbs={false}>
         {images.map((image, index) => (
-          <Box key={index} height="400px" position="relative">
+          <Box key={index} height={isSmallScreen ? '250px' : '400px'} position="relative">
             <Link to="/categorylist">
               <img
                 src={image}
@@ -30,15 +33,16 @@ const ImageCarousel = () => {
             </Link>
             <Box
               position="absolute"
-              bottom="20px"
-              left="20px"
+              bottom={isSmallScreen ? '10px' : '20px'}
+              left={isSmallScreen ? '10px' : '20px'}
               color="white"
               zIndex={1}
+              padding={isSmallScreen ? '5px' : '10px'}
             >
-              <Typography variant="h4" component="h2" fontWeight="bold">
+              <Typography variant={isSmallScreen ? 'h6' : 'h4'} component="h2" fontWeight="bold">
                 Explore Our Rooms
               </Typography>
-              <Typography variant="subtitle1" component="p">
+              <Typography variant={isSmallScreen ? 'body2' : 'subtitle1'} component="p">
                 Book your perfect room now!
               </Typography>
             </Box>
@@ -50,3 +54,4 @@ const ImageCarousel = () => {
 };
 
 export default ImageCarousel;
+

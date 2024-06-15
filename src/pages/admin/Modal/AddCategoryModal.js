@@ -24,7 +24,7 @@ export default function AddCategoryModal({
     if (Object.keys(errors).length === 0) {
       try {
         const categoryData = new FormData();
-        categoryData.append('categoryName', categoryName);
+        categoryData.append('category_name', categoryName);
         categoryData.append('image', selectedImage);
 
         const response = await onAddCategory(categoryData, {

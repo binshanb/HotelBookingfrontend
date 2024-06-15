@@ -5,15 +5,28 @@
 
 body {
   margin: 0;
+  padding-top: 65px; /* Adjust based on your header height */
+  padding-bottom: 40px; /* Adjust based on your footer height */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+},
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+main {
+  flex: 1 0 auto;
+  margin-top: 65px; /* Adjust based on the height of your header */
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
 
