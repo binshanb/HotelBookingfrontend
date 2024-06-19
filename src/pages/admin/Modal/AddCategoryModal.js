@@ -9,7 +9,7 @@ Modal.setAppElement("#root");
 
 export default function AddCategoryModal({
   isOpen,
-  onRequestClose,
+  onRequestClose,  
   onAddCategory,
 }) {
   const [formError, setFormError] = useState({});
