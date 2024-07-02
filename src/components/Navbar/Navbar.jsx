@@ -130,10 +130,15 @@ function Navbar() {
             <List>
               {menuItems}
               {userInfo ? (
+                <>
+                      <ListItem button component={Link} to='/user-profile'>
+                      <ListItemText primary="User Profile" />
+                    </ListItem>
                 <ListItem button component={Link} to='/user-profile' onClick={handleLogout}>
                   <ListItemText primary="Logout" />
                   <LogoutIcon />
                 </ListItem>
+                </>
               ) : (
                 <ListItem button component={Link} to='/login'>
                   <ListItemText primary="Login" />
